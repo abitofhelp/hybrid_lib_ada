@@ -457,16 +457,16 @@ func IsStable() bool {{ return !IsPrerelease() }}
             return True
 
         # Key targets to validate for Go projects
-        # These are used by the release process or are essential for development
+        # Ordered to avoid dependencies issues (clean first, then build-dependent)
         targets = [
-            'help',           # Display help (basic sanity check)
+            'help',           # Display help
             'clean',          # Clean build artifacts
-            'build-release',  # Release build (used by release script)
-            'test',           # Run all tests (used by release script)
+            'build',          # Development build
+            'test',           # Run all tests
             'vet',            # Go vet
             'format',         # Code formatting
             'check-arch',     # Architecture validation
-            'diagrams',       # Diagram generation
+            'stats',          # Project statistics
         ]
 
         print("Validating Makefile targets...")
