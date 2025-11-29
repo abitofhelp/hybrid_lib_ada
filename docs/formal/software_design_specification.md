@@ -37,7 +37,7 @@ This document covers:
 
 ### 2.1 Layer Architecture
 
-Hybrid_Lib_Ada uses a **4-layer library architecture** (no Bootstrap for libraries):
+Hybrid_Lib_Ada uses a **4-layer library architecture** (Domain, Application, Infrastructure, API):
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
