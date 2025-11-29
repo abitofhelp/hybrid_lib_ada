@@ -1,11 +1,11 @@
 # Hybrid_Lib_Ada Documentation
 
-**Version:** 1.0.0  
-**Date:** 2025-11-29    
-**SPDX-License-Identifier:** BSD-3-Clause  
-**License File:** See the LICENSE file in the project root  
-**Copyright:** © 2025 Michael Gardner, A Bit of Help, Inc.  
-**Status:** Released  
+**Version:** 1.0.0<br>
+**Date:** 2025-11-29<br>
+**SPDX-License-Identifier:** BSD-3-Clause<br>
+**License File:** See the LICENSE file in the project root<br>
+**Copyright:** © 2025 Michael Gardner, A Bit of Help, Inc.<br>
+**Status:** Released
 
 ---
 
@@ -25,7 +25,7 @@ Welcome to the documentation for **Hybrid_Lib_Ada**, a canonical Ada 2022 librar
 ### Getting Started
 
 - **[Quick Start Guide](quick_start.md)** - Get up and running in minutes
-- **[Build Profiles](BUILD_PROFILES.md)** - Profile configuration for different targets
+- **[Build Profiles](guides/build_profiles.md)** - Profile configuration for different targets
 
 ### Formal Documentation
 
@@ -36,7 +36,6 @@ Welcome to the documentation for **Hybrid_Lib_Ada**, a canonical Ada 2022 librar
 ### Developer Guides
 
 - **[All About Our API](guides/all_about_our_api.md)** - API layer architecture and usage
-- **[Roadmap](roadmap.md)** - Future development plans
 
 ### Reference
 

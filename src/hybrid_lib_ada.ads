@@ -63,6 +63,6 @@ package Hybrid_Lib_Ada with Pure is
 
    --  Library version information
    --  Note: Actual version is in Hybrid_Lib_Ada.Version package
-   Lib_Version : constant String := "1.0.0-dev";
+   Lib_Version : constant String := "1.0.0";
 
 end Hybrid_Lib_Ada;

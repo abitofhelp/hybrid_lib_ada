@@ -1,11 +1,11 @@
 # Quick Start Guide
 
-**Version:** 1.0.0  
-**Date:** 2025-11-29    
-**SPDX-License-Identifier:** BSD-3-Clause  
-**License File:** See the LICENSE file in the project root  
-**Copyright:** © 2025 Michael Gardner, A Bit of Help, Inc.  
-**Status:** Released  
+**Version:** 1.0.0<br>
+**Date:** 2025-11-29<br>
+**SPDX-License-Identifier:** BSD-3-Clause<br>
+**License File:** See the LICENSE file in the project root<br>
+**Copyright:** © 2025 Michael Gardner, A Bit of Help, Inc.<br>
+**Status:** Released
 
 ---
 
@@ -185,7 +185,7 @@ The library supports multiple build profiles for different target environments:
 alr build -- -XHYBRID_LIB_ADA_PROFILE=embedded
 ```
 
-See [Build Profiles](BUILD_PROFILES.md) for detailed configuration.
+See [Build Profiles](guides/build_profiles.md) for detailed configuration.
 
 ---
 
@@ -254,4 +254,3 @@ The library uses strict style checking. Warnings about line length are informati
 
 - Read [All About Our API](guides/all_about_our_api.md) for API architecture
 - Review [Software Design Specification](formal/software_design_specification.md) for internals
-- Check [Roadmap](roadmap.md) for planned features
