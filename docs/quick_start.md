@@ -21,9 +21,9 @@
 # macOS (Homebrew)
 brew install alire
 
-# Linux (download from https://alire.ada.dev)
-curl -L https://github.com/alire-project/alire/releases/latest/download/alr-x.y.z-bin-linux.zip -o alr.zip
-unzip alr.zip && sudo mv bin/alr /usr/local/bin/
+# Linux (download latest from https://alire.ada.dev/docs/#installation)
+# Visit releases page: https://github.com/alire-project/alire/releases
+# Download the appropriate binary for your platform and add to PATH
 
 # Verify installation
 alr --version
