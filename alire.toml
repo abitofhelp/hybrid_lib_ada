@@ -26,10 +26,7 @@ tags = [
 gnat = ">=13"
 
 [[depends-on]]
-functional = "^2.0.0"
+functional = "^2.1.1"
 
 [[depends-on]]
 gnatcov = "^22.0.1"
-
-[[pins]]
-functional = { url = "git+https://github.com/abitofhelp/functional.git" }

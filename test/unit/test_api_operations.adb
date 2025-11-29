@@ -195,8 +195,9 @@ begin
       Result1 : constant Unit_Result.Result := Test_Ops.Greet (Cmd1);
       Result2 : constant Unit_Result.Result := Test_Ops.Greet (Cmd2);
    begin
-      Run_Test ("Multiple calls - Both succeed",
-                Unit_Result.Is_Ok (Result1) and then Unit_Result.Is_Ok (Result2));
+      Run_Test
+        ("Multiple calls - Both succeed",
+         Unit_Result.Is_Ok (Result1) and then Unit_Result.Is_Ok (Result2));
       Run_Test ("Multiple calls - Writer called twice", Write_Call_Count = 2);
       Run_Test ("Multiple calls - Last message captured",
                 To_String (Captured_Message) = "Hello, Second!");

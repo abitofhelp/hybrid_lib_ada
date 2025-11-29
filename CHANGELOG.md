@@ -1,11 +1,11 @@
 # Changelog
 
-**Version:** 1.0.0-dev   
-**Date:** 2025-11-29    
-**SPDX-License-Identifier:** BSD-3-Clause  
-**License File:** See the LICENSE file in the project root  
-**Copyright:** © 2025 Michael Gardner, A Bit of Help, Inc.  
-**Status:** Released  
+**Version:** 1.0.0<br>
+**Date:** 2025-11-29<br>
+**SPDX-License-Identifier:** BSD-3-Clause<br>
+**License File:** See the LICENSE file in the project root<br>
+**Copyright:** © 2025 Michael Gardner, A Bit of Help, Inc.<br>
+**Status:** Released
 
 All notable changes to this project will be documented in this file.
 
@@ -14,10 +14,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0] - 2025-11-29
+
 ### Added
 - Initial library structure based on hybrid_app_ada
 - 4-layer hexagonal architecture (Domain, Application, Infrastructure, API)
 - Public API facade at `Hybrid_Lib_Ada.API`
+- Three-package API pattern (Operations, Desktop, facade)
 - Generic I/O plugin pattern via `Hybrid_Lib_Ada.API.Operations`
 - Desktop platform instantiation via `Hybrid_Lib_Ada.API.Desktop`
 - Embedded safety restrictions in root package
@@ -27,6 +30,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Console writer adapter for desktop platforms
 - Version package for runtime version queries
 - Comprehensive Makefile for build automation
+- 98 tests (88 unit + 10 integration)
+- Comprehensive documentation (SRS, SDS, STG)
+- 6 UML diagrams with SVG output
+- Build profile support (standard, embedded, baremetal, STM32)
 
 ### Architecture
 - Domain layer: Pure business logic with zero dependencies
@@ -35,14 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - API layer: Public facade with platform-specific instantiations
 - Library_Standalone mode with explicit Library_Interface
 - Static dispatch via generics for zero-overhead DI
+- SPARK_Mode boundaries defined for future formal verification
 
 ### Dependencies
-- functional ^2.1.0 (Result/Option/Try monads)
-
-## [1.0.0-dev] - 2025-11-28
-
-### Added
-- Initial development release
-- Project scaffolding from hybrid_app_ada
-- Removed presentation and bootstrap layers (app-only)
-- Added API layer for library public interface
+- functional ^2.1.1 (Result/Option/Try monads)
