@@ -1,0 +1,237 @@
+@startuml api_reexport_pattern
+!theme plain
+
+title API Re-export Pattern (LIBRARY)\nPublic Facade for Consumer Applications
+
+package "Domain Layer" as Domain #FFF9E6 {
+  class "Domain.Error" as DomainError {
+    + Error_Type : record
+    + Error_Kind : type
+    + Validation_Error : constant
+    + IO_Error : constant
+    --
+    Canonical error definitions
+  }
+
+  class "Domain.Error.Result" as DomainResult {
+    + Generic_Result[T] : generic
+    + Is_Ok, Is_Error : functions
+    + Value, Error_Info : functions
+    --
+    Result monad
+  }
+
+  class "Domain.Value_Object.Person" as DomainPerson {
+    + Person : private type
+    + Create(name) : Result[Person]
+    + Get_Name(P) : String
+    + Max_Name_Length : constant
+    --
+    Domain value object
+  }
+
+  class "Domain.Unit" as DomainUnit {
+    + Unit : type
+    + Unit_Value : constant
+    --
+    Void type equivalent
+  }
+}
+
+package "Application Layer" as Application #E8F5E9 {
+  class "Application.Command.Greet" as AppCommand {
+    + Greet_Command : private type
+    + Create(name) : Greet_Command
+    + Get_Name(Cmd) : String
+    --
+    Input DTO
+  }
+
+  class "Application.Port.Outbound.Writer" as AppPort {
+    + Unit_Result : package
+    + Generic_Writer : generic
+    --
+    Output port contract
+  }
+}
+
+package "API Layer (Public Facade)" as API #FFEBCD {
+  class "Hybrid_Lib_Ada.API" as APIFacade {
+    + Person_Type : subtype
+    + Greet_Command : subtype
+    + Error_Type : subtype
+    + Person_Result : package rename
+    + Unit_Result : package rename
+    + Create_Person(name) : Result
+    + Create_Greet_Command(name) : Cmd
+    + Get_Name(P) : String
+    + Get_Command_Name(Cmd) : String
+    + **Greet(Cmd) : Result**
+    --
+    **Re-exports for consumers**
+    Single import point
+  }
+}
+
+package "API.Desktop (Composition Root)" as APIDesktop #FFE4B5 {
+  class "Hybrid_Lib_Ada.API.Desktop" as Desktop {
+    + Console_Ops : package instance
+    + Greet(Cmd) : Result
+    --
+    **Wires infrastructure**
+    Instantiates with Console_Writer
+  }
+}
+
+package "API.Operations (SPARK-Safe)" as APIOps #CCFFCC {
+  class "Hybrid_Lib_Ada.API.Operations" as Operations {
+    generic with function Writer
+    + Greet_Use_Case : package instance
+    + Greet(Cmd) : Result
+    --
+    **SPARK_Mode: On**
+    No Infrastructure deps
+  }
+}
+
+package "Infrastructure Layer" as Infrastructure #E6F3FF {
+  class "Infrastructure.Adapter.Console_Writer" as ConsoleWriter {
+    + Write(Message) : Result
+    --
+    Implements **Writer Port**
+    Uses Ada.Text_IO
+  }
+}
+
+package "Consumer Application" as Consumer #E0FFE0 {
+  class "Consumer Code" as ConsumerApp {
+    with Hybrid_Lib_Ada.API;
+    use Hybrid_Lib_Ada.API;
+    --
+    **Library consumer**
+    Single import for all types
+  }
+}
+
+' Re-export relationships
+DomainError <.. APIFacade : re-exports
+DomainResult <.. APIFacade : re-exports
+DomainPerson <.. APIFacade : re-exports
+DomainUnit <.. APIFacade : re-exports
+AppCommand <.. APIFacade : re-exports
+AppPort <.. APIFacade : re-exports
+
+' Desktop wiring
+Operations <.. Desktop : instantiates
+ConsoleWriter <.. Desktop : wires
+APIFacade <.. Desktop : provides Greet
+
+' Consumer usage
+APIFacade <.. ConsumerApp : imports
+
+note right of APIFacade
+  **API Facade Pattern**
+  ═══════════════════════════
+
+  ```ada
+  package Hybrid_Lib_Ada.API is
+
+     --  Re-export Domain types
+     subtype Person_Type is
+       Domain.Value_Object.Person.Person;
+     function Create_Person (Name : String)
+       return Person_Result.Result
+     renames Domain.Value_Object.Person.Create;
+     package Person_Result renames
+       Domain.Value_Object.Person.Person_Result;
+
+     --  Re-export Application types
+     subtype Greet_Command is
+       Application.Command.Greet.Greet_Command;
+     function Create_Greet_Command (Name : String)
+       return Greet_Command
+     renames Application.Command.Greet.Create;
+
+     --  Public operation (delegates to Desktop)
+     function Greet (Cmd : Greet_Command)
+       return Unit_Result.Result;
+
+  end Hybrid_Lib_Ada.API;
+  ```
+end note
+
+note bottom of Desktop
+  **Composition Root**
+  ════════════════════════
+
+  ```ada
+  with Infrastructure.Adapter.Console_Writer;
+  with Hybrid_Lib_Ada.API.Operations;
+
+  package Hybrid_Lib_Ada.API.Desktop is
+
+     package Console_Ops is new
+       Hybrid_Lib_Ada.API.Operations
+         (Writer => Console_Writer.Write);
+
+     function Greet (Cmd : Greet_Command)
+       return Unit_Result.Result
+     renames Console_Ops.Greet;
+
+  end Hybrid_Lib_Ada.API.Desktop;
+  ```
+end note
+
+note bottom of ConsumerApp
+  **Consumer Usage**
+  ════════════════════════
+
+  ```ada
+  with Hybrid_Lib_Ada.API;
+
+  procedure Main is
+     use Hybrid_Lib_Ada.API;
+
+     Cmd : constant Greet_Command :=
+       Create_Greet_Command ("Alice");
+     Result : constant Unit_Result.Result :=
+       Greet (Cmd);
+  begin
+     if Unit_Result.Is_Ok (Result) then
+        --  Success! "Hello, Alice!" printed
+        null;
+     else
+        --  Handle error
+        declare
+           Info : constant Error_Type :=
+             Unit_Result.Error_Info (Result);
+        begin
+           Put_Line ("Error: " &
+             Error_Strings.To_String (Info.Message));
+        end;
+     end if;
+  end Main;
+  ```
+end note
+
+legend right
+  **Library Re-export Pattern**
+  ═══════════════════════════════
+  ✅ Subtypes/renames (minimal overhead)
+  ✅ Single import for consumers
+  ✅ Clean public interface
+  ✅ Hides internal layer structure
+
+  **Three-Package API Pattern**
+  ═══════════════════════════════
+  • **API** - Thin facade, re-exports types
+  • **API.Desktop** - Composition root
+  • **API.Operations** - SPARK-safe (generic)
+
+  **SPARK Boundaries**
+  ═══════════════════════════════
+  🟢 SPARK_Mode(On): API.Operations
+  🔴 SPARK_Mode(Off): API, API.Desktop
+endlegend
+
+@enduml

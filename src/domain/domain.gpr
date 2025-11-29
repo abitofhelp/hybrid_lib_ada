@@ -1,0 +1,53 @@
+-- ==========================================================================
+-- Domain Layer GPR - Domain Library Build Configuration
+-- ==========================================================================
+-- Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
+-- SPDX-License-Identifier: BSD-3-Clause
+--
+-- Purpose:
+--   Builds the domain layer as a standalone static library.
+--   No external dependencies - pure Ada.
+--   Configured to prevent transitive dependency exposure.
+-- ==========================================================================
+
+with "../../shared_config.gpr";
+
+library project Domain is
+
+   for Source_Dirs use (".", "error", "value_object");
+   for Object_Dir use "../../obj/domain";
+   for Library_Dir use "../../lib/domain";
+   for Library_Name use "domain";
+   for Library_Kind use "static";
+
+   --  ======================================================================
+   --  Stand-Alone Library Configuration - ARCHITECTURAL ENFORCEMENT
+   --  ======================================================================
+   --
+   --  WHY: Domain is the innermost layer with ZERO dependencies.
+   --       All other layers depend on Domain, but Domain depends on nothing.
+   --
+   --  HOW IT WORKS:
+   --    - Library_Standalone prevents transitive dependencies
+   --    - Library_Interface lists ALL Domain.* packages
+   --    - This is the foundation that all other layers build upon
+   --
+   --  VALIDATED BY: scripts/arch_guard.py
+   --  ======================================================================
+
+   for Library_Standalone use "standard";
+
+   for Library_Interface use
+     ("Domain",
+      "Domain.Unit",
+      "Domain.Error",
+      "Domain.Error.Result",
+      "Domain.Value_Object",
+      "Domain.Value_Object.Option",
+      "Domain.Value_Object.Person");
+
+   package Compiler renames Shared_Config.Compiler;
+   package Binder renames Shared_Config.Binder;
+   package Builder renames Shared_Config.Builder;
+
+end Domain;

@@ -1,0 +1,53 @@
+-- ==========================================================================
+-- Infrastructure Layer GPR - Infrastructure Library Build Configuration
+-- ==========================================================================
+-- Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
+-- SPDX-License-Identifier: BSD-3-Clause
+--
+-- Purpose:
+--   Builds the infrastructure layer as a standalone static library.
+--   Can depend on Domain and Application layers.
+--   Also depends on external libraries (functional).
+--   Configured to prevent transitive dependency exposure.
+-- ==========================================================================
+
+with "../../shared_config.gpr";
+with "../domain/domain.gpr";
+with "../application/application.gpr";
+with "functional";
+
+library project Infrastructure is
+
+   for Source_Dirs use (".", "adapter");
+   for Object_Dir use "../../obj/infrastructure";
+   for Library_Dir use "../../lib/infrastructure";
+   for Library_Name use "infrastructure";
+   for Library_Kind use "static";
+
+   --  ======================================================================
+   --  Stand-Alone Library Configuration - ARCHITECTURAL ENFORCEMENT
+   --  ======================================================================
+   --
+   --  WHY: Infrastructure implements adapters for output ports.
+   --       It depends on Domain + Application, provides implementations.
+   --
+   --  HOW IT WORKS:
+   --    - Library_Standalone prevents transitive dependencies
+   --    - Library_Interface lists Infrastructure.* packages
+   --    - Exposes adapters to Bootstrap for dependency injection
+   --
+   --  VALIDATED BY: scripts/arch_guard.py
+   --  ======================================================================
+
+   for Library_Standalone use "standard";
+
+   for Library_Interface use
+     ("Infrastructure",
+      "Infrastructure.Adapter",
+      "Infrastructure.Adapter.Console_Writer");
+
+   package Compiler renames Shared_Config.Compiler;
+   package Binder renames Shared_Config.Binder;
+   package Builder renames Shared_Config.Builder;
+
+end Infrastructure;

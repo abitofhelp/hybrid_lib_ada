@@ -1,0 +1,99 @@
+@startuml layer_dependencies
+!theme plain
+skinparam linetype ortho
+skinparam nodesep 80
+skinparam ranksep 100
+
+title 4-Layer Library Architecture\nHexagonal (Ports & Adapters) + Clean + DDD
+
+package "API Layer" as API #FFEBCD {
+  component "API Facade" as Facade
+  component "API.Desktop" as Desktop
+  component "API.Operations" as Operations
+  note right of API
+    **Public Interface + Composition Root**
+    - API: Thin facade, re-exports types
+    - API.Desktop: Wires Console_Writer
+    - API.Operations: SPARK-safe (generic)
+    - **Can depend on ALL layers**
+  end note
+}
+
+package "Infrastructure Layer" as Infrastructure #E6F3FF {
+  component "Adapters" as Adapters
+  component "Console_Writer" as ConsoleWriter
+  note right of Infrastructure
+    **Driven Adapters**
+    - Implements Output Ports
+    - External system integration
+    - Depends on Application + Domain
+  end note
+}
+
+package "Application Layer" as Application #E8F5E9 {
+  component "Use Cases" as UseCases
+  component "Ports" as Ports
+  component "Commands" as Commands
+  note right of Application
+    **Orchestration Layer**
+    - Coordinates domain logic
+    - Defines Output Ports
+    - Commands for input DTOs
+    - **Depends ONLY on Domain**
+  end note
+}
+
+package "Domain Layer" as Domain #FFF9E6 {
+  component "Value Objects" as VOs
+  component "Domain.Error" as DomainError
+  component "Generic_Result" as Result
+  component "Unit" as Unit
+  note right of Domain
+    **Business Logic Core**
+    - Pure domain concepts
+    - ZERO external deps
+    - Shareable across apps
+  end note
+}
+
+' Dependencies - ALL point INWARD (center-seeking)
+Facade -down-> Desktop : delegates
+Desktop -down-> Operations : instantiates
+Desktop -down-> Infrastructure : wires
+
+Operations -down-> Application : uses Use Cases
+Operations -[hidden]down-> Domain
+
+Infrastructure -down-> Application : implements Output Ports
+Infrastructure -down-> Domain : uses Value Objects
+
+Application -down-> Domain : orchestrates
+
+' Key architectural notes
+note on link
+  API.Operations depends
+  ONLY on Application/Domain
+  (SPARK-safe boundary)
+end note
+
+legend right
+  **Key Architectural Rules (Library)**
+  ═══════════════════════════════════
+  ✅ **API.Operations → Application + Domain ONLY**
+     (SPARK-safe, formally verifiable)
+  ✅ **API.Desktop → ALL** (composition root)
+  ✅ Infrastructure → Application + Domain
+  ✅ Application → Domain
+
+  ❌ **NO** API.Operations → Infrastructure
+  ❌ **NO** Domain → anything
+
+  **Library vs Application**
+  ═══════════════════════════════════
+  • Library: 4 layers (no Bootstrap/Presentation)
+  • API.Desktop fills Bootstrap role
+  • Consumers import API facade
+  • Domain is shareable across projects
+endlegend
+
+@enduml

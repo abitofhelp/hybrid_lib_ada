@@ -1,0 +1,183 @@
+@startuml static_dispatch
+!theme plain
+skinparam linetype ortho
+
+title Static Dispatch via Generics\nDependency Injection in Ada (Library)
+
+package "Infrastructure Layer" #E6F3FF {
+  class "Console_Writer" as CW <<package>> {
+    +Write(Message : String) : Result
+    --
+    Concrete implementation
+    of output port
+  }
+}
+
+package "Application Layer" #E8F5E9 {
+  class "Writer_Port" as Port <<generic package>> {
+    generic
+      with function Write(...) : Result
+    --
+    **Output Port Contract**
+    Defines what infrastructure
+    must provide
+  }
+
+  class "Use_Case" as UC <<generic package>> {
+    generic
+      with function Writer(...) : Result
+    +Execute(Cmd) : Result
+    --
+    **Use Case Logic**
+    Generic over writer function
+  }
+}
+
+package "API Layer" #FFEBCD {
+  class "API.Operations" as Ops <<generic package>> #CCFFCC {
+    generic
+      with function Writer(...) : Result
+    +Greet(Cmd) : Result
+    --
+    **SPARK-Safe Operations**
+    Generic over writer
+    SPARK_Mode: On
+  }
+
+  class "API.Desktop" as Desktop <<composition root>> {
+    Console_Ops
+    +Greet(Cmd) : Result
+    --
+    **Composition Root**
+    Instantiates Operations
+    with Console_Writer
+  }
+
+  class "API" as Facade <<thin facade>> {
+    +Greet(Cmd) : Result
+    --
+    **Public Facade**
+    Delegates to Desktop
+  }
+}
+
+' Relationships
+CW ..> Port : implements
+Port ..> UC : provides function
+UC ..> Ops : provides function
+Desktop -down-> CW : wires
+Desktop -down-> Ops : instantiates
+Facade -down-> Desktop : delegates
+
+note right of Desktop #CCFFCC
+  **API.Desktop Instantiation**
+  ═══════════════════════════════════
+
+  ```ada
+  --  Located in: src/api/desktop/
+  --  hybrid_lib_ada-api-desktop.ads
+
+  with Infrastructure.Adapter.Console_Writer;
+  with Hybrid_Lib_Ada.API.Operations;
+
+  package Hybrid_Lib_Ada.API.Desktop is
+
+     --  Instantiate Operations with
+     --  concrete Console_Writer
+     package Console_Ops is new
+       Hybrid_Lib_Ada.API.Operations
+         (Writer => Console_Writer.Write);
+
+     --  Re-export Greet function
+     function Greet (Cmd : Greet_Command)
+       return Unit_Result.Result
+     renames Console_Ops.Greet;
+
+  end Hybrid_Lib_Ada.API.Desktop;
+  ```
+end note
+
+note bottom of UC
+  **Generic Use Case**
+  ═══════════════════════════════════
+
+  ```ada
+  generic
+     with function Writer (Message : String)
+       return Unit_Result.Result;
+  package Application.Usecase.Greet is
+
+     function Execute
+       (Cmd : Greet_Command.Greet_Command)
+        return Unit_Result.Result;
+
+  end Application.Usecase.Greet;
+  ```
+
+  **Key:** `with function` parameter
+  binds concrete function at instantiation
+end note
+
+note bottom of Ops #CCFFCC
+  **Generic API.Operations (SPARK-Safe)**
+  ═══════════════════════════════════
+
+  ```ada
+  pragma SPARK_Mode (On);
+
+  generic
+     with function Writer (Message : String)
+       return Unit_Result.Result;
+  package Hybrid_Lib_Ada.API.Operations is
+
+     package Greet_Use_Case is new
+       Application.Usecase.Greet
+         (Writer => Writer);
+
+     function Greet
+       (Cmd : Greet_Command)
+        return Unit_Result.Result
+     renames Greet_Use_Case.Execute;
+
+  end Hybrid_Lib_Ada.API.Operations;
+  ```
+
+  **Key:** SPARK-verifiable, no Infrastructure deps
+end note
+
+legend right
+  **Static Dispatch Benefits**
+  ═══════════════════════════════════════
+
+  **Performance:**
+  • Zero runtime overhead
+  • All calls resolved at compile time
+  • Subprogram calls can be inlined
+  • No tagged type dispatching
+
+  **Type Safety:**
+  • Full compile-time checking
+  • Instantiation errors caught early
+  • No runtime type mismatches
+
+  **SPARK Compatibility:**
+  • No runtime dispatching
+  • Deterministic control flow
+  • Formally verifiable
+
+  **Ada Generic Pattern**
+  ═══════════════════════════════════════
+  • `generic` introduces formal parameters
+  • `with function` is a formal subprogram
+  • Instantiation binds concrete functions
+  • Compiler generates specialized code
+
+  **Library Architecture**
+  ═══════════════════════════════════════
+  • API.Operations: SPARK-safe (generic)
+  • API.Desktop: Composition root (wires)
+  • API: Thin facade (delegates)
+  • Consumer: Imports API, calls Greet
+endlegend
+
+@enduml

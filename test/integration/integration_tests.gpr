@@ -1,0 +1,42 @@
+-- ===========================================================================
+-- integration_tests.gpr - Integration Test Suite for Hybrid_Lib_Ada
+-- ===========================================================================
+-- Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
+-- SPDX-License-Identifier: BSD-3-Clause
+--
+-- Purpose:
+--   Integration test project for testing cross-layer interactions.
+--   Tests the public API with real infrastructure adapters.
+--
+-- Build: alr exec -- gprbuild -P test/integration/integration_tests.gpr
+--        make build-tests
+-- ===========================================================================
+
+with "../../hybrid_lib_ada_internal.gpr";
+
+project Integration_Tests is
+
+   for Source_Dirs use (".", "../common");
+   for Object_Dir use "../../obj/test/integration";
+   for Exec_Dir use "../bin";
+
+   --  Main test programs (add your tests here)
+   for Main use
+     ("integration_runner.adb",
+      "test_api_greet.adb");
+
+   package Compiler is
+      --  Inherit compiler settings from internal project
+      for Default_Switches ("Ada") use
+         Hybrid_Lib_Ada_Internal.Compiler'Default_Switches("Ada");
+   end Compiler;
+
+   package Binder is
+      for Switches ("Ada") use ("-Es");
+   end Binder;
+
+   package Builder is
+      for Switches ("Ada") use ("-g");  -- Debug symbols
+   end Builder;
+
+end Integration_Tests;

@@ -1,0 +1,46 @@
+-- ===========================================================================
+-- unit_tests.gpr - Unit Test Suite for Hybrid_Lib_Ada
+-- ===========================================================================
+-- Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
+-- SPDX-License-Identifier: BSD-3-Clause
+--
+-- Purpose:
+--   Unit test project for testing domain and application layers.
+--   Inherits validation profile settings from hybrid_lib_ada.gpr for consistency.
+--
+-- Build: alr build --validation
+--        make build-tests
+-- ===========================================================================
+
+with "../../hybrid_lib_ada_internal.gpr";
+
+project Unit_Tests is
+
+   for Source_Dirs use (".", "../common");
+   for Object_Dir use "../../obj/test/unit";
+   for Exec_Dir use "../bin";
+
+   --  Main test programs (add your tests here)
+   for Main use
+     ("unit_runner.adb",
+      "test_domain_error_result.adb",
+      "test_domain_person.adb",
+      "test_application_command_greet.adb",
+      "test_application_usecase_greet.adb",
+      "test_api_operations.adb");
+
+   package Compiler is
+      --  Inherit compiler settings from internal project (no interface restrictions)
+      for Default_Switches ("Ada") use
+         Hybrid_Lib_Ada_Internal.Compiler'Default_Switches("Ada");
+   end Compiler;
+
+   package Binder is
+      for Switches ("Ada") use ("-Es");
+   end Binder;
+
+   package Builder is
+      for Switches ("Ada") use ("-g");  -- Debug symbols
+   end Builder;
+
+end Unit_Tests;

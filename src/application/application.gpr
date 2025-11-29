@@ -1,0 +1,68 @@
+-- ===========================================================================
+-- Application Layer GPR - Application Library Build Configuration
+-- ===========================================================================
+-- Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
+-- SPDX-License-Identifier: BSD-3-Clause
+--
+-- Purpose:
+--   Builds the application layer as a standalone static library.
+--   Only depends on Domain layer.
+--   Configured to prevent transitive dependency exposure.
+--
+-- Dependencies: Domain layer only
+-- Visibility: Used by Infrastructure, Presentation, and Bootstrap layers
+-- ===========================================================================
+
+with "../../shared_config.gpr";
+with "../domain/domain.gpr";
+
+library project Application is
+
+   for Library_Name use "application";
+   for Library_Kind use "static";
+
+   for Source_Dirs use (".", "command", "port", "port/inbound", "port/outbound", "usecase", "error");
+   for Object_Dir use "../../obj/application";
+   for Library_Dir use "../../lib/application";
+
+   --  ======================================================================
+   --  Stand-Alone Library Configuration - ARCHITECTURAL ENFORCEMENT
+   --  ======================================================================
+   --
+   --  WHY: Hexagonal/Clean Architecture requires that the Presentation layer
+   --       cannot access the Domain layer, even transitively through Application.
+   --
+   --  ARCHITECTURAL RULE ENFORCED:
+   --    "Presentation → Application only (no transitive Domain access)"
+   --
+   --  HOW IT WORKS:
+   --    - Library_Standalone prevents transitive dependencies
+   --    - Library_Interface lists ONLY Application.* packages
+   --    - Domain.* packages are deliberately EXCLUDED
+   --    - Presentation can access Application.Error (not Domain.Error)
+   --
+   --  VALIDATED BY: scripts/arch_guard.py
+   --  ======================================================================
+
+   for Library_Standalone use "standard";
+
+   --  Public Application Layer Interface (visible to Presentation/Bootstrap)
+   --  NOTE: Domain.* packages are deliberately EXCLUDED
+   --  NOTE: Application.Error re-exports Domain.Error types
+   for Library_Interface use
+     ("Application",
+      "Application.Command",
+      "Application.Command.Greet",
+      "Application.Error",
+      "Application.Port",
+      "Application.Port.Inbound",
+      "Application.Port.Outbound",
+      "Application.Port.Outbound.Writer",
+      "Application.Usecase",
+      "Application.Usecase.Greet");
+
+   package Compiler renames Shared_Config.Compiler;
+   package Binder renames Shared_Config.Binder;
+   package Builder renames Shared_Config.Builder;
+
+end Application;
