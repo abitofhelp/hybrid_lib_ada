@@ -6,23 +6,22 @@ pragma Ada_2022;
 --  SPDX-License-Identifier: BSD-3-Clause
 --
 --  Purpose:
---    Re-exports Domain.Error types for use by Presentation layer.
---    Maintains architectural boundary: Presentation -> Application
---    -> Domain
+--    Re-exports Domain.Error types for use by API layer.
+--    Maintains architectural boundary: API -> Application -> Domain
 --  Architecture Notes:
 --    - Part of the APPLICATION layer (orchestration/contract layer)
 --    - Re-exports Domain error types without wrapping (zero overhead)
---    - Allows Presentation to access error types without depending on Domain
+--    - Allows API layer to access error types without depending on Domain
 --    - Infrastructure may use Domain.Error directly (it's allowed)
 --
 --  Why This Exists:
 --    In our hybrid architecture:
 --    - Domain is the only shareable layer across applications
---    - Application/Infrastructure/Presentation/Bootstrap are app-specific
---    - Presentation must NOT depend on Domain directly (to prevent coupling)
---    - Application acts as the contract/facade layer for Presentation
+--    - Application/Infrastructure/API are library-specific
+--    - API layer must NOT depend on Domain directly (to prevent coupling)
+--    - Application acts as the contract/facade layer for API layer
 --
---  Usage (Presentation layer):
+--  Usage (API layer):
 --    with Application.Error;  -- NOT with Domain.Error
 --
 --    use Application.Error;

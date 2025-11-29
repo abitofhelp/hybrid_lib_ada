@@ -26,7 +26,7 @@ pragma Ada_2022;
 --    (implements)
 --    - Takes Console_Write function as generic parameter
 --    - Infrastructure provides the implementation
---    - Bootstrap wires them together
+--    - api/desktop (composition root) wires them together
 --
 --  See Also:
 --    Domain.Value_Object.Person - Person value object
@@ -67,7 +67,7 @@ package Application.Usecase.Greet with Preelaborate is
    --  4. Write greeting to console via output port
    --  5. Propagate any errors via railway-oriented programming
    --
-   --  Input: GreetCommand DTO crossing presentation -> application boundary
+   --  Input: GreetCommand DTO crossing API -> application boundary
    --
    --  Error scenarios:
    --  - Validation_Error: Invalid person name (empty, too long)

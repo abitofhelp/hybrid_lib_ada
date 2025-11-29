@@ -34,7 +34,7 @@ library project Infrastructure is
    --  HOW IT WORKS:
    --    - Library_Standalone prevents transitive dependencies
    --    - Library_Interface lists Infrastructure.* packages
-   --    - Exposes adapters to Bootstrap for dependency injection
+   --    - Exposes adapters to api/desktop (composition root) for DI
    --
    --  VALIDATED BY: scripts/arch_guard.py
    --  ======================================================================

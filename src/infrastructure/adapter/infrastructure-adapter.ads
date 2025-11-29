@@ -19,7 +19,7 @@ pragma Ada_2022;
 --    ADAPTER pattern (Hexagonal Architecture / Ports & Adapters):
 --    - Application defines interface it needs (port)
 --    - Adapter implements that interface using external system
---    - Bootstrap wires adapter to application via generic instantiation
+--    - api/desktop (composition root) wires adapter to application
 --
 --  See Also:
 --    Infrastructure.Adapter.Console_Writer - Console output adapter

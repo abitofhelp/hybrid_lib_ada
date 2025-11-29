@@ -20,7 +20,7 @@ pragma Ada_2022;
 --
 --  Generic Parameter Flow:
 --    1. Infrastructure implements Write function matching signature
---    2. Bootstrap instantiates generic with Infrastructure's Write
+--    2. api/desktop (composition root) instantiates generic with Write
 --    3. Use case receives instantiated port, calls Write without knowing impl
 --    4. Zero runtime overhead - compile-time resolution
 --

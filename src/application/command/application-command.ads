@@ -8,8 +8,7 @@ pragma Ada_2022;
 --  Purpose:
 --    Parent package for command Data Transfer Objects (DTOs).
 --    Commands are simple data structures that cross the
---    presentation -> application boundary, carrying parameters
---    for use cases.
+--    API -> application boundary, carrying parameters for use cases.
 --  Architecture Notes:
 --    - Part of the APPLICATION layer
 --    - Commands = DTOs for use case input
@@ -17,8 +16,8 @@ pragma Ada_2022;
 --    - Separate from domain entities (different concerns)
 --
 --  Design Pattern:
---    Command pattern / DTO pattern for decoupling presentation from
---    application. Presentation sends commands, application executes them.
+--    Command pattern / DTO pattern for decoupling API from application.
+--    API layer sends commands, application executes them.
 --
 --  See Also:
 --    Application.Command.Greet - Example command DTO

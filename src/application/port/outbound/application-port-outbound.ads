@@ -19,7 +19,7 @@ pragma Ada_2022;
 --  Design Pattern:
 --    - Application: "I need something that can Write(message)"
 --    - Infrastructure: "I have a ConsoleWriter that implements Write"
---    - Bootstrap: Wires them together via generic instantiation
+--    - api/desktop (composition root): Wires them together via generics
 --
 --  See Also:
 --    Application.Port.Outbound.Writer - Writer output port

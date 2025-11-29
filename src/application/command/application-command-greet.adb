@@ -7,7 +7,7 @@ pragma Ada_2022;
 --
 --  Purpose:
 --    Implements factory function Create and accessor Get_Name for the
---    Greet_Command DTO used to pass data between presentation and use case.
+--    Greet_Command DTO used to pass data between API layer and use case.
 --  =========================================================================
 
 package body Application.Command.Greet is

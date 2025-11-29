@@ -646,7 +646,7 @@ end Hybrid_Lib_Ada.API.Desktop;
 **Why a Separate Composition Root?**
 - Isolates platform-specific wiring from pure logic
 - Enables future platform variants (Web, Embedded, etc.)
-- Follows Bootstrap pattern for libraries (api/desktop fills Bootstrap role)
+- api/desktop serves as the composition root for libraries (no Bootstrap layer)
 
 ---
 
@@ -741,8 +741,8 @@ We considered making `API_Operations` a top-level sibling package to enable `Pre
 ### Why api/desktop/ as Composition Root?
 
 For **libraries** (not applications), the composition root lives under `api/`:
-- No Bootstrap layer for libraries (4-layer model)
-- `api/desktop/` fills the Bootstrap role
+- Libraries use 4-layer model (no Bootstrap layer)
+- `api/desktop/` serves as the composition root for desktop platforms
 - arch_guard recognizes this pattern and allows Infrastructure imports
 
 ---

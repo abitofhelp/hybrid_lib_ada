@@ -10,7 +10,7 @@
 --   Configured to prevent transitive dependency exposure.
 --
 -- Dependencies: Domain layer only
--- Visibility: Used by Infrastructure, Presentation, and Bootstrap layers
+-- Visibility: Used by Infrastructure and API layers
 -- ===========================================================================
 
 with "../../shared_config.gpr";
@@ -29,24 +29,24 @@ library project Application is
    --  Stand-Alone Library Configuration - ARCHITECTURAL ENFORCEMENT
    --  ======================================================================
    --
-   --  WHY: Hexagonal/Clean Architecture requires that the Presentation layer
+   --  WHY: Hexagonal/Clean Architecture requires that the API layer
    --       cannot access the Domain layer, even transitively through Application.
    --
    --  ARCHITECTURAL RULE ENFORCED:
-   --    "Presentation → Application only (no transitive Domain access)"
+   --    "API → Application only (no transitive Domain access)"
    --
    --  HOW IT WORKS:
    --    - Library_Standalone prevents transitive dependencies
    --    - Library_Interface lists ONLY Application.* packages
    --    - Domain.* packages are deliberately EXCLUDED
-   --    - Presentation can access Application.Error (not Domain.Error)
+   --    - API layer can access Application.Error (not Domain.Error)
    --
    --  VALIDATED BY: scripts/arch_guard.py
    --  ======================================================================
 
    for Library_Standalone use "standard";
 
-   --  Public Application Layer Interface (visible to Presentation/Bootstrap)
+   --  Public Application Layer Interface (visible to API layer)
    --  NOTE: Domain.* packages are deliberately EXCLUDED
    --  NOTE: Application.Error re-exports Domain.Error types
    for Library_Interface use

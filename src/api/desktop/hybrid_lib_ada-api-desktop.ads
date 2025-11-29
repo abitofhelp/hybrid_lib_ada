@@ -11,7 +11,7 @@ pragma Ada_2022;
 --    API for desktop applications.
 --
 --  Architecture:
---    - COMPOSITION ROOT for libraries (api/desktop fills Bootstrap role)
+--    - COMPOSITION ROOT for libraries (4-layer model, no Bootstrap)
 --    - SPARK-Mode Off: Contains I/O wiring, not formally verifiable
 --    - Instantiates API.Operations with Infrastructure.Adapter.Console_Writer
 --    - Re-exports Greet as a simple callable function

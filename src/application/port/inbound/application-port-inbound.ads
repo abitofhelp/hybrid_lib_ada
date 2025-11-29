@@ -12,13 +12,13 @@ pragma Ada_2022;
 --
 --  Architecture Notes:
 --    - Inbound ports = Application's PUBLIC API
---    - Called by: Presentation layer (CLI, Web, API)
+--    - Called by: API layer (or Presentation layer in apps)
 --    - Examples: Execute use case functions
---    - Flow: Presentation → Inbound Port (Use Case) → Domain
+--    - Flow: API → Inbound Port (Use Case) → Domain
 --
 --  Design Pattern:
 --    Use cases themselves serve as inbound ports, accepting DTOs
---    (commands) from the presentation layer.
+--    (commands) from the API layer.
 --
 --  See Also:
 --    Application.Usecase - Use cases implement inbound ports
