@@ -403,6 +403,66 @@ end {ada_package}.Version;
         print("  No test target found")
         return True  # Not fatal
 
+    def validate_makefile(self, config) -> bool:
+        """
+        Validate all key Makefile targets for Ada projects.
+
+        Validates targets used by the release process plus essential
+        development targets.
+
+        Args:
+            config: ReleaseConfig instance
+
+        Returns:
+            True if all targets work
+        """
+        makefile = config.project_root / 'Makefile'
+        if not makefile.exists():
+            print("  No Makefile found, skipping validation")
+            return True
+
+        # Key targets to validate for Ada projects
+        # These are used by the release process or are essential for development
+        targets = [
+            'help',           # Display help (basic sanity check)
+            'clean',          # Clean build artifacts
+            'build-release',  # Release build (used by release script)
+            'test-all',       # All tests (used by release script)
+            'check-arch',     # Architecture validation
+            'diagrams',       # Diagram generation
+        ]
+
+        print("Validating Makefile targets...")
+        failed_targets = []
+
+        for target in targets:
+            result = self.run_command(
+                ['make', target],
+                config.project_root,
+                capture_output=True,
+                check=False
+            )
+            if result is None:
+                print(f"  ✗ make {target}")
+                failed_targets.append(target)
+            else:
+                print(f"  ✓ make {target}")
+
+        # Clean up after validation
+        self.run_command(
+            ['make', 'clean'],
+            config.project_root,
+            capture_output=True,
+            check=False
+        )
+
+        if failed_targets:
+            print(f"\n  Failed targets: {', '.join(failed_targets)}")
+            return False
+
+        print("  All Makefile targets validated successfully")
+        return True
+
     def run_format(self, config) -> bool:
         """
         Run Ada code formatting.
