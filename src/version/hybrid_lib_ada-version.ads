@@ -1,6 +1,6 @@
 pragma Ada_2022;
 --  =========================================================================
---  Hybrid_Lib_Ada.Version - Library Version Information
+--  Hybrid_Lib_Ada.Version - Application Version Information
 --  =========================================================================
 --  Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
 --  SPDX-License-Identifier: BSD-3-Clause
