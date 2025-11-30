@@ -1,13 +1,13 @@
 # Starter Library with Hybrid DDD/Clean/Hexagonal Architecture
 
-[![License](https://img.shields.io/badge/license-BSD--3--Clause-blue.svg)](LICENSE) [![Ada](https://img.shields.io/badge/Ada-2022-blue.svg)](https://ada-lang.io)
+[![License](https://img.shields.io/badge/license-BSD--3--Clause-blue.svg)](LICENSE) [![Ada](https://img.shields.io/badge/Ada-2022-blue.svg)](https://ada-lang.io) [![Alire](https://img.shields.io/badge/Alire-2.0+-blue.svg)](https://alire.ada.dev)
 
 **Version:** 1.0.0<br>
-**Date:** November 29, 2025<br>
+**Date:** 2025-11-29<br>
 **SPDX-License-Identifier:** BSD-3-Clause<br>
 **License File:** See the LICENSE file in the project root<br>
-**Copyright:** © 2025 Michael Gardner, A Bit of Help, Inc.<br>  
-**Status:** Released   
+**Copyright:** © 2025 Michael Gardner, A Bit of Help, Inc.<br>
+**Status:** Released
 
 > A canonical Ada 2022 library demonstrating hexagonal architecture with functional error handling, SPARK-compatible design, and embedded-safe patterns.
 
@@ -216,4 +216,4 @@ https://github.com/abitofhelp
 - ✅ Comprehensive documentation
 - ✅ SPARK_Mode boundaries defined
 - ⬜ Embedded platform composition roots (documented, not yet implemented)
-- ⬜ Alire publication
+- ✅ Alire publication
