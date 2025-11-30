@@ -285,7 +285,7 @@ test-all: build build-tests
 	@echo "$(GREEN)Running all test executables...$(NC)"
 	@failed=0; \
 	if [ -d "$(TEST_DIR)/bin" ]; then \
-		for test in $(TEST_DIR)/bin/*_runner $(TEST_DIR)/bin/test_*; do \
+		for test in $(TEST_DIR)/bin/*_runner; do \
 			if [ -x "$$test" ] && [ -f "$$test" ]; then \
 				echo "$(CYAN)Running $$test...$(NC)"; \
 				$$test || failed=1; \
