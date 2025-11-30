@@ -1,5 +1,5 @@
 --  ==========================================================================
---  Concurrent Profile - Multi-Core Safety Restrictions for TZif Library
+--  Concurrent Profile - Multi-Core Safety Restrictions for Hybrid Lib Ada
 --  ==========================================================================
 --  Target: Multi-threaded desktop/server applications
 --

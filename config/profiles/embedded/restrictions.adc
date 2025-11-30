@@ -1,5 +1,5 @@
 --  ==========================================================================
---  Embedded Profile - Safety Restrictions for TZif Library
+--  Embedded Profile - Safety Restrictions for Hybrid Lib Ada
 --  ==========================================================================
 --  Target: Ravenscar-compatible embedded systems (STM32F769+ / 532KB+ RAM)
 --
