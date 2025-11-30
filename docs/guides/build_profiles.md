@@ -1,17 +1,17 @@
 # Build Profiles
 
-**Version:** 1.0.0  
-**Date:** November 29, 2025  
+**Version:** 1.0.0<br>
+**Date:** November 29, 2025<br>
 **SPDX-License-Identifier:** BSD-3-Clause<br>
 **License File:** See the LICENSE file in the project root<br>
-**Copyright:** © 2025 Michael Gardner, A Bit of Help, Inc.<br>  
-**Status:** Released  
+**Copyright:** © 2025 Michael Gardner, A Bit of Help, Inc.<br>
+**Status:** Released
 
 This document explains how to build the library for different target platforms.
 
 ## Overview
 
-hybrid_lib_ada supports multiple build profiles for different target platforms. Each profile configures:
+tzif supports multiple build profiles for different target platforms. Each profile configures:
 
 - **Bounded string sizes** (Max_Name_Length, Max_Message_Length, Max_Error_Length)
 - **Runtime settings** (Enable_Contracts, Enable_Debug)
@@ -37,25 +37,25 @@ hybrid_lib_ada supports multiple build profiles for different target platforms. 
 alr build
 
 # Embedded profile
-alr build -- -XHYBRID_LIB_ADA_PROFILE=embedded
+alr build -- -XTZIF_PROFILE=embedded
 
 # Baremetal profile
-alr build -- -XHYBRID_LIB_ADA_PROFILE=baremetal
+alr build -- -XTZIF_PROFILE=baremetal
 
 # Concurrent profile
-alr build -- -XHYBRID_LIB_ADA_PROFILE=concurrent
+alr build -- -XTZIF_PROFILE=concurrent
 
 # STM32H7S78-DK profile
-alr build -- -XHYBRID_LIB_ADA_PROFILE=stm32h7s78
+alr build -- -XTZIF_PROFILE=stm32h7s78
 
 # STM32MP135F-DK Linux profile
-alr build -- -XHYBRID_LIB_ADA_PROFILE=stm32mp135_linux
+alr build -- -XTZIF_PROFILE=stm32mp135_linux
 ```
 
 ### Using gprbuild Directly
 
 ```bash
-gprbuild -P hybrid_lib_ada.gpr -XHYBRID_LIB_ADA_PROFILE=embedded
+gprbuild -P tzif.gpr -XTZIF_PROFILE=embedded
 ```
 
 ### Using Make
@@ -67,7 +67,7 @@ make build-profiles
 
 ## How It Works
 
-1. **GPR Variable**: The `HYBRID_LIB_ADA_PROFILE` external variable selects the profile
+1. **GPR Variable**: The `TZIF_PROFILE` external variable selects the profile
 2. **Source_Dirs Switch**: The GPR uses a `case` statement to include the profile-specific config:
 
 ```ada
@@ -80,14 +80,14 @@ case Profile is
 end case;
 ```
 
-3. **Config Package**: Each profile has its own `Hybrid_Lib_Ada_Config` package in `config/profiles/<profile>/hybrid_lib_ada_config.ads`
+3. **Config Package**: Each profile has its own `Tzif_Config` package in `config/profiles/<profile>/tzif_config.ads`
 
 ## Profile Configuration
 
 Each profile config provides these constants:
 
 ```ada
-package Hybrid_Lib_Ada_Config is
+package Tzif_Config is
    pragma Pure;
 
    Profile_Name    : constant String := "...";
@@ -104,14 +104,14 @@ package Hybrid_Lib_Ada_Config is
    --  Runtime configuration
    Enable_Contracts : constant Boolean := ...;
    Enable_Debug     : constant Boolean := ...;
-end Hybrid_Lib_Ada_Config;
+end Tzif_Config;
 ```
 
 ## Adding a New Profile
 
 1. Create directory: `config/profiles/<profile_name>/`
-2. Create config file: `hybrid_lib_ada_config.ads` with appropriate values
-3. Add the profile to the `Profile_Type` in `hybrid_lib_ada.gpr`
+2. Create config file: `tzif_config.ads` with appropriate values
+3. Add the profile to the `Profile_Type` in `tzif.gpr`
 4. Add the `case` branch for Source_Dirs
 5. Update the PROFILES list in `Makefile` build-profiles target
 

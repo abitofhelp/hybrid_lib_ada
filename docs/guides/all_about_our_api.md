@@ -1,11 +1,21 @@
 # All About Our API Layer
 
-**Version:** 1.0.0  
-**Date:** November 29, 2025  
+**Version:** 1.0.0<br>
+**Date:** November 29, 2025<br>
 **SPDX-License-Identifier:** BSD-3-Clause<br>
 **License File:** See the LICENSE file in the project root<br>
-**Copyright:** © 2025 Michael Gardner, A Bit of Help, Inc.<br>  
-**Status:** Released  
+**Copyright:** © 2025 Michael Gardner, A Bit of Help, Inc.<br>
+**Status:** Released
+
+---
+
+## About This Document
+
+This guide explains the **three-package API pattern** used in projects built on our hybrid architecture reference design. TZif implements this pattern for its timezone operations.
+
+The examples below use `Hybrid_Lib_Ada` with a simplified "Greet" use case to illustrate the architectural concepts clearly. The same patterns apply to TZif's timezone operations (`Find_By_Id`, `Get_Version`, `Find_My_Id`, etc.) - only the domain-specific types and operations differ.
+
+**Key takeaway:** Understand the pattern here, then see it applied in the actual TZif source code.
 
 ---
 
@@ -23,7 +33,7 @@
 
 ## Overview
 
-The `Hybrid_Lib_Ada` library uses a **three-package API pattern** that separates concerns between SPARK-verifiable operations, platform-specific wiring, and a convenient public facade. This architecture enables:
+The hybrid architecture uses a **three-package API pattern** that separates concerns between SPARK-verifiable operations, platform-specific wiring, and a convenient public facade. This architecture enables:
 
 - **Formal verification** of core operation logic via SPARK
 - **Platform flexibility** through composition roots
@@ -255,7 +265,7 @@ When creating a new composition root, ensure:
 | **SPARK_Mode** | Off (contains I/O wiring) |
 | **Imports** | Infrastructure adapter for your platform |
 | **Instantiation** | Instantiate `API.Operations` with your adapter |
-| **Re-export** | Re-export the `Greet` function (and future operations) |
+| **Re-export** | Re-export the operation functions |
 | **arch_guard** | Add path to composition root whitelist |
 
 ### Diagram: Multiple Composition Roots
@@ -381,7 +391,7 @@ alr build -- -XPLATFORM=web
 
 ### Modifying the Public Facade (Optional)
 
-If you want the thin `Hybrid_Lib_Ada.API` facade to automatically use your composition root, you have two options:
+If you want the thin public API facade to automatically use your composition root, you have two options:
 
 **Option A: Conditional Compilation (Recommended)**
 
@@ -532,7 +542,7 @@ end Test_Greet_Valid_Name;
 |---------|-------|----------|
 | `arch_guard: API importing Infrastructure` | Composition root not in whitelist | Add `api/<platform>/` to composition root paths |
 | `undefined reference to Write` | Adapter not in Source_Dirs | Add adapter directory to GPR for selected platform |
-| `Body of Hybrid_Lib_Ada.API not found` | Multiple body files conflict | Use GPR `for Body` clause to select correct one |
+| `Body of API not found` | Multiple body files conflict | Use GPR `for Body` clause to select correct one |
 | `Preelaborate violation` | Composition root importing non-Preelaborate | SPARK_Mode(Off) is correct; Preelaborate not required |
 | `generic formal function mismatch` | Writer signature doesn't match port | Ensure return type is exactly `Unit_Result.Result` |
 
@@ -562,15 +572,15 @@ alr build -- -XPLATFORM=my_platform
 
 ## Package Details
 
-### 1. Hybrid_Lib_Ada.API.Operations
+### 1. API.Operations
 
-**Location:** `src/api/operations/hybrid_lib_ada-api-operations.ads`
+**Location:** `src/api/operations/`
 
 **Purpose:** SPARK-safe, generic operations that depend only on Application and Domain layers.
 
 **Key Characteristics:**
 - `pragma SPARK_Mode (On)` - Formally verifiable
-- Generic package parameterized by Writer function
+- Generic package parameterized by port functions
 - No Infrastructure dependencies
 - No direct I/O operations
 
@@ -607,16 +617,16 @@ end Hybrid_Lib_Ada.API.Operations;
 
 ---
 
-### 2. Hybrid_Lib_Ada.API.Desktop
+### 2. API.Desktop
 
-**Location:** `src/api/desktop/hybrid_lib_ada-api-desktop.ads`
+**Location:** `src/api/desktop/`
 
 **Purpose:** Desktop platform composition root that wires Infrastructure adapters to the generic Operations.
 
 **Key Characteristics:**
 - `pragma SPARK_Mode (Off)` - Contains I/O wiring
 - Located under `api/desktop/` - recognized as composition root by arch_guard
-- Imports Infrastructure.Adapter.Console_Writer
+- Imports Infrastructure adapters
 - Instantiates API.Operations with concrete adapter
 
 **Code Structure:**
@@ -650,19 +660,19 @@ end Hybrid_Lib_Ada.API.Desktop;
 
 ---
 
-### 3. Hybrid_Lib_Ada.API
+### 3. API (Public Facade)
 
-**Location:** `src/api/hybrid_lib_ada-api.ads` and `.adb`
+**Location:** `src/api/`
 
 **Purpose:** Thin public facade that re-exports types and delegates operations to Desktop.
 
 **Key Characteristics:**
-- Re-exports Domain types (Person, Error, Unit)
-- Re-exports Application types (Greet_Command, Unit_Result)
-- Single Greet function delegating to API.Desktop.Greet
+- Re-exports Domain types
+- Re-exports Application types
+- Delegates operations to API.Desktop
 - Not Preelaborate (body imports Desktop which imports Infrastructure)
 
-**Spec (hybrid_lib_ada-api.ads):**
+**Spec:**
 
 ```ada
 pragma Ada_2022;
@@ -694,7 +704,7 @@ package Hybrid_Lib_Ada.API is
 end Hybrid_Lib_Ada.API;
 ```
 
-**Body (hybrid_lib_ada-api.adb):**
+**Body:**
 
 ```ada
 pragma Ada_2022;
@@ -851,6 +861,6 @@ This is:
 
 ## See Also
 
-- [Software Design Specification](../formal/software_design_specification.md)
-- [Architecture Overview](../guides/architecture/architecture-overview.md)
-- [Build Profiles](../BUILD_PROFILES.md)
+- [Architecture Enforcement](architecture_enforcement.md)
+- [Error Handling Strategy](error_handling_strategy.md)
+- [Build Profiles](build_profiles.md)
