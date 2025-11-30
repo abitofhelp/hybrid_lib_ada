@@ -20,10 +20,8 @@ project Integration_Tests is
    for Object_Dir use "../../obj/test/integration";
    for Exec_Dir use "../bin";
 
-   --  Main test programs (add your tests here)
-   for Main use
-     ("integration_runner.adb",
-      "test_api_greet.adb");
+   --  Only the runner is Main; individual tests are procedures it calls
+   for Main use ("integration_runner.adb");
 
    package Compiler is
       --  Inherit compiler settings from internal project

@@ -20,14 +20,8 @@ project Unit_Tests is
    for Object_Dir use "../../obj/test/unit";
    for Exec_Dir use "../bin";
 
-   --  Main test programs (add your tests here)
-   for Main use
-     ("unit_runner.adb",
-      "test_domain_error_result.adb",
-      "test_domain_person.adb",
-      "test_application_command_greet.adb",
-      "test_application_usecase_greet.adb",
-      "test_api_operations.adb");
+   --  Only the runner is Main; individual tests are procedures it calls
+   for Main use ("unit_runner.adb");
 
    package Compiler is
       --  Inherit compiler settings from internal project (no interface restrictions)
