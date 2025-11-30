@@ -1,4 +1,4 @@
-# Enterprise Starter Library with Hybrid DDD/Clean/Hexagonal Architecture
+# Starter Library with Hybrid DDD/Clean/Hexagonal Architecture
 
 [![License](https://img.shields.io/badge/license-BSD--3--Clause-blue.svg)](LICENSE) [![Ada](https://img.shields.io/badge/Ada-2022-blue.svg)](https://ada-lang.io)
 
@@ -13,7 +13,7 @@
 
 ## Overview
 
-Hybrid Lib Ada is a demonstration library showcasing **hybrid DDD/Clean/Hexagonal architecture** with dependency inversion, ports & adapters, and Result monad error handling in Ada 2022. This is a library-only crate designed to be embedded in applications, with support for both desktop and embedded platforms.
+hybrid_lib_ada is a demonstration library showcasing **hybrid DDD/Clean/Hexagonal architecture** with dependency inversion, ports & adapters, and Result monad error handling in Ada 2022. This is a library-only crate designed to be embedded in applications, with support for both desktop and embedded platforms.
 
 ## Features
 
