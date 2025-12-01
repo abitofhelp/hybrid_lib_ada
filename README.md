@@ -1,6 +1,6 @@
 # Starter Library with Hybrid DDD/Clean/Hexagonal Architecture
 
-[![License](https://img.shields.io/badge/license-BSD--3--Clause-blue.svg)](LICENSE) [![Ada](https://img.shields.io/badge/Ada-2022-blue.svg)](https://ada-lang.io) [![Alire](https://img.shields.io/badge/Alire-2.0+-blue.svg)](https://alire.ada.dev)
+[![License](https://img.shields.io/badge/license-BSD--3--Clause-blue.svg)](LICENSE) [![Ada](https://img.shields.io/badge/Ada-2022-blue.svg)](https://ada-lang.io) [![SPARK](https://img.shields.io/badge/SPARK-Friendly-green.svg)](https://www.adacore.com/about-spark) [![Alire](https://img.shields.io/badge/Alire-2.0+-blue.svg)](https://alire.ada.dev)
 
 **Version:** 1.0.0<br>
 **Date:** 2025-11-29<br>
@@ -25,6 +25,40 @@ hybrid_lib_ada is a demonstration library showcasing **hybrid DDD/Clean/Hexagona
 - ✅ Static dispatch via generics (zero runtime overhead)
 - ✅ Desktop platform support (Console I/O)
 - ✅ Library_Standalone with explicit Library_Interface
+
+## Platform Support
+
+| Platform | Status | Notes |
+|----------|--------|-------|
+| **Desktop** | ✅ Full | Console I/O via `API.Desktop` |
+| **Embedded** | 🔧 Custom | Requires Writer port implementation |
+
+### Embedded Platform Support
+
+This library uses a **three-package API pattern** with dependency injection for platform portability:
+
+| Package | Purpose |
+|---------|---------|
+| `API.Operations` | Generic operations (SPARK-safe, no I/O dependencies) |
+| `API.Desktop` | Composition root for desktop (Console_Writer) |
+| `API` | Public facade (uses Desktop by default) |
+
+**Default**: Desktop platforms use console I/O via `API.Desktop`.
+
+**For embedded platforms**, create your own composition root:
+
+```ada
+--  1. Implement the Writer port for your platform
+function UART_Write (Message : String) return Unit_Result.Result;
+
+--  2. Instantiate operations with your writer
+package Embedded_Ops is new Hybrid_Lib_Ada.API.Operations (Writer => UART_Write);
+
+--  3. Use operations directly
+Result : constant Unit_Result.Result := Embedded_Ops.Greet (Cmd);
+```
+
+See **[All About Our API](docs/guides/all_about_our_api.md)** for detailed architecture and implementation guidance.
 
 ## Architecture
 
@@ -100,45 +134,27 @@ begin
 end Main;
 ```
 
-## Usage
+## Quick Snippets
 
-### Creating a Person
-
-```ada
-with Hybrid_Lib_Ada.API;
-
-declare
-   use Hybrid_Lib_Ada.API;
-
-   --  Create a person (validated)
-   Person_Res : constant Person_Result.Result := Create_Person ("Alice");
-begin
-   if Person_Result.Is_Ok (Person_Res) then
-      declare
-         P : constant Person_Type := Person_Result.Value (Person_Res);
-      begin
-         --  Use the person
-         Put_Line ("Name: " & Get_Name (P));
-      end;
-   end if;
-end;
-```
-
-### Custom I/O Adapter
-
-For embedded or custom platforms, instantiate `API.Operations` with your own writer:
+All operations use `Hybrid_Lib_Ada.API` and return Result types. See `/examples` for complete programs.
 
 ```ada
-with Hybrid_Lib_Ada.API.Operations;
-with Application.Port.Outbound.Writer;
+with Hybrid_Lib_Ada.API; use Hybrid_Lib_Ada.API;
 
---  Your custom writer function
-function UART_Write (Message : String)
-   return Application.Port.Outbound.Writer.Unit_Result.Result;
+--  Create a validated person
+Result : constant Person_Result.Result := Create_Person ("Alice");
 
---  Instantiate operations with your writer
-package My_Ops is new Hybrid_Lib_Ada.API.Operations
-  (Writer => UART_Write);
+--  Get person's name
+Name : constant String := Get_Name (Person);
+
+--  Create a greet command
+Cmd : constant Greet_Command := Create_Greet_Command ("World");
+
+--  Execute the greeting operation
+Result : constant Unit_Result.Result := Greet (Cmd);
+
+--  Custom I/O adapter (for embedded platforms)
+package My_Ops is new Hybrid_Lib_Ada.API.Operations (Writer => UART_Write);
 ```
 
 ## Testing
