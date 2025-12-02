@@ -12,7 +12,7 @@ pragma Ada_2022;
 --
 --  Architecture Notes:
 --    - Inbound ports = Application's PUBLIC API
---    - Called by: API layer (or Presentation layer in apps)
+--    - Called by: API layer (facade)
 --    - Examples: Execute use case functions
 --    - Flow: API → Inbound Port (Use Case) → Domain
 --
