@@ -1,7 +1,7 @@
 # Changelog
 
-**Version:** 1.0.0  
-**Date:** November 29, 2025  
+**Version:** 1.0.0
+**Date:** December 02, 2025  
 **SPDX-License-Identifier:** BSD-3-Clause<br>
 **License File:** See the LICENSE file in the project root<br>
 **Copyright:** © 2025 Michael Gardner, A Bit of Help, Inc.<br>  
@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.0.0] - 2025-11-29
+## [1.0.0] - 2025-12-02
 
 ### Added
 - Initial library structure based on hybrid_app_ada
@@ -43,6 +43,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Library_Standalone mode with explicit Library_Interface
 - Static dispatch via generics for zero-overhead DI
 - SPARK_Mode boundaries defined for future formal verification
+- Submodule `export-ignore` for clean Alire deployment
 
 ### Dependencies
-- functional ^2.1.1 (Result/Option/Try monads)
+- functional ^2.2.1 (Result/Option/Try monads)
