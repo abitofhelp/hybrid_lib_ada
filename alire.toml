@@ -26,7 +26,7 @@ tags = [
 gnat = ">=13"
 
 [[depends-on]]
-functional = "^2.2.0"
+functional = "^2.2.1"
 
 [[pins]]
 functional = { path = '../functional' }
