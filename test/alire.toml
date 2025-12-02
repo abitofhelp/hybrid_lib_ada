@@ -1,0 +1,18 @@
+name = "hybrid_lib_ada_tests"
+description = "Test suite for hybrid_lib_ada"
+version = "1.0.0"
+authors = ["Michael Gardner"]
+maintainers = ["Michael Gardner <mike@abitofhelp.com>"]
+licenses = "BSD-3-Clause"
+
+# This crate is not meant to be published
+auto-gpr-with = false
+
+[[depends-on]]
+hybrid_lib_ada = "*"
+
+[[depends-on]]
+gnatcov = "^22.0.1"
+
+[[pins]]
+hybrid_lib_ada = { path = ".." }

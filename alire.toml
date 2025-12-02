@@ -28,8 +28,5 @@ gnat = ">=13"
 [[depends-on]]
 functional = "^2.2.0"
 
-[[depends-on]]
-gnatcov = "^22.0.1"
-
 [[pins]]
 functional = { path = '../functional' }
