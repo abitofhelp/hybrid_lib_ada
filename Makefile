@@ -356,12 +356,7 @@ test-framework: test-unit test-integration ## Run all test suites
 
 test-coverage: clean build build-coverage-runtime
 	@echo "$(GREEN)Running tests with GNATcoverage analysis...$(NC)"
-	@if [ -f "scripts/python/makefile/coverage.sh" ]; then \
-		bash scripts/python/makefile/coverage.sh; \
-	else \
-		echo "$(YELLOW)Coverage script not found at scripts/python/makefile/coverage.sh$(NC)"; \
-		exit 1; \
-	fi
+	@cd test && alr exec -- bash ../scripts/python/makefile/coverage.sh
 
 # =============================================================================
 # Quality & Code Formatting Commands
@@ -456,7 +451,7 @@ install-tools: ## Install development tools (GMP, gcovr, gnatformat)
 
 build-coverage-runtime: ## Build GNATcoverage runtime library
 	@echo "$(CYAN)Building GNATcoverage runtime...$(NC)"
-	@$(PYTHON3) scripts/python/makefile/build_gnatcov_runtime.py
+	@cd test && alr exec -- python3 ../scripts/python/makefile/build_gnatcov_runtime.py
 
 .DEFAULT_GOAL := help
 
