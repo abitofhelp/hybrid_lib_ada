@@ -354,9 +354,9 @@ test-integration: build build-tests
 test-framework: test-unit test-integration ## Run all test suites
 	@echo "$(GREEN)$(BOLD)✓ All test suites completed$(NC)"
 
-test-coverage: clean build build-coverage-runtime
+test-coverage: ## Run tests with GNATcoverage analysis
 	@echo "$(GREEN)Running tests with GNATcoverage analysis...$(NC)"
-	@cd test && alr exec -- bash ../scripts/python/makefile/coverage.sh
+	@$(PYTHON3) scripts/python/makefile/coverage_ada.py
 
 # =============================================================================
 # Quality & Code Formatting Commands
@@ -449,9 +449,10 @@ install-tools: ## Install development tools (GMP, gcovr, gnatformat)
 	@$(PYTHON3) scripts/python/makefile/install_tools.py
 	@echo "$(GREEN)✓ Tool installation complete$(NC)"
 
-build-coverage-runtime: ## Build GNATcoverage runtime library
-	@echo "$(CYAN)Building GNATcoverage runtime...$(NC)"
-	@cd test && alr exec -- python3 ../scripts/python/makefile/build_gnatcov_runtime.py
+build-coverage-runtime: ## Force rebuild GNATcoverage runtime library
+	@echo "$(CYAN)Rebuilding GNATcoverage runtime...$(NC)"
+	@$(PYTHON3) scripts/python/makefile/coverage_ada.py --rebuild-runtime --unit-only
+	@echo "$(GREEN)✓ GNATcov runtime rebuilt (run 'make test-coverage' for full analysis)$(NC)"
 
 .DEFAULT_GOAL := help
 
