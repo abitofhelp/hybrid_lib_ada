@@ -1,17 +1,16 @@
 pragma Ada_2022;
-with Domain;
 --  ======================================================================
 --  Test_Domain_Error_Result
 --  ======================================================================
 --  Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
 --  SPDX-License-Identifier: BSD-3-Clause
---
 --  Purpose:
 --    Unit tests for Domain.Error.Result monad functionality.
 --    Tests Ok/Error constructors, Is_Ok/Is_Error queries, and then value
 --    extraction.
 --  ======================================================================
 
+with Domain;
 with Ada.Text_IO;
 with Domain.Error;
 with Domain.Error.Result;
