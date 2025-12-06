@@ -73,6 +73,13 @@ is
          Inline,
          Post => Is_Error (Error'Result);
 
+      --  From_Error: construct Result from pre-existing Error_Type record
+      --  Used at infrastructure boundaries for exception-to-Result conversion
+      function From_Error (Err : Error_Type) return Result
+      with
+         Inline,
+         Post => Is_Error (From_Error'Result);
+
       --  =====================================================================
       --  Query functions
       --  =====================================================================
@@ -148,6 +155,27 @@ is
                   else Is_Error (Map_Error'Result));
       --  Transform the error value if Error, propagate Ok if Ok
       --  Use to add context to errors as they propagate up call stack
+
+      --  Bimap: transform both Ok and Error values simultaneously
+      generic
+         with function Map_Ok (X : T) return T;
+         with function Map_Err (E : Error_Type) return Error_Type;
+      function Bimap (Self : Result) return Result;
+
+      --  =====================================================================
+      --  Validation
+      --  =====================================================================
+
+      --  Ensure: validate Ok value with predicate, convert to error if fails
+      generic
+         with function Pred (X : T) return Boolean;
+         with function To_Error (X : T) return Error_Type;
+      function Ensure (Self : Result) return Result;
+
+      --  With_Context: enrich error with location/breadcrumb for debugging
+      generic
+         with function Add (E : Error_Type; Where : String) return Error_Type;
+      function With_Context (Self : Result; Where : String) return Result;
 
       --  =====================================================================
       --  Fallback and recovery

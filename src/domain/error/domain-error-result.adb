@@ -36,6 +36,15 @@ package body Domain.Error.Result is
               (Kind => Kind, Message => To_Bounded_String (Message)));
       end Error;
 
+      ----------------
+      -- From_Error --
+      ----------------
+
+      function From_Error (Err : Error_Type) return Result is
+      begin
+         return (State => Error_State, Error_Value => Err);
+      end From_Error;
+
       -----------
       -- Is_Ok --
       -----------
@@ -149,6 +158,58 @@ package body Domain.Error.Result is
             return Self;  -- Propagate Ok
          end if;
       end Map_Error;
+
+      -----------
+      -- Bimap --
+      -----------
+
+      function Bimap (Self : Result) return Result is
+      begin
+         case Self.State is
+            when Ok_State =>
+               return Ok (Map_Ok (Self.Success_Value));
+
+            when Error_State =>
+               return
+                 Result'
+                   (State       => Error_State,
+                    Error_Value => Map_Err (Self.Error_Value));
+         end case;
+      end Bimap;
+
+      ------------
+      -- Ensure --
+      ------------
+
+      function Ensure (Self : Result) return Result is
+      begin
+         case Self.State is
+            when Ok_State =>
+               if Pred (Self.Success_Value) then
+                  return Self;
+               else
+                  return
+                    Result'
+                      (State       => Error_State,
+                       Error_Value => To_Error (Self.Success_Value));
+               end if;
+
+            when Error_State =>
+               return Self;
+         end case;
+      end Ensure;
+
+      ------------------
+      -- With_Context --
+      ------------------
+
+      function With_Context (Self : Result; Where : String) return Result is
+         function Add_This (E : Error_Type) return Error_Type is
+           (Add (E, Where));
+         function Map_E is new Map_Error (F => Add_This);
+      begin
+         return Map_E (Self);
+      end With_Context;
 
       --------------
       -- Fallback --

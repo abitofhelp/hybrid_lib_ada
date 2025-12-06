@@ -225,6 +225,241 @@ begin
       end if;
    end;
 
+   --  ========================================================================
+   --  Test: From_Error constructor
+   --  ========================================================================
+
+   declare
+      Err : constant Error_Type :=
+        (Kind    => Parse_Error,
+         Message => Error_Strings.To_Bounded_String ("parse failed"));
+      R   : constant Int_Result.Result := Int_Result.From_Error (Err);
+   begin
+      Run_Test ("From_Error - Is_Error returns true", Int_Result.Is_Error (R));
+      if Int_Result.Is_Error (R) then
+         Run_Test
+           ("From_Error - preserves error kind",
+            Int_Result.Error_Info (R).Kind = Parse_Error);
+      end if;
+   end;
+
+   --  ========================================================================
+   --  Test: Map with Ok transforms value
+   --  ========================================================================
+
+   declare
+      function Double (X : Integer) return Integer is (X * 2);
+      function Map_Double is new Int_Result.Map (F => Double);
+
+      R      : constant Int_Result.Result := Int_Result.Ok (21);
+      Mapped : constant Int_Result.Result := Map_Double (R);
+   begin
+      Run_Test
+        ("Map with Ok transforms value",
+         Int_Result.Is_Ok (Mapped) and then Int_Result.Value (Mapped) = 42);
+   end;
+
+   --  ========================================================================
+   --  Test: Bimap with Ok transforms value
+   --  ========================================================================
+
+   declare
+      function Double (X : Integer) return Integer is (X * 2);
+
+      function Change_Kind (E : Error_Type) return Error_Type is
+        ((Kind => Internal_Error, Message => E.Message));
+
+      function Transform is new Int_Result.Bimap
+        (Map_Ok  => Double,
+         Map_Err => Change_Kind);
+
+      R      : constant Int_Result.Result := Int_Result.Ok (21);
+      Mapped : constant Int_Result.Result := Transform (R);
+   begin
+      Run_Test
+        ("Bimap with Ok transforms value",
+         Int_Result.Is_Ok (Mapped) and then Int_Result.Value (Mapped) = 42);
+   end;
+
+   --  ========================================================================
+   --  Test: Bimap with Error transforms error
+   --  ========================================================================
+
+   declare
+      function Double (X : Integer) return Integer is (X * 2);
+
+      function Change_Kind (E : Error_Type) return Error_Type is
+        ((Kind => Internal_Error, Message => E.Message));
+
+      function Transform is new Int_Result.Bimap
+        (Map_Ok  => Double,
+         Map_Err => Change_Kind);
+
+      R      : constant Int_Result.Result :=
+        Int_Result.Error (Kind => Validation_Error, Message => "test");
+      Mapped : constant Int_Result.Result := Transform (R);
+   begin
+      Run_Test
+        ("Bimap with Error transforms error kind",
+         Int_Result.Is_Error (Mapped) and then
+         Int_Result.Error_Info (Mapped).Kind = Internal_Error);
+   end;
+
+   --  ========================================================================
+   --  Test: Ensure with Ok and predicate passes
+   --  ========================================================================
+
+   declare
+      function Is_Positive (X : Integer) return Boolean is (X > 0);
+
+      function To_Validation_Error (X : Integer) return Error_Type is
+         pragma Unreferenced (X);
+      begin
+         return
+           (Kind    => Validation_Error,
+            Message => Error_Strings.To_Bounded_String ("Not positive"));
+      end To_Validation_Error;
+
+      function Validate is new Int_Result.Ensure
+        (Pred     => Is_Positive,
+         To_Error => To_Validation_Error);
+
+      R      : constant Int_Result.Result := Int_Result.Ok (10);
+      Result : constant Int_Result.Result := Validate (R);
+   begin
+      Run_Test
+        ("Ensure keeps Ok if predicate holds",
+         Int_Result.Is_Ok (Result) and then Int_Result.Value (Result) = 10);
+   end;
+
+   --  ========================================================================
+   --  Test: Ensure with Ok and predicate fails
+   --  ========================================================================
+
+   declare
+      function Is_Positive (X : Integer) return Boolean is (X > 0);
+
+      function To_Validation_Error (X : Integer) return Error_Type is
+         pragma Unreferenced (X);
+      begin
+         return
+           (Kind    => Validation_Error,
+            Message => Error_Strings.To_Bounded_String ("Not positive"));
+      end To_Validation_Error;
+
+      function Validate is new Int_Result.Ensure
+        (Pred     => Is_Positive,
+         To_Error => To_Validation_Error);
+
+      R      : constant Int_Result.Result := Int_Result.Ok (-5);
+      Result : constant Int_Result.Result := Validate (R);
+   begin
+      Run_Test
+        ("Ensure converts to Error if predicate fails",
+         Int_Result.Is_Error (Result));
+   end;
+
+   --  ========================================================================
+   --  Test: With_Context on Error adds context
+   --  ========================================================================
+
+   declare
+      function Add_Location (E : Error_Type; Where : String) return Error_Type
+      is
+         use Error_Strings;
+         New_Msg : constant String := To_String (E.Message) & " at " & Where;
+      begin
+         return (Kind => E.Kind, Message => To_Bounded_String (New_Msg));
+      end Add_Location;
+
+      function Add_Context is new Int_Result.With_Context (Add => Add_Location);
+
+      R      : constant Int_Result.Result :=
+        Int_Result.Error (Kind => Parse_Error, Message => "file not found");
+      Result : constant Int_Result.Result := Add_Context (R, "read_config");
+      Info   : Error_Type;
+   begin
+      if Int_Result.Is_Error (Result) then
+         Info := Int_Result.Error_Info (Result);
+         Run_Test
+           ("With_Context on Error adds context",
+            Error_Strings.To_String (Info.Message) =
+               "file not found at read_config");
+      else
+         Run_Test ("With_Context should return Error", False);
+      end if;
+   end;
+
+   --  ========================================================================
+   --  Test: Fallback with Error primary returns alternative
+   --  ========================================================================
+
+   declare
+      Primary     : constant Int_Result.Result :=
+        Int_Result.Error (Kind => Parse_Error, Message => "Error");
+      Alternative : constant Int_Result.Result := Int_Result.Ok (99);
+      Result      : constant Int_Result.Result :=
+        Int_Result.Fallback (Primary, Alternative);
+   begin
+      Run_Test
+        ("Fallback with Error returns alternative",
+         Int_Result.Is_Ok (Result) and then Int_Result.Value (Result) = 99);
+   end;
+
+   --  ========================================================================
+   --  Test: Recover with Error calls handler
+   --  ========================================================================
+
+   declare
+      function Handle_Error (E : Error_Type) return Integer is
+         pragma Unreferenced (E);
+      begin
+         return -1;
+      end Handle_Error;
+
+      function Recover_From_Error is new Int_Result.Recover
+        (Handle => Handle_Error);
+
+      R   : constant Int_Result.Result :=
+        Int_Result.Error (Kind => Validation_Error, Message => "Error");
+      Val : constant Integer := Recover_From_Error (R);
+   begin
+      Run_Test ("Recover with Error calls handler", Val = -1);
+   end;
+
+   --  ========================================================================
+   --  Test: Tap with Ok calls On_Ok
+   --  ========================================================================
+
+   declare
+      On_Ok_Called    : Boolean := False;
+      On_Error_Called : Boolean := False;
+
+      procedure On_Ok (V : Integer) is
+         pragma Unreferenced (V);
+      begin
+         On_Ok_Called := True;
+      end On_Ok;
+
+      procedure On_Error (E : Error_Type) is
+         pragma Unreferenced (E);
+      begin
+         On_Error_Called := True;
+      end On_Error;
+
+      function Tap_Side_Effects is new Int_Result.Tap
+        (On_Ok    => On_Ok,
+         On_Error => On_Error);
+
+      R      : constant Int_Result.Result := Int_Result.Ok (42);
+      Result : constant Int_Result.Result := Tap_Side_Effects (R);
+   begin
+      Run_Test
+        ("Tap with Ok calls On_Ok",
+         On_Ok_Called and then not On_Error_Called and then
+         Int_Result.Is_Ok (Result));
+   end;
+
    --  Print summary
    New_Line;
    Put_Line ("========================================");
