@@ -17,7 +17,7 @@ PROJECT_NAME := hybrid_lib_ada
 .PHONY: all build build-dev build-opt build-release build-tests build-profiles check check-arch \
         clean clean-clutter clean-coverage clean-deep compress deps \
 		help prereqs rebuild refresh stats test test-all test-coverage test-framework \
-		test-integration test-unit test-python install-tools build-coverage-runtime \
+		test-integration test-unit test-python test-windows install-tools build-coverage-runtime \
 		submodule-init submodule-update submodule-status
 # FIX: ENABLE AFTER THE TARGETS CONVERT TO USING OUR ADAFMT TOOL, WHICH IS IN DEVELOPMENT.
 #       format format-all format-src format-tests
@@ -118,6 +118,7 @@ help: ## Display this help message
 	@echo "  test-framework     - Run all test suites (unit + integration)"
 	@echo "  test-python        - Run Python script tests (arch_guard.py validation)"
 	@echo "  test-coverage      - Run tests with coverage analysis"
+	@echo "  test-windows       - Trigger Windows CI validation on GitHub"
 	@echo ""
 	@echo "$(YELLOW)Quality & Architecture Commands:$(NC)"
 	@echo "  check              - Run static analysis"
@@ -382,6 +383,35 @@ test-python: ## Run Python script tests (arch_guard.py validation)
 	@cd test/python && $(PYTHON3) -m pytest -v
 	@echo "$(GREEN)✓ Python tests complete$(NC)"
 
+test-windows: ## Trigger Windows CI validation on GitHub Actions
+	@echo "$(CYAN)Triggering Windows CI validation...$(NC)"
+	@if [ ! -f ".github/workflows/windows-ci.yml" ]; then \
+		echo "$(RED)✗ Windows workflow not found$(NC)"; \
+		exit 1; \
+	fi
+	@if ! command -v gh >/dev/null 2>&1; then \
+		echo "$(RED)✗ GitHub CLI (gh) not installed$(NC)"; \
+		echo "  Install from: https://cli.github.com/"; \
+		exit 1; \
+	fi
+	@BRANCH=$$(git rev-parse --abbrev-ref HEAD); \
+	echo "$(CYAN)  Branch: $$BRANCH$(NC)"; \
+	gh workflow run windows-ci.yml --ref $$BRANCH; \
+	echo "$(GREEN)✓ Workflow triggered$(NC)"; \
+	echo ""; \
+	echo "$(YELLOW)Waiting for workflow to start...$(NC)"; \
+	sleep 5; \
+	RUN_ID=$$(gh run list --workflow=windows-ci.yml --limit=1 --json databaseId -q '.[0].databaseId'); \
+	if [ -n "$$RUN_ID" ]; then \
+		echo "$(CYAN)  Run ID: $$RUN_ID$(NC)"; \
+		echo "$(YELLOW)Watching workflow (Ctrl+C to detach)...$(NC)"; \
+		gh run watch $$RUN_ID --exit-status && \
+			echo "$(GREEN)$(BOLD)✓ Windows validation passed$(NC)" || \
+			(echo "$(RED)$(BOLD)✗ Windows validation failed$(NC)" && exit 1); \
+	else \
+		echo "$(RED)✗ Could not find workflow run$(NC)"; \
+		exit 1; \
+	fi
 
 # FIXME: REPLACE WITH THE ADAFMT TOOL WE ARE CREATING WHEN IT IS COMPLETED.
 # THE CURRENT SCRIPT IS COMMENTING COMMENTS AND MESSING UP WITH INDEXED COMMENTS.
