@@ -17,5 +17,8 @@ hybrid_lib_ada = "*"
 [[depends-on]]
 gnatcov = "^22.0.1"
 
+[[depends-on]]
+gnatprove = "*"
+
 [[pins]]
 hybrid_lib_ada = { path = ".." }

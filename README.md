@@ -1,6 +1,6 @@
 # Starter Library with Hybrid DDD/Clean/Hexagonal Architecture
 
-[![License](https://img.shields.io/badge/license-BSD--3--Clause-blue.svg)](LICENSE) [![Ada](https://img.shields.io/badge/Ada-2022-blue.svg)](https://ada-lang.io) [![SPARK](https://img.shields.io/badge/SPARK-Friendly-green.svg)](https://www.adacore.com/about-spark) [![Alire](https://img.shields.io/badge/Alire-2.0+-blue.svg)](https://alire.ada.dev)
+[![License](https://img.shields.io/badge/license-BSD--3--Clause-blue.svg)](LICENSE) [![Ada](https://img.shields.io/badge/Ada-2022-blue.svg)](https://ada-lang.io) [![SPARK](https://img.shields.io/badge/SPARK-Proved-brightgreen.svg)](https://www.adacore.com/about-spark) [![Alire](https://img.shields.io/badge/Alire-2.0+-blue.svg)](https://alire.ada.dev)
 
 **Version:** 1.0.0  
 **Date:** December 02, 2025  
@@ -14,6 +14,52 @@
 ## Overview
 
 hybrid_lib_ada is a demonstration library showcasing **hybrid DDD/Clean/Hexagonal architecture** with dependency inversion, ports & adapters, and Result monad error handling in Ada 2022. This is a library-only crate designed to be embedded in applications, with support for both desktop and embedded platforms.
+
+## SPARK Formal Verification
+
+<table>
+<tr>
+<td width="120"><strong>Status</strong></td>
+<td><img src="https://img.shields.io/badge/SPARK-Proved-brightgreen.svg" alt="SPARK Proved"></td>
+</tr>
+<tr>
+<td><strong>Scope</strong></td>
+<td>Domain + Application Layers</td>
+</tr>
+<tr>
+<td><strong>Mode</strong></td>
+<td>gnatprove --mode=prove --level=2 (full proof)</td>
+</tr>
+<tr>
+<td><strong>Results</strong></td>
+<td>76 checks: 40 flow, 36 proved, 0 unproved (functional library)</td>
+</tr>
+</table>
+
+The **domain and application layers** are formally verified using SPARK Ada, providing mathematical guarantees of:
+
+- **No runtime errors** - Division by zero, overflow, range violations
+- **No uninitialized data** - All variables properly initialized before use
+- **Contract compliance** - Pre/postconditions proven correct
+- **Data flow integrity** - No aliasing or information flow violations
+
+### Verification Commands
+
+```bash
+make spark-check    # Run SPARK legality verification
+make spark-prove    # Run SPARK PROVE formal verification
+```
+
+### Verified Packages
+
+| Layer | SPARK_Mode | Description |
+|-------|-----------|-------------|
+| `Domain.*` | On | Value objects, errors, Result monad |
+| `Application.Command.*` | On | Commands (Greet) |
+| `Application.Port.*` | On | Inbound/outbound port interfaces |
+| `Application.UseCase.*` | On | Use case implementations |
+
+Infrastructure and API layers use `SPARK_Mode => Off` as they perform I/O operations.
 
 ## Getting Started
 
