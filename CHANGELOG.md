@@ -1,7 +1,7 @@
 # Changelog
 
-**Version:** 1.0.0  
-**Date:** December 02, 2025  
+**Version:** 2.0.0  
+**Date:** December 08, 2025  
 **SPDX-License-Identifier:** BSD-3-Clause<br>
 **License File:** See the LICENSE file in the project root<br>
 **Copyright:** © 2025 Michael Gardner, A Bit of Help, Inc.<br>  
@@ -13,6 +13,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [2.0.0] - 2025-12-08
+
+**Test Coverage:** 99 unit + 10 integration + 0 examples = 109 total
+
+### Breaking Changes
+- **Error_Kind enum refactored** for better error categorization:
+  - Added `Parse_Error` for malformed data and parsing failures
+  - Added `Not_Found_Error` for missing resources (files, records, etc.)
+  - Replaced `System_Error` and `Unknown_Error` with `Internal_Error` for bugs and invariant violations
+- **functional dependency upgraded** from ^2.2.1 to ^3.0.0
+
+### Changed
+- Domain.Error and Application.Error updated with new Error_Kind values
+- Build profile switched to development with debug settings
+- Compiler switches updated for development: -Og, -g, -gnatwa, -gnatVa
 
 ## [1.0.0] - 2025-12-02
 

@@ -1,6 +1,6 @@
 name = "hybrid_lib_ada"
 description = "Hexagonal architecture library template with DDD and Result monad"
-version = "1.0.0"
+version = "2.0.0"
 authors = ["Michael Gardner"]
 maintainers = ["Michael Gardner <mike@abitofhelp.com>"]
 maintainers-logins = ["abitofhelp"]
