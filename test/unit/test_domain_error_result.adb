@@ -230,15 +230,15 @@ begin
 
    declare
       Err : constant Error_Type :=
-        (Kind    => Parse_Error,
-         Message => Error_Strings.To_Bounded_String ("parse failed"));
+        (Kind    => Validation_Error,
+         Message => Error_Strings.To_Bounded_String ("validation failed"));
       R   : constant Int_Result.Result := Int_Result.From_Error (Err);
    begin
       Run_Test ("From_Error - Is_Error returns true", Int_Result.Is_Error (R));
       if Int_Result.Is_Error (R) then
          Run_Test
            ("From_Error - preserves error kind",
-            Int_Result.Error_Info (R).Kind = Parse_Error);
+            Int_Result.Error_Info (R).Kind = Validation_Error);
       end if;
    end;
 
@@ -371,7 +371,8 @@ begin
          return (Kind => E.Kind, Message => To_Bounded_String (New_Msg));
       end Add_Location;
 
-      function Add_Context is new Int_Result.With_Context (Add => Add_Location);
+      function Add_Context is new
+        Int_Result.With_Context (Add => Add_Location);
 
       R      : constant Int_Result.Result :=
         Int_Result.Error (Kind => Parse_Error, Message => "file not found");

@@ -53,9 +53,10 @@ is
    --  More granular than a single "Infrastructure_Error" for better handling
    type Error_Kind is
      (Validation_Error,  --  Domain validation failures (invalid input)
+      Parse_Error,       --  Malformed data/parsing failures
+      Not_Found_Error,   --  Resource not found (file, record, etc.)
       IO_Error,          --  I/O operations (file, network, console)
-      System_Error,      --  System-level errors (OS, runtime)
-      Unknown_Error);    --  Unexpected errors (catch-all)
+      Internal_Error);   --  Bugs, invariant violations, preconditions
 
    --  ========================================================================
    --  Error Type Record
