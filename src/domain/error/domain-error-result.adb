@@ -107,19 +107,6 @@ package body Domain.Error.Result is
          end if;
       end Unwrap_Or_With;
 
-      ------------
-      -- Expect --
-      ------------
-
-      function Expect (Self : Result; Message : String) return T is
-      begin
-         if Self.State = Ok_State then
-            return Self.Success_Value;
-         else
-            raise Program_Error with Message;
-         end if;
-      end Expect;
-
       ---------
       -- Map --
       ---------

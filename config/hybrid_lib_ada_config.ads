@@ -5,7 +5,7 @@ pragma Style_Checks (Off);
 package Hybrid_Lib_Ada_Config is
    pragma Pure;
 
-   Crate_Version : constant String := "1.0.0";
+   Crate_Version : constant String := "2.0.0";
    Crate_Name : constant String := "hybrid_lib_ada";
 
    Alire_Host_OS : constant String := "macos";

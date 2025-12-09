@@ -117,11 +117,6 @@ is
       --  Get the value if Ok, otherwise compute default lazily via F
       --  Use when default is expensive to compute
 
-      function Expect (Self : Result; Message : String) return T;
-      --  Get the value if Result is Ok; otherwise raise Program_Error with
-      --  the provided custom message. Use only when you can document why
-      --  Result should be Ok at the call site.
-
       --  =====================================================================
       --  Functional operations (transform and chain)
       --  =====================================================================

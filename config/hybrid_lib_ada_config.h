@@ -2,7 +2,7 @@
 #ifndef HYBRID_LIB_ADA_CONFIG_H
 #define HYBRID_LIB_ADA_CONFIG_H
 
-#define CRATE_VERSION "1.0.0"
+#define CRATE_VERSION "2.0.0"
 #define CRATE_NAME "hybrid_lib_ada"
 
 #define ALIRE_HOST_OS "macos"
