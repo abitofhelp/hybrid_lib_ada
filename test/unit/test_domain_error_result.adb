@@ -311,6 +311,7 @@ begin
    declare
       function Is_Positive (X : Integer) return Boolean is (X > 0);
 
+      function To_Validation_Error (X : Integer) return Error_Type;
       function To_Validation_Error (X : Integer) return Error_Type is
          pragma Unreferenced (X);
       begin
@@ -338,6 +339,7 @@ begin
    declare
       function Is_Positive (X : Integer) return Boolean is (X > 0);
 
+      function To_Validation_Error (X : Integer) return Error_Type;
       function To_Validation_Error (X : Integer) return Error_Type is
          pragma Unreferenced (X);
       begin
@@ -363,6 +365,7 @@ begin
    --  ========================================================================
 
    declare
+      function Add_Location (E : Error_Type; Where : String) return Error_Type;
       function Add_Location (E : Error_Type; Where : String) return Error_Type
       is
          use Error_Strings;
@@ -411,6 +414,7 @@ begin
    --  ========================================================================
 
    declare
+      function Handle_Error (E : Error_Type) return Integer;
       function Handle_Error (E : Error_Type) return Integer is
          pragma Unreferenced (E);
       begin
@@ -435,12 +439,14 @@ begin
       On_Ok_Called    : Boolean := False;
       On_Error_Called : Boolean := False;
 
+      procedure On_Ok (V : Integer);
       procedure On_Ok (V : Integer) is
          pragma Unreferenced (V);
       begin
          On_Ok_Called := True;
       end On_Ok;
 
+      procedure On_Error (E : Error_Type);
       procedure On_Error (E : Error_Type) is
          pragma Unreferenced (E);
       begin
