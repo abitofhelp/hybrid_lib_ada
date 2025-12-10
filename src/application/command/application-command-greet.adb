@@ -12,7 +12,7 @@ pragma Ada_2022;
 
 package body Application.Command.Greet is
 
-   use Name_Strings;
+   use Greet_Strings;
 
    ------------
    -- Create --

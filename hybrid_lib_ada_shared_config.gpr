@@ -10,13 +10,13 @@
 --   for all sub-projects (domain, application, infrastructure, api)
 --
 -- Usage:
---   with "../../shared_config.gpr";
+--   with "../../hybrid_lib_ada_shared_config.gpr";
 --   library project My_Project is
---      package Compiler renames Shared_Config.Compiler;
+--      package Compiler renames Hybrid_Lib_Ada_Shared_Config.Compiler;
 --   end My_Project;
 -- ==========================================================================
 
-abstract project Shared_Config is
+abstract project Hybrid_Lib_Ada_Shared_Config is
 
    -- ==========================================================================
    -- Build Mode Configuration
@@ -151,4 +151,4 @@ abstract project Shared_Config is
       for Documentation_Dir use "docs/api";
    end Documentation;
 
-end Shared_Config;
+end Hybrid_Lib_Ada_Shared_Config;

@@ -133,7 +133,8 @@ package body Domain.Value_Object.Option is
       -------------
 
       function Or_Else
-        (Primary : Option; Alternative : Option) return Option is
+        (Primary : Option; Alternative : Option) return Option
+      is
       begin
          if Primary.Kind = Some_Kind then
             return Primary;

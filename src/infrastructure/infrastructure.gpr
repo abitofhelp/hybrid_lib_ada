@@ -11,7 +11,7 @@
 --   Configured to prevent transitive dependency exposure.
 -- ==========================================================================
 
-with "../../shared_config.gpr";
+with "../../hybrid_lib_ada_shared_config.gpr";
 with "../domain/domain.gpr";
 with "../application/application.gpr";
 with "functional";
@@ -46,8 +46,8 @@ library project Infrastructure is
       "Infrastructure.Adapter",
       "Infrastructure.Adapter.Console_Writer");
 
-   package Compiler renames Shared_Config.Compiler;
-   package Binder renames Shared_Config.Binder;
-   package Builder renames Shared_Config.Builder;
+   package Compiler renames Hybrid_Lib_Ada_Shared_Config.Compiler;
+   package Binder renames Hybrid_Lib_Ada_Shared_Config.Binder;
+   package Builder renames Hybrid_Lib_Ada_Shared_Config.Builder;
 
 end Infrastructure;

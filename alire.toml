@@ -1,5 +1,5 @@
 name = "hybrid_lib_ada"
-description = "Hexagonal architecture library template with DDD and Result monad"
+description = "Hybrid DDD/Clean/Hexagonal library starter for Ada 2022"
 version = "2.0.0"
 authors = ["Michael Gardner"]
 maintainers = ["Michael Gardner <mike@abitofhelp.com>"]
@@ -16,6 +16,8 @@ tags = [
     "functional",
     "result-monad",
     "greeter",
+    "spark",
+    "embedded"
 ]
 
 [build-switches]

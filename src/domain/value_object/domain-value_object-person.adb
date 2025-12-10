@@ -12,7 +12,7 @@ pragma Ada_2022;
 
 package body Domain.Value_Object.Person is
 
-   use Name_Strings;
+   use Person_Strings;
    use Domain.Error;
 
    ----------------------

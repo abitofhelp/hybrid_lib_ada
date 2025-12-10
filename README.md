@@ -1,6 +1,6 @@
-# Starter Library with Hybrid DDD/Clean/Hexagonal Architecture
+# Enterprise Starter Application with Hybrid DDD/Clean/Hexagonal Architecture
 
-[![License](https://img.shields.io/badge/license-BSD--3--Clause-blue.svg)](LICENSE) [![Ada](https://img.shields.io/badge/Ada-2022-blue.svg)](https://ada-lang.io) [![SPARK](https://img.shields.io/badge/SPARK-Proved-brightgreen.svg)](https://www.adacore.com/about-spark) [![Alire](https://img.shields.io/badge/Alire-2.0+-blue.svg)](https://alire.ada.dev)
+[![License](https://img.shields.io/badge/license-BSD--3--Clause-blue.svg)](LICENSE) [![Ada](https://img.shields.io/badge/Ada-2022-blue.svg)](https://ada-lang.io) [![Alire](https://img.shields.io/badge/Alire-2.0+-blue.svg)](https://alire.ada.dev)
 
 **Version:** 2.0.0  
 **Date:** December 08, 2025  
@@ -9,57 +9,18 @@
 **Copyright:** © 2025 Michael Gardner, A Bit of Help, Inc.<br>  
 **Status:** Released  
 
-> A canonical Ada 2022 library demonstrating hexagonal architecture with functional error handling, SPARK-compatible design, and embedded-safe patterns.
+> A canonical Ada 2022 application demonstrating a **hybrid DDD/Clean/Hexagonal architecture** with functional error handling.
 
 ## Overview
 
-hybrid_lib_ada is a demonstration library showcasing **hybrid DDD/Clean/Hexagonal architecture** with dependency inversion, ports & adapters, and Result monad error handling in Ada 2022. This is a library-only crate designed to be embedded in applications, with support for both desktop and embedded platforms.
+A **professional Ada 2022 application starter** demonstrating a **hybrid DDD/Clean/Hexagonal architecture** with **functional programming** principles using the `functional` crate for Result monads.
 
-## SPARK Formal Verification
-
-<table>
-<tr>
-<td width="120"><strong>Status</strong></td>
-<td><img src="https://img.shields.io/badge/SPARK-Proved-brightgreen.svg" alt="SPARK Proved"></td>
-</tr>
-<tr>
-<td><strong>Scope</strong></td>
-<td>Domain + Application Layers</td>
-</tr>
-<tr>
-<td><strong>Mode</strong></td>
-<td>gnatprove --mode=prove --level=2 (full proof)</td>
-</tr>
-<tr>
-<td><strong>Results</strong></td>
-<td>76 checks: 40 flow, 36 proved, 0 unproved (functional library)</td>
-</tr>
-</table>
-
-The **domain and application layers** are formally verified using SPARK Ada, providing mathematical guarantees of:
-
-- **No runtime errors** - Division by zero, overflow, range violations
-- **No uninitialized data** - All variables properly initialized before use
-- **Contract compliance** - Pre/postconditions proven correct
-- **Data flow integrity** - No aliasing or information flow violations
-
-### Verification Commands
-
-```bash
-make spark-check    # Run SPARK legality verification
-make spark-prove    # Run SPARK PROVE formal verification
-```
-
-### Verified Packages
-
-| Layer | SPARK_Mode | Description |
-|-------|-----------|-------------|
-| `Domain.*` | On | Value objects, errors, Result monad |
-| `Application.Command.*` | On | Commands (Greet) |
-| `Application.Port.*` | On | Inbound/outbound port interfaces |
-| `Application.UseCase.*` | On | Use case implementations |
-
-Infrastructure and API layers use `SPARK_Mode => Off` as they perform I/O operations.
+This is a **desktop/enterprise application template** showcasing:
+- **5-Layer Hexagonal Architecture** (Domain, Application, Infrastructure, Presentation, Bootstrap)
+- **Static Dispatch Dependency Injection** via generics (zero runtime overhead)
+- **Railway-Oriented Programming** with Result monads (no exceptions across boundaries)
+- **Presentation Isolation** pattern (only the Domain is shareable across apps)
+- **Single-Project Structure** (easy Alire deployment)
 
 ## Getting Started
 
@@ -68,7 +29,7 @@ Infrastructure and API layers use `SPARK_Mode => Off` as they perform I/O operat
 This repository uses git submodules for shared tooling. Clone with:
 
 ```bash
-git clone --recurse-submodules https://github.com/abitofhelp/hybrid_lib_ada.git
+git clone --recurse-submodules https://github.com/abitofhelp/hybrid_app_ada.git
 ```
 
 Or if already cloned without submodules:
@@ -80,179 +41,276 @@ git submodule update --init --recursive
 
 ## Features
 
-- ✅ 4-layer hexagonal architecture (Domain, Application, Infrastructure, API)
-- ✅ Public API facade with stable interface
-- ✅ Generic I/O plugin pattern for platform portability
-- ✅ Result monad error handling (via `functional` crate)
-- ✅ Embedded safety restrictions (no implicit heap allocations)
-- ✅ Static dispatch via generics (zero runtime overhead)
-- ✅ Desktop platform support (Console I/O)
-- ✅ Library_Standalone with explicit Library_Interface
+- ✅ Single-project structure (easy Alire deployment)
+- ✅ Result monad error handling (Domain.Error.Result)
+- ✅ Static dependency injection via generics
+- ✅ Application.Error re-export pattern
+- ✅ Architecture boundary validation (arch_guard.py)
+- ✅ Comprehensive documentation with UML diagrams
+- ✅ Test framework (unit/integration/e2e - 109 tests)
+- ✅ Windows CI with GitHub Actions
+- ✅ Aspect syntax (not pragmas)
+- ✅ Makefile automation
 
 ## Platform Support
 
 | Platform | Status | Notes |
 |----------|--------|-------|
-| **Desktop** | ✅ Full | Console I/O via `API.Desktop` |
-| **Embedded** | 🔧 Custom | Requires Writer port implementation |
+| **Linux** | ✅ Full | CI tested, console I/O |
+| **macOS** | ✅ Full | CI tested, console I/O |
+| **Windows** | ✅ Full | CI tested (v2.0.0+), console I/O |
+| **Embedded** | 🔧 Untested | Architecture supports it, not yet validated |
 
-### Embedded Platform Support
-
-This library uses a **three-package API pattern** with dependency injection for platform portability:
-
-| Package | Purpose |
-|---------|---------|
-| `API.Operations` | Generic operations (SPARK-safe, no I/O dependencies) |
-| `API.Desktop` | Composition root for desktop (Console_Writer) |
-| `API` | Public facade (uses Desktop by default) |
-
-**Default**: Desktop platforms use console I/O via `API.Desktop`.
-
-**For embedded platforms**, create your own composition root:
-
-```ada
---  1. Implement the Writer port for your platform
-function UART_Write (Message : String) return Unit_Result.Result;
-
---  2. Instantiate operations with your writer
-package Embedded_Ops is new Hybrid_Lib_Ada.API.Operations (Writer => UART_Write);
-
---  3. Use operations directly
-Result : constant Unit_Result.Result := Embedded_Ops.Greet (Cmd);
-```
-
-See **[All About Our API](docs/guides/all_about_our_api.md)** for detailed architecture and implementation guidance.
+> **Note**: This application is not yet SPARK-friendly. SPARK compatibility is planned for future releases when embedded deployment is required.
 
 ## Architecture
 
+### Layer Structure
+
+![Application Architecture](docs/diagrams/application_architecture.svg)
+
+**5 Layers (Dependency Rule: All dependencies point INWARD)**:
+
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    Hybrid_Lib_Ada.API                       │
-│              (Public Facade - Stable Interface)             │
-├─────────────────────────────────────────────────────────────┤
-│  API.Operations     │     API.Desktop     │   (API.Embedded)│
-│  (Generic I/O)      │ (Console_Writer DI) │   (Future UART) │
-├─────────────────────┼─────────────────────┼─────────────────┤
-│                    Application Layer                        │
-│     Use Cases  │  Ports (Writer)  │  Commands (Greet)       │
-├─────────────────────────────────────────────────────────────┤
-│                   Infrastructure Layer                      │
-│              Adapters (Console_Writer)                      │
-├─────────────────────────────────────────────────────────────┤
-│                      Domain Layer                           │
-│   Value Objects (Person) │ Errors │ Unit │ Result Monad    │
-└─────────────────────────────────────────────────────────────┘
+hybrid_app_ada/
+├── src/
+│   ├── domain/                    # Pure Business Logic (ZERO dependencies)
+│   │   ├── error/                 # Error types & Result monad
+│   │   └── value_object/          # Immutable value objects
+│   │
+│   ├── application/               # Use Cases & Ports (Depends on: Domain)
+│   │   ├── command/               # Input DTOs
+│   │   ├── error/                 # Re-exports Domain.Error for Presentation
+│   │   ├── port/                  # Port interfaces (in/out)
+│   │   └── usecase/               # Use case orchestration
+│   │
+│   ├── infrastructure/            # Driven Adapters (Depends on: Application + Domain)
+│   │   └── adapter/               # Concrete implementations
+│   │
+│   ├── presentation/              # Driving Adapters (Depends on: Application ONLY)
+│   │   └── cli/                   # CLI interface
+│   │
+│   ├── bootstrap/                 # Composition Root (Depends on: ALL)
+│   │   └── cli/                   # CLI wiring
+│   │
+│   └── greeter.adb                # Main (3 lines - delegates to Bootstrap)
+│
+├── test/                          # Test Suite
+│   ├── unit/                      # Domain & Application unit tests
+│   ├── integration/               # Cross-layer integration tests
+│   ├── e2e/                       # End-to-end CLI tests
+│   └── common/                    # Shared test framework
+│
+├── docs/                          # Documentation
+│   ├── diagrams/                  # UML diagrams (PlantUML)
+│   └── formal/                    # SDS, SRS, Test Guide
+│
+├── scripts/                       # Automation
+│   └── arch_guard.py              # Architecture boundary validation
+│
+├── hybrid_app_ada.gpr             # Main project file (single-project)
+├── alire.toml                     # Alire manifest
+└── Makefile                       # Build automation
 ```
 
+### Key Architectural Rules
+
+![Application Error Pattern](docs/diagrams/ada/application_error_pattern_ada.svg)
+
+**Critical Boundary Rule:**
+> **Presentation is the ONLY outer layer prevented from direct Domain access**
+
+- ✅ **Infrastructure** CAN access `Domain.*` (implements repositories, uses entities)
+- ✅ **Application** depends on `Domain.*` (orchestrates domain logic)
+- ❌ **Presentation** CANNOT access `Domain.*` (must use `Application.Error`, `Application.Command`, etc.)
+
+**Why This Matters:**
+- Domain is the **only shareable layer** across multiple applications
+- Each app has its own Application/Infrastructure/Presentation/Bootstrap
+- Prevents tight coupling between UI and business logic
+- Allows multiple UIs (CLI, REST, GUI) to share the same Domain
+
+**The Solution:** `Application.Error` re-exports `Domain.Error` types:
+
+```ada
+-- Application.Error (facade for Presentation)
+with Domain.Error;
+
+package Application.Error is
+   -- Re-export Domain error types (zero overhead)
+   subtype Error_Type is Domain.Error.Error_Type;
+   subtype Error_Kind is Domain.Error.Error_Kind;
+   package Error_Strings renames Domain.Error.Error_Strings;
+
+   -- Convenience constants
+   Validation_Error : constant Error_Kind := Domain.Error.Validation_Error;
+   IO_Error         : constant Error_Kind := Domain.Error.IO_Error;
+end Application.Error;
+```
+
+### Error Ownership: Domain vs Functional Result
+
+This project uses **two distinct Result types**:
+
+1. **`Domain.Error.Result`** - Self-contained Result monad in the Domain layer
+   - Used throughout Domain and Application layers
+   - Zero external dependencies
+   - Owns the `Error_Type` definition
+
+2. **`Functional.Result`** (from `functional` crate) - Used only in Infrastructure
+   - Bridges exception-throwing I/O to Result-based error handling
+   - Infrastructure catches exceptions, converts to `Functional.Result`
+   - Then converts to `Domain.Error.Result` before returning to Application
+
+**Why two Result types?**
+- Domain must have zero external dependencies (architecture rule)
+- Infrastructure needs exception-to-Result conversion at I/O boundaries
+- The conversion happens once at the boundary, not throughout the code
+
+### Static Dispatch Dependency Injection
+
+![Static vs Dynamic Dispatch](docs/diagrams/ada/dynamic_static_dispatch_ada.svg)
+
+```ada
+-- Compile-time polymorphism (USED in this project)
+generic
+   with function Writer (Message : String) return Result;
+package Application.Usecase.Greet is
+   function Execute (...) return Result;
+end Application.Usecase.Greet;
+
+-- Implementation
+function Execute (...) return Result is
+begin
+   return Writer("Hello, " & Name & "!");  -- Direct call (or inlined!)
+end Execute;
+```
+
+**Benefits:**
+- ✅ **Zero runtime overhead** (compile-time resolution)
+- ✅ **Full inlining** (compiler can optimize across boundaries)
+- ✅ **Stack allocation** (no heap required)
+- ✅ **Type-safe** (verified at compile time)
+
 ## Quick Start
+
+### Prerequisites
+
+- **GNAT FSF 13+** or **GNAT Pro** (Ada 2022 support)
+- **Alire 2.0+** package manager
+- **Java 11+** (for PlantUML diagram generation, optional)
 
 ### Building
 
 ```bash
-# Build debug library
+# Build the project
 make build
-
-# Build release library
-make build-release
-
-# Using Alire directly
+# or
 alr build
+
+# Clean artifacts
+make clean
+
+# Rebuild from scratch
+make rebuild
 ```
 
-### Using in Your Project
+### Running
 
-Add to your `alire.toml`:
-
-```toml
-[[depends-on]]
-hybrid_lib_ada = "*"
+```bash
+# Run the application
+./bin/greeter Alice
 ```
 
-In your Ada code:
+## Usage
 
-```ada
-with Hybrid_Lib_Ada.API;
+```bash
+# Greet a person
+./bin/greeter Alice
+# Output: Hello, Alice!
 
-procedure Main is
-   use Hybrid_Lib_Ada.API;
+# Name with spaces
+./bin/greeter "Bob Smith"
+# Output: Hello, Bob Smith!
 
-   --  Create a greet command
-   Cmd : constant Greet_Command := Create_Greet_Command ("World");
+# No arguments (shows usage)
+./bin/greeter
+# Output: Usage: greeter <name>
+# Exit code: 1
 
-   --  Execute the greeting operation
-   Result : constant Unit_Result.Result := Greet (Cmd);
-begin
-   if Unit_Result.Is_Ok (Result) then
-      --  Success! Message was printed to console
-      null;
-   else
-      --  Handle error
-      declare
-         Err : constant Error_Type := Unit_Result.Error_Info (Result);
-      begin
-         --  Process error...
-         null;
-      end;
-   end if;
-end Main;
+# Empty name (validation error)
+./bin/greeter ""
+# Output: Error: Name cannot be empty
+# Exit code: 1
 ```
 
-## Quick Snippets
+### Exit Codes
 
-All operations use `Hybrid_Lib_Ada.API` and return Result types. See `/examples` for complete programs.
-
-```ada
-with Hybrid_Lib_Ada.API; use Hybrid_Lib_Ada.API;
-
---  Create a validated person
-Result : constant Person_Result.Result := Create_Person ("Alice");
-
---  Get person's name
-Name : constant String := Get_Name (Person);
-
---  Create a greet command
-Cmd : constant Greet_Command := Create_Greet_Command ("World");
-
---  Execute the greeting operation
-Result : constant Unit_Result.Result := Greet (Cmd);
-
---  Custom I/O adapter (for embedded platforms)
-package My_Ops is new Hybrid_Lib_Ada.API.Operations (Writer => UART_Write);
-```
+- **0**: Success
+- **1**: Failure (validation error, infrastructure error, or missing arguments)
 
 ## Testing
 
+Tests use a custom lightweight test framework (no AUnit dependency):
+
+| Test Type     | Count | Location              | Purpose                              |
+|---------------|-------|-----------------------|--------------------------------------|
+| Unit          | 85    | `test/unit/`          | Domain & Application logic           |
+| Integration   | 16    | `test/integration/`   | Cross-layer interactions             |
+| E2E           | 8     | `test/e2e/`           | Full system via CLI (black-box)      |
+| **Total**     | **109**|                      | **100% passing**                     |
+
 ```bash
-# Run all tests (98 tests: 88 unit + 10 integration)
+# Run all tests
 make test-all
 
-# Build tests
-make build-tests
+# Run specific test level
+make test-unit
+make test-integration
+make test-e2e
 
-# Run unit tests only
-./test/bin/unit_runner
-
-# Run integration tests only
-./test/bin/integration_runner
+# Code quality
+make check-arch          # Validate architecture boundaries
+make diagrams            # Regenerate UML diagrams
+make stats               # Code statistics
 ```
 
 ## Documentation
 
-- 📚 **[Documentation Index](docs/index.md)** - Full documentation
+- 📚 **[Documentation Index](docs/index.md)** - Complete documentation overview
 - 🚀 **[Quick Start Guide](docs/quick_start.md)** - Get started in minutes
-- 🏗️ **[All About Our API](docs/guides/all_about_our_api.md)** - API architecture and platform customization
-- 📋 **[Software Requirements](docs/formal/software_requirements_specification.md)** - Formal requirements
-- 📐 **[Software Design](docs/formal/software_design_specification.md)** - Architecture details
-- 🧪 **[Software Test Guide](docs/formal/software_test_guide.md)** - Testing strategy
+- 📖 **[Software Requirements Specification](docs/formal/software_requirements_specification.md)**
+- 🏗️ **[Software Design Specification](docs/formal/software_design_specification.md)**
+- 🧪 **[Software Test Guide](docs/formal/software_test_guide.md)**
+- 🗺️ **[Roadmap](docs/roadmap.md)** - Future plans
 - 📝 **[CHANGELOG](CHANGELOG.md)** - Release history
+
+### Diagrams
+
+- `docs/diagrams/application_architecture.svg` - 5-layer architecture overview
+- `docs/diagrams/ada/application_error_pattern_ada.svg` - Re-export pattern
+- `docs/diagrams/ada/package_structure_ada.svg` - Actual packages
+- `docs/diagrams/ada/error_handling_flow_ada.svg` - Error propagation
+- `docs/diagrams/ada/static_dispatch_ada.svg` - Static DI with generics
+- `docs/diagrams/ada/dynamic_static_dispatch_ada.svg` - Static vs dynamic comparison
 
 ## Code Standards
 
 This project follows:
-- **Ada Agent** (`~/.claude/agents/ada.md`) - Ada 2022 standards
-- **Architecture Agent** (`~/.claude/agents/architecture.md`) - DDD/Clean/Hexagonal
-- **Functional Agent** (`~/.claude/agents/functional.md`) - Result/Option patterns
-- **SPARK Agent** (`~/.claude/agents/spark.md`) - Embedded safety patterns
+- **Ada Agent** (`~/.claude/agents/ada.md`)
+- **Architecture Agent** (`~/.claude/agents/architecture.md`)
+- **Functional Agent** (`~/.claude/agents/functional.md`)
+- **Testing Agent** (`~/.claude/agents/testing.md`)
+
+### Key Standards Applied
+
+1. **Aspects over Pragmas:** `with Pure` not `pragma Pure`
+2. **Contracts:** Pre/Post conditions on all public operations
+3. **No Heap:** Domain uses bounded strings
+4. **Immutability:** Value objects immutable after creation
+5. **Pure Functions:** Domain logic has no side effects
+6. **Result Monads:** No exceptions across boundaries
+7. **Static Dispatch:** Generics for dependency injection
 
 ## Submodule Management
 
@@ -334,14 +392,16 @@ https://github.com/abitofhelp
 
 ## Project Status
 
-**Status**: Released (v1.0.0)
+**Status**: Production Ready (v2.0.0)
 
-- ✅ Core library structure
-- ✅ 4-layer hexagonal architecture
-- ✅ Public API facade with three-package pattern
-- ✅ Desktop platform support (Console_Writer)
-- ✅ Full test suite (98 tests)
-- ✅ Comprehensive documentation
-- ✅ SPARK_Mode boundaries defined
-- ⬜ Embedded platform composition roots (documented, not yet implemented)
+- ✅ Single-project structure (easy Alire deployment)
+- ✅ Result monad error handling (Domain.Error.Result)
+- ✅ Static dependency injection via generics
+- ✅ Application.Error re-export pattern
+- ✅ Architecture boundary validation (arch_guard.py)
+- ✅ Comprehensive documentation with UML diagrams
+- ✅ Test framework (unit/integration/e2e - 109 tests)
+- ✅ Windows CI with GitHub Actions
+- ✅ Aspect syntax (not pragmas)
+- ✅ Makefile automation
 - ✅ Alire publication

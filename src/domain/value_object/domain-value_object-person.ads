@@ -41,7 +41,8 @@ is
    Max_Name_Length : constant := 100;
 
    --  Bounded string for name storage (no dynamic allocation)
-   package Name_Strings is new
+   --  Named after parent package per Ada agent naming convention
+   package Person_Strings is new
      Ada.Strings.Bounded.Generic_Bounded_Length (Max => Max_Name_Length);
 
    --  ========================================================================
@@ -64,7 +65,7 @@ is
    --  will enforce the invariant even for direct construction.
    --  ========================================================================
    type Person is record
-      Name_Value : Name_Strings.Bounded_String;
+      Name_Value : Person_Strings.Bounded_String;
    end record;
 
    --  Instantiate Result type for Person
@@ -103,7 +104,7 @@ is
         then Person_Result.Is_Error (Create'Result)
         else
           (Person_Result.Is_Ok (Create'Result)
-           and then Name_Strings.Length
+           and then Person_Strings.Length
                       (Person_Result.Value (Create'Result).Name_Value)
                     > 0));
 

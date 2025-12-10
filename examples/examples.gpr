@@ -1,0 +1,39 @@
+-- ===========================================================================
+-- Examples.gpr - Hybrid_Lib_Ada Example Programs
+-- ===========================================================================
+-- Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
+-- SPDX-License-Identifier: BSD-3-Clause
+--
+-- Purpose:
+--   Example programs demonstrating Hybrid_Lib_Ada library usage.
+--   Shows hybrid DDD/Clean/Hexagonal architecture in action.
+-- ===========================================================================
+
+with "../config/hybrid_lib_ada_config.gpr";
+with "../hybrid_lib_ada_internal.gpr";
+
+project Examples is
+
+   for Source_Dirs use (".");
+   for Object_Dir use "../obj/examples";
+   for Exec_Dir use "bin";
+
+   for Main use (
+      "basic_greeting.adb",
+      "error_handling.adb"
+   );
+
+   package Compiler is
+      for Default_Switches ("Ada") use Hybrid_Lib_Ada_Config.Ada_Compiler_Switches;
+   end Compiler;
+
+   package Binder is
+      --  -Es: Symbolic traceback
+      for Switches ("Ada") use ("-Es");
+   end Binder;
+
+   package Builder is
+      for Switches ("Ada") use ("-g");  -- Debug symbols
+   end Builder;
+
+end Examples;

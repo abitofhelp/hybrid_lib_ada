@@ -1,0 +1,34 @@
+-- ==========================================================================
+-- Version GPR - Cross-Cutting Version Library
+-- ==========================================================================
+-- Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
+-- SPDX-License-Identifier: BSD-3-Clause
+--
+-- Purpose:
+--   Builds the version package as a standalone static library.
+--   Cross-cutting concern - OUTSIDE the hexagonal architecture layers.
+--   Provides version constants for CLI display and runtime queries.
+--
+-- Architecture Notes:
+--   - NOT part of Domain, Application, Infrastructure, or API layers
+--   - Can be used by any layer that needs version information
+--   - Auto-generated content from release scripts
+-- ==========================================================================
+
+with "../../hybrid_lib_ada_shared_config.gpr";
+
+library project Version is
+
+   for Source_Dirs use (".");
+   for Object_Dir use "../../obj/version";
+   for Library_Dir use "../../lib/version";
+   for Library_Name use "version";
+   for Library_Kind use "static";
+
+   for Library_Interface use
+     ("Hybrid_Lib_Ada.Version");
+
+   package Compiler renames Hybrid_Lib_Ada_Shared_Config.Compiler;
+   package Binder renames Hybrid_Lib_Ada_Shared_Config.Binder;
+
+end Version;

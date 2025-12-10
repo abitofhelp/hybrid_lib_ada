@@ -22,7 +22,7 @@
 --   - API: Public facade with platform-specific instantiations
 -- ===========================================================================
 
-with "shared_config.gpr";
+with "hybrid_lib_ada_shared_config.gpr";
 with "functional.gpr";
 with "config/hybrid_lib_ada_config.gpr";
 
@@ -137,14 +137,14 @@ library project Hybrid_Lib_Ada is
       "Application.Port.Outbound.Writer");
 
    -- ==========================================================================
-   -- Package References: Inherit from Shared_Config
+   -- Package References: Inherit from Hybrid_Lib_Ada_Shared_Config
    -- ==========================================================================
 
-   package Compiler renames Shared_Config.Compiler;
-   package Binder renames Shared_Config.Binder;
-   package Builder renames Shared_Config.Builder;
-   package Format renames Shared_Config.Format;
-   package Documentation renames Shared_Config.Documentation;
+   package Compiler renames Hybrid_Lib_Ada_Shared_Config.Compiler;
+   package Binder renames Hybrid_Lib_Ada_Shared_Config.Binder;
+   package Builder renames Hybrid_Lib_Ada_Shared_Config.Builder;
+   package Format renames Hybrid_Lib_Ada_Shared_Config.Format;
+   package Documentation renames Hybrid_Lib_Ada_Shared_Config.Documentation;
 
    package Install is
       for Artifacts (".") use ("share");

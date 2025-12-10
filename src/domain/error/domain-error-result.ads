@@ -254,8 +254,7 @@ is
    --       F             => Write_Greeting);
    --    --
    --    -- Usage:
-   --    Final_Result : Unit_Result.Result :=
-   --      Chain_To_Unit (Person.Create (Name));
+   --    Final : Unit_Result.Result := Chain_To_Unit (Person.Create (Name));
    --
    --  Design Pattern:
    --    This is the monadic bind (>>=) operation that allows crossing type

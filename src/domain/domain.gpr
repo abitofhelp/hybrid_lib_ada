@@ -10,7 +10,7 @@
 --   Configured to prevent transitive dependency exposure.
 -- ==========================================================================
 
-with "../../shared_config.gpr";
+with "../../hybrid_lib_ada_shared_config.gpr";
 
 library project Domain is
 
@@ -46,8 +46,8 @@ library project Domain is
       "Domain.Value_Object.Option",
       "Domain.Value_Object.Person");
 
-   package Compiler renames Shared_Config.Compiler;
-   package Binder renames Shared_Config.Binder;
-   package Builder renames Shared_Config.Builder;
+   package Compiler renames Hybrid_Lib_Ada_Shared_Config.Compiler;
+   package Binder renames Hybrid_Lib_Ada_Shared_Config.Binder;
+   package Builder renames Hybrid_Lib_Ada_Shared_Config.Builder;
 
 end Domain;
