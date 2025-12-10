@@ -169,8 +169,8 @@ end Hybrid_Lib_Ada.API;
 
 | Platform | Status | Notes |
 |----------|--------|-------|
-| **Linux** | ✅ Full | Primary development platform |
-| **macOS** | ✅ Full | Fully supported |
+| **Linux** | ✅ Full | Fully supported |
+| **macOS** | ✅ Full | Primary development platform |
 | **BSD** | ✅ Full | Fully supported |
 | **Windows** | ✅ Full | Windows 11+ (CI tested) |
 | **Embedded** | 🔧 Stub | Custom adapter required |
