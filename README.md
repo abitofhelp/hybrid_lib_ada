@@ -1,70 +1,113 @@
-# Hybrid_Lib_Ada - Greeter Library with Hexagonal Architecture
+# Hybrid DDD/Clean/Hexagonal library starter for Ada 2022
 
 [![License](https://img.shields.io/badge/license-BSD--3--Clause-blue.svg)](LICENSE) [![Ada](https://img.shields.io/badge/Ada-2022-blue.svg)](https://ada-lang.io) [![SPARK](https://img.shields.io/badge/SPARK-Proved-green.svg)](https://www.adacore.com/about-spark)
 
 **Version:** 2.0.0  
 **Date:** December 10, 2025  
-**SPDX-License-Identifier:** BSD-3-Clause<br>
-**License File:** See the LICENSE file in the project root<br>
-**Copyright:** © 2025 Michael Gardner, A Bit of Help, Inc.<br>  
+**SPDX-License-Identifier:** BSD-3-Clause
+**License File:** See the LICENSE file in the project root
+**Copyright:** © 2025 Michael Gardner, A Bit of Help, Inc.  
 **Status:** Released  
-
-> **Note**: This library is currently a release candidate awaiting publication of the `functional` crate to Alire.
 
 ## Overview
 
-A professional Ada 2022 library starter demonstrating a **hybrid DDD/Clean/Hexagonal architecture** with **functional programming** principles using the `functional` crate for Result monads.
+**Hybrid_Lib_Ada** is a professional Ada 2022 library demonstrating hybrid DDD/Clean/Hexagonal architecture with functional error handling.
 
-This is a **library template** showcasing:
-- **4-Layer Hexagonal Architecture** (Domain, Application, Infrastructure, API)
-- **Static Dispatch Dependency Injection** via generics (zero runtime overhead)
-- **Railway-Oriented Programming** with Result monads (no exceptions across boundaries)
-- **Three-Package API Pattern** (Operations generic, platform-specific composition roots, facade)
-- **Embedded Safety** (No_Implicit_Heap_Allocations, bounded types, static allocation)
-- **Single-Project Structure** (easy Alire deployment)
+**Key Capabilities:**
+
+- 4-layer hexagonal architecture (Domain, Application, Infrastructure, API)
+- Functional error handling via Result monad (no exceptions)
+- Three-package API pattern for flexible dependency injection
+- Generic I/O plugin pattern for platform portability
+- Embedded-safe design (no heap allocation, bounded types)
+- SPARK-compatible for formal verification (6 proofs verified)
+- Cross-platform: Linux, macOS, Windows, Embedded
 
 ## Features
 
-- ✅ Single-project structure (easy Alire deployment)
-- ✅ Result monad error handling (Domain.Error.Result)
-- ✅ Static dependency injection via generics
+- ✅ 4-layer hexagonal architecture
+- ✅ Result monad error handling (no exceptions across boundaries)
+- ✅ Static dependency injection via generics (zero runtime overhead)
 - ✅ Three-package API pattern (Operations + Desktop + facade)
 - ✅ Generic I/O plugin pattern for platform portability
 - ✅ Embedded safety restrictions (no heap allocation)
-- ✅ SPARK-compatible design for formal verification
+- ✅ SPARK-compatible design (6 proofs verified)
 - ✅ Comprehensive documentation with UML diagrams
 - ✅ Test framework (99 unit + 10 integration = 109 tests)
 - ✅ Example programs (basic_greeting, error_handling)
 - ✅ Windows CI with GitHub Actions
-- ✅ Aspect syntax (not pragmas)
-- ✅ Makefile automation
+- ✅ 6 build profiles (standard, concurrent, embedded, baremetal, STM32)
 
 ## Architecture
 
-### Layer Structure
+### 4-Layer Hexagonal Architecture
+
+```
+        Consumer Application
+                ↓
+        ┌───────────────────────────────────────────────┐
+        │              API LAYER (Public Facade)        │
+        │  ┌─────────────────┬────────────────────────┐ │
+        │  │ API + Operations│    API.Desktop         │ │
+        │  │ (facade)        │  (composition root)    │ │
+        │  │                 │  Wires Infrastructure  │ │
+        │  │ Depends on:     │  Depends on:           │ │
+        │  │ App + Domain    │  ALL layers            │ │
+        │  └─────────────────┴────────────────────────┘ │
+        └───────────────────────────────────────────────┘
+                                │
+        ┌───────────────────────▼───────────────────────┐
+        │              INFRASTRUCTURE LAYER             │
+        │  Adapters: Console_Writer                     │
+        │  Depends on: Application + Domain             │
+        └───────────────────────┬───────────────────────┘
+                                │
+        ┌───────────────────────▼───────────────────────┐
+        │               APPLICATION LAYER               │
+        │  Use Cases: Greet | Commands | Ports          │
+        │  Depends on: Domain only                      │
+        └───────────────────────┬───────────────────────┘
+                                │
+        ┌───────────────────────▼───────────────────────┐
+        │                 DOMAIN LAYER                  │
+        │  Value Objects: Person | Error: Result monad  │
+        │  Depends on: NOTHING (zero dependencies)      │
+        └───────────────────────────────────────────────┘
+```
+
+**Design Principles:**
+
+- Dependencies flow inward (toward Domain)
+- Domain layer has zero external dependencies
+- Infrastructure implements ports defined in Application
+- **API facade depends on Application + Domain ONLY** (no Infrastructure)
+- **API.Desktop** is a composition root that wires Infrastructure
+- Generic I/O plugin pattern enables platform portability
+- Static dispatch via generics (zero runtime overhead)
+
+### Project Structure
 
 ```
 Hybrid_Lib_Ada/
 ├── src/
-│   ├── api/                        # Public Interface (ZERO dependencies)
+│   ├── api/                        # Public Interface
 │   │   ├── hybrid_lib_ada-api.ads  # Facade: re-exports + Greet operation
 │   │   ├── operations/             # Generic operations (DI pattern)
 │   │   └── desktop/                # Desktop composition root
 │   │
-│   ├── application/                # Use Cases & Ports (Depends on: Domain)
+│   ├── application/                # Use Cases & Ports
 │   │   ├── command/                # Input DTOs (Greet_Command)
-│   │   ├── error/                  # Re-exports Domain.Error
 │   │   ├── port/                   # Port interfaces (in/out)
 │   │   └── usecase/                # Use case orchestration (Greet)
 │   │
-│   ├── infrastructure/             # Adapters (Depends on: Application + Domain)
+│   ├── infrastructure/             # Adapters
 │   │   └── adapter/                # Console_Writer implementation
 │   │
-│   ├── domain/                     # Pure Business Logic (ZERO dependencies)
+│   ├── domain/                     # Pure Business Logic
 │   │   ├── error/                  # Error types & Result monad
 │   │   └── value_object/           # Person value object
 │   │
-│   └── hybrid_lib_ada.ads          # Root package with embedded restrictions
+│   └── hybrid_lib_ada.ads          # Root package
 │
 ├── examples/                       # Example Programs
 │   ├── basic_greeting.adb          # Simple greeting example
@@ -79,83 +122,58 @@ Hybrid_Lib_Ada/
 │   ├── guides/                     # Developer guides
 │   └── diagrams/                   # UML diagrams
 │
+├── config/profiles/                # Build profiles
+│   ├── standard/                   # Desktop/server (default)
+│   ├── concurrent/                 # Multi-threaded server
+│   ├── embedded/                   # Ravenscar embedded
+│   ├── baremetal/                  # Zero footprint (ZFP)
+│   ├── stm32h7s78/                 # STM32H7S78-DK
+│   └── stm32mp135_linux/           # STM32MP135F-DK (Linux MPU)
+│
 ├── hybrid_lib_ada.gpr              # Main library project
 ├── hybrid_lib_ada_internal.gpr     # Internal project (tests + examples)
 ├── alire.toml                      # Alire manifest
 └── Makefile                        # Build automation
 ```
 
-### 4-Layer Architecture
-
-**Dependency Rule: All dependencies point INWARD**
-
-```
-+-----------------------------------------------------------------+
-|                          API Layer                               |
-|  Hybrid_Lib_Ada.API (facade) + API.Desktop + API.Operations     |
-+----------------------------------+------------------------------+
-                                   |
-+----------------------------------v------------------------------+
-|                      Application Layer                           |
-|  Use Cases (Greet) + Inbound/Outbound Ports + Commands          |
-+----------------------------------+------------------------------+
-                                   |
-+----------------------------------v------------------------------+
-|                    Infrastructure Layer                          |
-|  Adapters (Console_Writer) + Platform Implementations           |
-+----------------------------------+------------------------------+
-                                   |
-+----------------------------------v------------------------------+
-|                       Domain Layer                               |
-|  Entities + Value Objects (Person) + Result Monad + Errors      |
-+-----------------------------------------------------------------+
-```
-
-**Design Principles:**
-
-- Dependencies flow inward (toward Domain)
-- Domain layer has zero external dependencies
-- Infrastructure implements ports defined in Application
-- API provides stable public interface via facade pattern
-- Generic I/O plugin pattern enables platform portability
-
 ### Three-Package API Pattern
 
 ```ada
--- 1. API.Operations - Generic operations (define the interface)
+-- 1. API.Operations - Generic operations (SPARK-safe, no Infrastructure)
 generic
    with function Writer (Message : String) return Unit_Result.Result;
 package Hybrid_Lib_Ada.API.Operations is
    function Greet (Cmd : Greet_Command) return Unit_Result.Result;
 end Hybrid_Lib_Ada.API.Operations;
 
--- 2. API.Desktop - Desktop composition root (wire dependencies)
+-- 2. API.Desktop - Desktop composition root (wires Console_Writer)
 package Hybrid_Lib_Ada.API.Desktop is
    function Greet (Cmd : Greet_Command) return Unit_Result.Result;
-   -- Internally instantiates API.Operations with Console_Writer
 end Hybrid_Lib_Ada.API.Desktop;
 
 -- 3. API - Public facade (convenience wrapper)
 package Hybrid_Lib_Ada.API is
-   -- Re-exports domain/application types
    function Greet (Cmd : Greet_Command) return Unit_Result.Result;
    -- Delegates to API.Desktop.Greet
 end Hybrid_Lib_Ada.API;
 ```
 
 **Benefits:**
+
 - Library users get simple API facade by default
 - Advanced users can inject custom I/O adapters via API.Operations
 - Zero runtime overhead (compile-time polymorphism)
+- SPARK-compatible (API.Operations has SPARK_Mode On)
 
 ## Platform Support
 
 | Platform | Status | Notes |
 |----------|--------|-------|
-| **Linux** | ✅ Full | Primary development platform, console I/O |
-| **macOS** | ✅ Full | CI tested, console I/O |
-| **Windows** | ✅ Full | CI tested (v2.0.0+), console I/O |
-| **Embedded** | 🔧 Stub | Architecture supports it, custom adapter required |
+| **Linux** | ✅ Full | Primary development platform |
+| **macOS** | ✅ Full | Fully supported |
+| **BSD** | ✅ Full | Fully supported |
+| **Windows** | ✅ Full | Windows 11+ (CI tested) |
+| **Embedded** | 🔧 Stub | Custom adapter required |
 
 ## Quick Start
 
@@ -182,7 +200,7 @@ alr build
 ### Prerequisites
 
 - **Alire** 2.0+ (Ada package manager)
-- **GNAT** 14+ (via Alire toolchain)
+- **GNAT** 13+ (via Alire toolchain)
 - **Make** (for convenience targets)
 
 ## Usage
@@ -213,6 +231,7 @@ end My_First_Greeting;
 ```
 
 **Output:**
+
 ```
 Hello, Alice!
 Greeting succeeded!
@@ -245,29 +264,27 @@ end Error_Example;
 
 ```ada
 with Hybrid_Lib_Ada.API.Operations;
-with My_Custom_Writer; -- Your I/O adapter
+with My_Custom_Writer;
 
 procedure Custom_Output is
    package My_Ops is new Hybrid_Lib_Ada.API.Operations
      (Writer => My_Custom_Writer.Write);
 
    use Hybrid_Lib_Ada.API;
-   Cmd : constant Greet_Command := Create_Greet_Command ("Bob");
+   Cmd    : constant Greet_Command := Create_Greet_Command ("Bob");
+   Result : Unit_Result.Result;
 begin
-   -- Uses your custom writer instead of console
    Result := My_Ops.Greet (Cmd);
 end Custom_Output;
 ```
 
 ## Testing
 
-Tests use a custom lightweight test framework (no AUnit dependency):
-
-| Test Type     | Count | Location              | Purpose                              |
-|---------------|-------|-----------------------|--------------------------------------|
-| Unit          | 99    | `test/unit/`          | Domain & Application logic           |
-| Integration   | 10    | `test/integration/`   | Cross-layer interactions             |
-| **Total**     | **109**|                      | **100% passing**                     |
+| Test Type | Count | Location | Purpose |
+|-----------|-------|----------|---------|
+| Unit | 99 | `test/unit/` | Domain & Application logic |
+| Integration | 10 | `test/integration/` | Cross-layer interactions |
+| **Total** | **109** | | **100% passing** |
 
 ```bash
 # Run all tests
@@ -279,43 +296,38 @@ make test-integration
 
 # Code quality
 make check-arch          # Validate architecture boundaries
-make diagrams            # Regenerate UML diagrams
-make stats               # Code statistics
-```
-
-**Expected Output:**
-
-```
-========================================
-     HYBRID_LIB_ADA UNIT TEST SUITE
-========================================
-
-[PASS] Ok construction - Is_Ok returns true
-[PASS] Create valid name - Is_Ok
-...
-
-########################################
-###    UNIT TESTS: SUCCESS            ###
-###    All 99 tests passed!           ###
-########################################
+make spark-check         # SPARK legality check
+make spark-prove         # SPARK proof verification
 ```
 
 ## Examples
 
-The library includes runnable examples:
-
 ```bash
 # Build examples
-alr build
+alr exec -- gprbuild -P examples/examples.gpr
 
 # Run basic greeting
-./bin/basic_greeting
+./examples/bin/basic_greeting
 
 # Run error handling demonstration
-./bin/error_handling
+./examples/bin/error_handling
 ```
 
-See `examples/` directory for source code.
+## Build Profiles
+
+| Profile | Target Platform | RAM | String Limits | Contracts | Debug |
+|---------|-----------------|-----|---------------|-----------|-------|
+| `standard` | Desktop/Server | 1+ GB | 128/256/512 | Yes | Yes |
+| `concurrent` | Multi-threaded Server | 1+ GB | 128/256/512 | Yes | Yes |
+| `stm32mp135_linux` | STM32MP135F-DK (Linux MPU) | 512 MB | 128/256/512 | Yes | Yes |
+| `embedded` | Ravenscar Embedded | 512KB-1MB | 64/128/256 | Yes | No |
+| `stm32h7s78` | STM32H7S78-DK | 620KB+32MB | 64/128/256 | Yes | Yes |
+| `baremetal` | Zero Footprint (ZFP) | 128KB-256KB | 32/64/128 | No | No |
+
+```bash
+# Build with specific profile
+alr build -- -XHYBRID_LIB_PROFILE=embedded
+```
 
 ## Documentation
 
@@ -330,28 +342,16 @@ See `examples/` directory for source code.
 
 - `docs/diagrams/library_architecture.svg` - 4-layer architecture overview
 - `docs/diagrams/ada/api_reexport_pattern_ada.svg` - Three-package API pattern
-- `docs/diagrams/ada/package_structure_ada.svg` - Actual packages
+- `docs/diagrams/ada/package_structure_ada.svg` - Package structure
 - `docs/diagrams/ada/error_handling_flow_ada.svg` - Error propagation
 - `docs/diagrams/ada/static_dispatch_ada.svg` - Static DI with generics
 - `docs/diagrams/ada/three_package_api_ada.svg` - API composition pattern
 
-## Code Standards
+## Dependencies
 
-This project follows:
-- **Ada Agent** (`~/.claude/agents/ada.md`)
-- **Architecture Agent** (`~/.claude/agents/architecture.md`)
-- **Functional Agent** (`~/.claude/agents/functional.md`)
-- **Testing Agent** (`~/.claude/agents/testing.md`)
-
-### Key Standards Applied
-
-1. **Aspects over Pragmas:** `with Pure` not `pragma Pure`
-2. **Contracts:** Pre/Post conditions on all public operations
-3. **No Heap:** Domain uses bounded strings, embedded restrictions enforced
-4. **Immutability:** Value objects immutable after creation
-5. **Pure Functions:** Domain logic has no side effects
-6. **Result Monads:** No exceptions across boundaries
-7. **Static Dispatch:** Generics for dependency injection
+| Dependency | Version | Purpose |
+|------------|---------|---------|
+| functional | ^3.0.0 | Result monad and Option types |
 
 ## Contributing
 
@@ -381,20 +381,3 @@ Licensed under the BSD-3-Clause License. See [LICENSE](LICENSE) for details.
 Michael Gardner
 A Bit of Help, Inc.
 https://github.com/abitofhelp
-
-## Project Status
-
-**Status**: Release Candidate (v2.0.0)
-
-- ✅ Single-project structure (easy Alire deployment)
-- ✅ Result monad error handling (Domain.Error.Result)
-- ✅ Static dependency injection via generics
-- ✅ Three-package API pattern (Operations + Desktop + facade)
-- ✅ Generic I/O plugin pattern
-- ✅ Embedded safety restrictions
-- ✅ SPARK-compatible design
-- ✅ Comprehensive documentation with UML diagrams
-- ✅ Test framework (99 unit + 10 integration = 109 tests)
-- ✅ Example programs (basic_greeting, error_handling)
-- ✅ Windows CI with GitHub Actions
-- ⏳ Awaiting functional crate publication to Alire
