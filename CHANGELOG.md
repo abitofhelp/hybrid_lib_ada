@@ -1,7 +1,7 @@
 # Changelog
 
 **Version:** 2.0.0  
-**Date:** December 08, 2025  
+**Date:** December 10, 2025  
 **SPDX-License-Identifier:** BSD-3-Clause<br>
 **License File:** See the LICENSE file in the project root<br>
 **Copyright:** © 2025 Michael Gardner, A Bit of Help, Inc.<br>  
@@ -14,9 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [2.0.0] - 2025-12-08
+## [2.0.0] - 2025-12-10
 
-**Test Coverage:** 99 unit + 10 integration + 0 examples = 109 total
+**Test Coverage:** 99 unit + 10 integration = 109 total
 
 ### Breaking Changes
 - **Error_Kind enum refactored** for better error categorization:
@@ -24,11 +24,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Added `Not_Found_Error` for missing resources (files, records, etc.)
   - Replaced `System_Error` and `Unknown_Error` with `Internal_Error` for bugs and invariant violations
 - **functional dependency upgraded** from ^2.2.1 to ^3.0.0
+- **Removed `Expect` function** from Domain.Error.Result - violated architecture rules by raising Program_Error
+
+### Added
+- **Example programs** in `examples/` directory:
+  - `basic_greeting` - Simple library usage demonstration
+  - `error_handling` - Result monad error handling patterns
+- **Windows CI workflow** (`windows-release.yml`) for automated Windows testing
+- **6 build profiles** documented: standard, concurrent, stm32mp135_linux, embedded, stm32h7s78, baremetal
 
 ### Changed
 - Domain.Error and Application.Error updated with new Error_Kind values
 - Build profile switched to development with debug settings
 - Compiler switches updated for development: -Og, -g, -gnatwa, -gnatVa
+- Documentation completely regenerated with correct architecture diagrams
+- Fixed layer terminology in comments ("API" instead of "Presentation" for library)
+
+### Fixed
+- Architecture documentation corrected: API facade depends on Application + Domain ONLY (not Infrastructure)
+- API.Desktop correctly documented as composition root (can depend on all layers)
 
 ## [1.0.0] - 2025-12-02
 
