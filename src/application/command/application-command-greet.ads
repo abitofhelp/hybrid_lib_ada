@@ -15,7 +15,7 @@ pragma Ada_2022;
 --    - No business logic in DTOs
 --    - DTOs are different from domain entities
 --    - This separates external API from internal domain model
---    - Crosses boundary: Presentation -> Application
+--    - Crosses boundary: API -> Application
 --
 --  Mapping to Go:
 --    Go: application/port/greet_command.go
@@ -50,7 +50,7 @@ is
    --  ========================================================================
 
    --  Data Transfer Object for greet use case.
-   --  Simple data structure that crosses presentation -> application
+   --  Simple data structure that crosses API -> Application
    --  boundary. It may carry invalid data; the domain layer is responsible
    --  for validating the name and returning appropriate Result errors.
 
