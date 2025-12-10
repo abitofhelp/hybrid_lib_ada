@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.0.0] - 2025-12-10
 
-**Test Coverage:** 99 unit + 10 integration = 109 total
+**Test Coverage:** 99 unit + 10 integration + 0 examples = 109 total
 
 ### Breaking Changes
 - **Error_Kind enum refactored** for better error categorization:
