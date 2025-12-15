@@ -1,6 +1,6 @@
 pragma Ada_2022;
 --  =========================================================================
---  Domain.Value_Object.Option - Generic Option/Maybe monad
+--  Domain.Types.Option - Generic Option/Maybe monad
 --  =========================================================================
 --  Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
 --  SPDX-License-Identifier: BSD-3-Clause
@@ -17,9 +17,9 @@ pragma Ada_2022;
 --    - Alternative to null pointers and access types
 --
 --  Usage:
---    with Domain.Value_Object.Option;
+--    with Domain.Types.Option;
 --
---    package String_Option is new Domain.Value_Object.Option (T => String);
+--    package String_Option is new Domain.Types.Option (T => String);
 --
 --    Opt : String_Option.Option := String_Option.Of_Value ("value");
 --    if String_Option.Is_Some (Opt) then
@@ -35,7 +35,7 @@ pragma Ada_2022;
 --    Domain.Error.Result - For computations that can fail with error
 --  =========================================================================
 
-package Domain.Value_Object.Option
+package Domain.Types.Option
   with Preelaborate
 is
 
@@ -173,4 +173,4 @@ is
 
    end Generic_Option;
 
-end Domain.Value_Object.Option;
+end Domain.Types.Option;

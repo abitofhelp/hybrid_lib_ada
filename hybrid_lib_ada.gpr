@@ -127,7 +127,8 @@ library project Hybrid_Lib_Ada is
       "Domain.Unit",
       "Domain.Value_Object",
       "Domain.Value_Object.Person",
-      "Domain.Value_Object.Option",
+      "Domain.Types",
+      "Domain.Types.Option",
       --  Application types re-exported via API
       "Application",
       "Application.Command",

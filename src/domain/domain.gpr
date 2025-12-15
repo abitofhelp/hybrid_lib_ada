@@ -14,7 +14,7 @@ with "../../hybrid_lib_ada_shared_config.gpr";
 
 library project Domain is
 
-   for Source_Dirs use (".", "error", "value_object");
+   for Source_Dirs use (".", "error", "types", "value_object");
    for Object_Dir use "../../obj/domain";
    for Library_Dir use "../../lib/domain";
    for Library_Name use "domain";
@@ -43,7 +43,8 @@ library project Domain is
       "Domain.Error",
       "Domain.Error.Result",
       "Domain.Value_Object",
-      "Domain.Value_Object.Option",
+      "Domain.Types",
+      "Domain.Types.Option",
       "Domain.Value_Object.Person");
 
    package Compiler renames Hybrid_Lib_Ada_Shared_Config.Compiler;
