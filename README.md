@@ -20,8 +20,36 @@
 - Three-package API pattern for flexible dependency injection
 - Generic I/O plugin pattern for platform portability
 - Embedded-safe design (no heap allocation, bounded types)
-- SPARK-compatible for formal verification (6 proofs verified)
+- SPARK-compatible for formal verification
 - Cross-platform: Linux, macOS, Windows, Embedded
+
+## SPARK Formal Verification
+
+<table>
+<tr>
+<td width="120"><strong>Status</strong></td>
+<td><img src="https://img.shields.io/badge/SPARK-Proved-green.svg" alt="SPARK Proved"></td>
+</tr>
+<tr>
+<td><strong>Scope</strong></td>
+<td>API.Operations generic package (SPARK_Mode On)</td>
+</tr>
+<tr>
+<td><strong>Mode</strong></td>
+<td>gnatprove --mode=prove --level=2</td>
+</tr>
+<tr>
+<td><strong>Results</strong></td>
+<td>See <a href="CHANGELOG.md">CHANGELOG</a> for current proof statistics</td>
+</tr>
+</table>
+
+### Verification Commands
+
+```bash
+make spark-check    # Run SPARK legality verification
+make spark-prove    # Run full SPARK proof verification
+```
 
 ## Features
 
@@ -31,7 +59,7 @@
 - ✅ Three-package API pattern (Operations + Desktop + facade)
 - ✅ Generic I/O plugin pattern for platform portability
 - ✅ Embedded safety restrictions (no heap allocation)
-- ✅ SPARK-compatible design (6 proofs verified)
+- ✅ SPARK-compatible design (see SPARK section above)
 - ✅ Comprehensive documentation with UML diagrams
 - ✅ Test framework (99 unit + 10 integration = 109 tests)
 - ✅ Example programs (basic_greeting, error_handling)
@@ -296,8 +324,6 @@ make test-integration
 
 # Code quality
 make check-arch          # Validate architecture boundaries
-make spark-check         # SPARK legality check
-make spark-prove         # SPARK proof verification
 ```
 
 ## Examples
