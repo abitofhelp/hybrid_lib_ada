@@ -61,7 +61,7 @@ make spark-prove    # Run full SPARK proof verification
 - ✅ Embedded safety restrictions (no heap allocation)
 - ✅ SPARK-compatible design (see SPARK section above)
 - ✅ Comprehensive documentation with UML diagrams
-- ✅ Test framework (99 unit + 10 integration = 109 tests)
+- ✅ Test framework (see CHANGELOG)
 - ✅ Example programs (basic_greeting, error_handling)
 - ✅ Windows CI with GitHub Actions
 - ✅ 6 build profiles (standard, concurrent, embedded, baremetal, STM32)
