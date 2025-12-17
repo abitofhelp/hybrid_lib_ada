@@ -379,6 +379,27 @@ alr build -- -XHYBRID_LIB_PROFILE=embedded
 |------------|---------|---------|
 | functional | ^3.0.0 | Result monad and Option types |
 
+## Submodule Management
+
+This project uses git submodules for shared tooling:
+
+- `docs` - Shared documentation templates and guides
+- `scripts/python` - Build, release, and architecture scripts
+- `test/python` - Shared test fixtures and configuration
+
+### Commands
+
+```bash
+# After fresh clone
+make submodule-init
+
+# Pull latest from submodule repos
+make submodule-update
+
+# Check current submodule commits
+make submodule-status
+```
+
 ## Contributing
 
 This project is not open to external contributions at this time.
