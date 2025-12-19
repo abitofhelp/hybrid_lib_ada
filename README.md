@@ -400,6 +400,14 @@ make submodule-update
 make submodule-status
 ```
 
+## Code Standards
+
+This project follows:
+- **Ada Agent** (`~/.claude/agents/ada.md`) - Ada 2022 standards
+- **Architecture Agent** (`~/.claude/agents/architecture.md`) - DDD/Clean/Hexagonal
+- **Functional Agent** (`~/.claude/agents/functional.md`) - Result/Option patterns
+- **SPARK Agent** (`~/.claude/agents/spark.md`) - Formal verification patterns
+
 ## Contributing
 
 This project is not open to external contributions at this time.
