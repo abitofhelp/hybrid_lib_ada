@@ -6,10 +6,9 @@
 #
 # This Makefile provides:
 #   - Build targets (build, clean, rebuild)
-#   - Test infrastructure (test, test-coverage)
-#   - Format/check targets (format, stats)
-#   - Documentation generation (docs, api-docs)
-#   - Development tools (setup-hooks, ci)
+#   - Test infrastructure (test, test-coverage, test-python, test-windows)
+#   - Quality targets (check, check-arch, stats)
+#   - Development tools (deps, refresh, install-tools, compress)
 # =============================================================================
 
 PROJECT_NAME := hybrid_lib_ada
@@ -18,9 +17,8 @@ PROJECT_NAME := hybrid_lib_ada
         clean clean-clutter clean-coverage clean-deep compress deps \
 		help prereqs rebuild refresh stats test test-all test-coverage test-framework \
 		test-integration test-unit test-python test-windows install-tools build-coverage-runtime \
-		submodule-init submodule-update submodule-status spark-check spark-prove
-# FIX: ENABLE AFTER THE TARGETS CONVERT TO USING OUR ADAFMT TOOL, WHICH IS IN DEVELOPMENT.
-#       format format-all format-src format-tests
+		submodule-init submodule-update submodule-status spark-check spark-prove \
+		format format-all format-src format-tests
 
 # =============================================================================
 # OS Detection
@@ -49,6 +47,7 @@ ALR := alr
 GPRBUILD := gprbuild
 GNATFORMAT := gnatformat
 GNATDOC := gnatdoc
+ADAFMT := adafmt
 PYTHON3 := python3
 
 # =============================================================================
@@ -101,7 +100,7 @@ help: ## Display this help message
 	@echo "$(YELLOW)Build Commands:$(NC)"
 	@echo "  build              - Build library (development mode)"
 	@echo "  build-dev          - Build with development flags"
-	@echo "  build-opt          - Build with optimization (-O2)"
+	@echo "  build-opt          - Build with validation profile"
 	@echo "  build-release      - Build in release mode"
 	@echo "  build-tests        - Build all test executables"
 	@echo "  clean              - Clean build artifacts"
@@ -126,11 +125,10 @@ help: ## Display this help message
 	@echo "  check-arch         - Validate hexagonal architecture boundaries"
 	@echo "  spark-check        - Run SPARK formal verification on domain/application"
 	@echo "  spark-prove        - Run SPARK PROVE formal verification"
-# FIX: ENABLE AFTER THE TARGETS CONVERT TO USING OUR ADAFMT TOOL, WHICH IS IN DEVELOPMENT.
-# 	@echo "  format-src         - Auto-format source code only"
-# 	@echo "  format-tests       - Auto-format test code only"
-# 	@echo "  format-all         - Auto-format all code"
-# 	@echo "  format             - Alias for format-all"
+	@echo "  format-src         - Auto-format source code only"
+	@echo "  format-tests       - Auto-format test code only"
+	@echo "  format-all         - Auto-format all code"
+	@echo "  format             - Alias for format-all"
 	@echo "  stats              - Display project statistics by layer"
 	@echo ""
 	@echo "$(YELLOW)Utility Commands:$(NC)"
@@ -175,9 +173,9 @@ build-dev: check-arch prereqs
 	@echo "$(GREEN)✓ Development build complete: $(LIB_DIR)/lib$(PROJECT_NAME).a$(NC)"
 
 build-opt: check-arch prereqs
-	@echo "$(GREEN)Building $(PROJECT_NAME) (optimized -O2)...$(NC)"
-	$(ALR) build -- -O2 $(ALR_BUILD_FLAGS)
-	@echo "$(GREEN)✓ Optimized build complete$(NC)"
+	@echo "$(GREEN)Building $(PROJECT_NAME) (validation profile)...$(NC)"
+	$(ALR) build --validation -- $(ALR_BUILD_FLAGS)
+	@echo "$(GREEN)✓ Validation build complete: $(LIB_DIR)/lib$(PROJECT_NAME).a$(NC)"
 
 build-release: check-arch prereqs
 	@echo "$(GREEN)Building $(PROJECT_NAME) (release mode)...$(NC)"
@@ -373,13 +371,9 @@ check:
 
 check-arch: ## Validate hexagonal architecture boundaries
 	@echo "$(GREEN)Validating architecture boundaries...$(NC)"
-	@PYTHONPATH=scripts/python/shared $(PYTHON3) -m arch_guard --project-root .
-	@if [ $$? -eq 0 ]; then \
-		echo "$(GREEN)✓ Architecture validation passed$(NC)"; \
-	else \
-		echo "$(RED)✗ Architecture validation failed$(NC)"; \
-		exit 1; \
-	fi
+	@PYTHONPATH=scripts/python/shared $(PYTHON3) -m arch_guard --project-root . && \
+		echo "$(GREEN)✓ Architecture validation passed$(NC)" || \
+		(echo "$(RED)✗ Architecture validation failed$(NC)"; exit 1)
 
 spark-check: ## Run SPARK formal verification on domain/application layers
 	@echo "$(GREEN)Running SPARK verification...$(NC)"
@@ -444,20 +438,20 @@ test-windows: ## Trigger Windows CI validation on GitHub Actions
 		exit 1; \
 	fi
 
-# FIXME: REPLACE WITH THE ADAFMT TOOL WE ARE CREATING WHEN IT IS COMPLETED.
-# THE CURRENT SCRIPT IS COMMENTING COMMENTS AND MESSING UP WITH INDEXED COMMENTS.
-# format-src:
-# 	@echo "$(GREEN)Formatting source code...$(NC)"
-# 	...
+format-src: ## Format source code
+	@echo "$(GREEN)Formatting source code...$(NC)"
+	@$(ADAFMT) -j0 --write src/
+	@echo "$(GREEN)✓ Source code formatted$(NC)"
 
-# format-tests:
-# 	@echo "$(GREEN)Formatting test code...$(NC)"
-# 	...
+format-tests: ## Format test code
+	@echo "$(GREEN)Formatting test code...$(NC)"
+	@$(ADAFMT) -j0 --write $(TEST_DIR)/
+	@echo "$(GREEN)✓ Test code formatted$(NC)"
 
-# format-all: format-src format-tests
-# 	@echo "$(GREEN)✓ All code formatting complete$(NC)"
+format-all: format-src format-tests ## Format all code
+	@echo "$(GREEN)✓ All code formatting complete$(NC)"
 
-# format: format-all
+format: format-all ## Alias for format-all
 
 
 # =============================================================================
@@ -528,7 +522,7 @@ submodule-update: ## Pull latest from all submodule repos
 	git submodule update --remote --merge
 	@echo ""
 	@echo "Submodules updated. Review changes, then run:"
-	@echo "  git add docs scripts/python test/python"
+	@echo "  git add docs scripts/python/shared test/python"
 	@echo "  git commit -m 'chore: update submodules'"
 	@echo "  git push"
 
