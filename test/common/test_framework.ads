@@ -13,6 +13,18 @@ pragma Ada_2022;
 
 package Test_Framework is
 
+   --  ========================================================================
+   --  Color-Coded Test Result Output
+   --  ========================================================================
+   --  Print colored [PASS] message (bright green)
+   procedure Print_Pass (Name : String);
+
+   --  Print colored [FAIL] message (bright red)
+   procedure Print_Fail (Name : String);
+
+   --  ========================================================================
+   --  Test Result Tracking
+   --  ========================================================================
    --  Track grand totals across all test suites
    procedure Register_Results (Total : Natural; Passed : Natural);
 

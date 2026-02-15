@@ -25,6 +25,22 @@ package body Test_Framework is
    Color_Red   : constant String := ASCII.ESC & "[1;91m";  --  Bright red
    Color_Reset : constant String := ASCII.ESC & "[0m";     --  Reset to default
 
+   --  ========================================================================
+   --  Color-Coded Test Result Output
+   --  ========================================================================
+   procedure Print_Pass (Name : String) is
+   begin
+      Put_Line (Color_Green & "[PASS]" & Color_Reset & " " & Name);
+   end Print_Pass;
+
+   procedure Print_Fail (Name : String) is
+   begin
+      Put_Line (Color_Red & "[FAIL]" & Color_Reset & " " & Name);
+   end Print_Fail;
+
+   --  ========================================================================
+   --  Test Result Tracking
+   --  ========================================================================
    procedure Register_Results (Total : Natural; Passed : Natural) is
    begin
       Total_Tests := Total_Tests + Total;

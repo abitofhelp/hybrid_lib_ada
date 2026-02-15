@@ -81,9 +81,9 @@ procedure Test_API_Operations is
       Total_Tests := Total_Tests + 1;
       if Passed then
          Passed_Tests := Passed_Tests + 1;
-         Put_Line ("[PASS] " & Name);
+         Test_Framework.Print_Pass (Name);
       else
-         Put_Line ("[FAIL] " & Name);
+         Test_Framework.Print_Fail (Name);
       end if;
    end Run_Test;
 
