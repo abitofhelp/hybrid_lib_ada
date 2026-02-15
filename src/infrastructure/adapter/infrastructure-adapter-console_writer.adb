@@ -10,99 +10,64 @@ pragma Ada_2022;
 --    wrapping exceptions into Result type for railway-oriented error handling.
 --
 --  Implementation Notes:
---    Uses Functional.Try.Try_To_Result_With_Param to wrap exception-prone
+--    Uses Functional.Try.Map_To_Result_With_Param to wrap exception-prone
 --    Ada.Text_IO operations, converting them to Result type for
 --    railway-oriented flow.
 --  =========================================================================
 
 with Ada.Text_IO;
-with Ada.Exceptions;
+with Ada.IO_Exceptions;
 with Domain.Error;
 with Domain.Unit;
-with Functional.Result;
-with Functional.Try;
+with Functional.Try.Map_To_Result_With_Param;
+pragma Elaborate_All (Functional.Try.Map_To_Result_With_Param);
 
 package body Infrastructure.Adapter.Console_Writer is
 
    use Application.Port.Outbound.Writer;
    use Domain.Unit;
-   use Ada.Exceptions;
 
    --  ========================================================================
-   --  Internal: Exception-prone Write Action
+   --  Internal: Write Action (may raise exceptions)
    --  ========================================================================
 
    --  This function performs the actual I/O and may raise exceptions.
-   --  It will be wrapped by Functional.Try.Try_To_Result_With_Param.
-   pragma Style_Checks (Off);
-   function Write_Action (Message : String) return Unit is
-   pragma Style_Checks (On);
+   --  It returns the domain Result type directly; exceptions are caught
+   --  by Map_To_Result_With_Param.
+   function Write_Action (Message : String) return Unit_Result.Result is
    begin
       Ada.Text_IO.Put_Line (Message);
-      return Unit_Value;
+      return Unit_Result.Ok (Unit_Value);
    end Write_Action;
 
    --  ========================================================================
-   --  Internal: Map Exception to Domain Error
+   --  Error Factory for Map_To_Result_With_Param
    --  ========================================================================
 
-   --  Converts Ada exception to domain error type
-   pragma Style_Checks (Off);
-   function Map_Exception
-     (Exc : Exception_Occurrence) return Domain.Error.Error_Type is
-   pragma Style_Checks (On);
+   function Make_Write_Error
+     (Kind : Domain.Error.Error_Kind; Message : String)
+      return Unit_Result.Result
+   is
    begin
-      return
-        (Kind    => Domain.Error.IO_Error,
-         Message =>
-           Domain.Error.Error_Strings.To_Bounded_String
-             ("Console write failed: " & Exception_Name (Exc)));
-   end Map_Exception;
+      return Unit_Result.Error (Kind => Kind, Message => Message);
+   end Make_Write_Error;
 
    --  ========================================================================
-   --  Instantiate Functional.Result for Unit
+   --  Instantiate Map_To_Result_With_Param for Write Operation
    --  ========================================================================
 
-   package Unit_Functional_Result is new
-     Functional.Result (T => Unit, E => Domain.Error.Error_Type);
+   package Try_Write is new Functional.Try.Map_To_Result_With_Param
+     (Error_Kind_Type    => Domain.Error.Error_Kind,
+      Param_Type         => String,
+      Result_Type        => Unit_Result.Result,
+      Make_Error         => Make_Write_Error,
+      Default_Error_Kind => Domain.Error.IO_Error,
+      Action             => Write_Action);
 
-   --  ========================================================================
-   --  Instantiate Try.Try_To_Result_With_Param for Write Operation
-   --  ========================================================================
-
-   function Write_With_Try is new
-     Functional.Try.Try_To_Result_With_Param
-       (T             => Unit,
-        E             => Domain.Error.Error_Type,
-        Param         => String,
-        Result_Pkg    => Unit_Functional_Result,
-        Map_Exception => Map_Exception,
-        Action        => Write_Action);
-
-   --  ========================================================================
-   --  Convert Functional.Result to Domain.Result
-   --  ========================================================================
-
-   pragma Style_Checks (Off);
-   function To_Domain_Result
-     (FR : Unit_Functional_Result.Result) return Unit_Result.Result is
-   pragma Style_Checks (On);
-   begin
-      if Unit_Functional_Result.Is_Ok (FR) then
-         return Unit_Result.Ok (Unit_Functional_Result.Value (FR));
-      else
-         declare
-            Err : constant Domain.Error.Error_Type :=
-              Unit_Functional_Result.Error (FR);
-         begin
-            return
-              Unit_Result.Error
-                (Kind    => Err.Kind,
-                 Message =>
-                   Domain.Error.Error_Strings.To_String (Err.Message));
-         end;
-      end if;
-   end To_Domain_Result;
+   --  Exception mappings (declarative, not procedural)
+   Write_Mappings : constant Try_Write.Mapping_Array :=
+     [(Ada.IO_Exceptions.Device_Error'Identity, Domain.Error.IO_Error),
+      (Ada.IO_Exceptions.Use_Error'Identity, Domain.Error.IO_Error)];
 
    -----------
    -- Write --
@@ -112,10 +77,8 @@ package body Infrastructure.Adapter.Console_Writer is
      (Message : String)
       return Application.Port.Outbound.Writer.Unit_Result.Result
    is
-      FR : constant Unit_Functional_Result.Result := Write_With_Try (Message);
    begin
-      --  Convert from Functional.Result to Domain.Result
-      return To_Domain_Result (FR);
+      return Try_Write.Run (Message, Write_Mappings);
    end Write;
 
 end Infrastructure.Adapter.Console_Writer;

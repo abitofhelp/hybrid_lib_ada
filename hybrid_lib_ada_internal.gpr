@@ -14,6 +14,7 @@
 -- External clients should NEVER depend on this project - use hybrid_lib_ada.gpr instead.
 -- ===========================================================================
 
+with "hybrid_lib_ada_shared_config.gpr";
 with "config/hybrid_lib_ada_config.gpr";
 
 library project Hybrid_Lib_Ada_Internal is
@@ -57,8 +58,7 @@ library project Hybrid_Lib_Ada_Internal is
 
    for Languages use ("Ada");
 
-   package Compiler is
-      for Default_Switches ("Ada") use Hybrid_Lib_Ada_Config.Ada_Compiler_Switches;
-   end Compiler;
+   package Compiler renames Hybrid_Lib_Ada_Shared_Config.Compiler;
+   package Binder renames Hybrid_Lib_Ada_Shared_Config.Binder;
 
 end Hybrid_Lib_Ada_Internal;

@@ -27,7 +27,7 @@ pragma Ada_2022;
 --  =========================================================================
 
 package Hybrid_Lib_Ada.Version
-  with Preelaborate, SPARK_Mode => On
+  with Preelaborate
 is
 
    --  Semantic Version Components

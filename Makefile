@@ -57,8 +57,9 @@ PYTHON3 := python3
 # NOTE: --no-indirect-imports is NOT needed. Architecture is enforced via
 #       Stand-Alone Library with explicit Library_Interface in hybrid_lib_ada.gpr
 #       which prevents transitive access from API layer to internal packages.
-ALR_BUILD_FLAGS := -j8 | grep -E 'warning:|(style)|error:' || true
-ALR_TEST_FLAGS  := -j8 | grep -E 'warning:|(style)|error:' || true
+# Filter build output to show only warnings/errors (capture both stdout and stderr)
+ALR_BUILD_FLAGS := -j0 2>&1 | grep -E 'warning:|error:|\(style\)|finished|Success' || true
+ALR_TEST_FLAGS  := -j0 2>&1 | grep -E 'warning:|error:|\(style\)|finished|Success' || true
 
 # =============================================================================
 # Directories

@@ -20,10 +20,6 @@ tags = [
     "embedded"
 ]
 
-[build-switches]
-"*".Ada_Version = "Ada2022"
-"*".Style_Checks = "yes"
-
 [[depends-on]]
 gnat = ">=13"
 
@@ -32,3 +28,41 @@ functional = "^4.0.0"
 
 [[pins]]
 functional = { path = '../functional' }
+
+# =============================================================================
+# BUILD CONFIGURATION POLICY
+# =============================================================================
+#
+# IMPORTANT: Do NOT add [build-switches] to this file!
+#
+# Why?
+# ----
+# 1. Alire's [build-switches] regenerates config/hybrid_lib_ada_config.gpr,
+#    overwriting any manual customizations.
+#
+# 2. The .gpr file supports advanced features that alire.toml cannot express:
+#    - Multiple build profiles (development, validation, release)
+#    - Case expressions for profile-specific flags
+#    - Fine-grained control over warnings, style, and runtime checks
+#
+# 3. Our config/hybrid_lib_ada_config.gpr has been manually tuned with:
+#    - development: -O0, -g, -gnata, -gnato, -gnatVa, -gnatE, -gnateE
+#    - validation:  -O2, -g, -gnata, -gnato, -gnatVa (optimized + contracts)
+#    - release:     -O3, -gnatn, -gnatp (maximum performance)
+#
+# How to Build
+# ------------
+# Always use gprbuild directly, or via Alire's exec wrapper:
+#
+#   # Development (default)
+#   alr exec -- gprbuild -P hybrid_lib_ada.gpr
+#
+#   # Validation (optimized with assertions)
+#   alr exec -- gprbuild -P hybrid_lib_ada.gpr -XHYBRID_LIB_ADA_BUILD_PROFILE=validation
+#
+#   # Release (production)
+#   alr exec -- gprbuild -P hybrid_lib_ada.gpr -XHYBRID_LIB_ADA_BUILD_PROFILE=release
+#
+# WARNING: Running `alr build` directly (not `alr exec -- gprbuild`) may
+# regenerate the config.gpr if [build-switches] is ever added here.
+# =============================================================================

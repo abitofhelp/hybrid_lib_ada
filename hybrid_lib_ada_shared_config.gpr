@@ -1,5 +1,5 @@
 -- ==========================================================================
--- Shared Configuration for hybrid_lib_ada Library
+-- Shared Configuration for Hybrid_Lib_Ada Library
 -- ==========================================================================
 -- Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
 -- SPDX-License-Identifier: BSD-3-Clause
@@ -14,7 +14,14 @@
 --   library project My_Project is
 --      package Compiler renames Hybrid_Lib_Ada_Shared_Config.Compiler;
 --   end My_Project;
+--
+-- Build Profiles:
+--   development - Debug symbols, all checks, no optimization (-O0)
+--   validation  - Optimized with assertions and contracts (-O2)
+--   release     - Maximum performance, minimal checks (-O3)
 -- ==========================================================================
+
+with "config/hybrid_lib_ada_config.gpr";
 
 abstract project Hybrid_Lib_Ada_Shared_Config is
 
@@ -23,58 +30,99 @@ abstract project Hybrid_Lib_Ada_Shared_Config is
    -- ==========================================================================
    package Compiler is
 
-      -- Common switches applied to all build modes
+      -- ---------------------------------------------------------------------
+      --  Common flags (all profiles)
+      -- ---------------------------------------------------------------------
       Common_Switches := (
-         "-gnat2022",        -- Ada 2022 mode
-         "-gnatwa",          -- All warnings
-         "-gnatw.Y",         -- Disable warnings from system units
-         "-gnatwl",          -- Elaboration warnings
-         "-gnatwu",          -- Unused entities warnings
-         "-gnatw.u",         -- Unreferenced entities
-         "-gnatw.r",         -- Redundant constructs
-         "-gnatw.k",         -- Variable could be constant
-         "-gnatw.m",         -- Variable assigned but never read
-         "-gnatw.o",         -- Modified but unreferenced out parameters
-         "-gnatw.X",         -- Disable warnings on local exception propagation
-         "-gnatf",           -- Full error messages
-
-         -- Style checks (Ada Quality and Style Guide)
-         "-gnatyy",          -- Enable default style checks
-         "-gnaty3",          -- Check indentation of 3 spaces
-         "-gnatya",          -- Check attribute casing
-         "-gnatyb",          -- Check blanks at end of lines
-         "-gnatyc",          -- Check comment format
-         "-gnatyd",          -- Check no DOS line terminators
-         "-gnatye",          -- Check end labels
-         "-gnatyf",          -- Check form feeds/vertical tabs
-         "-gnatyh",          -- Check horizontal tabs
-         "-gnatyi",          -- Check if-then layout
-         "-gnatyk",          -- Check keyword casing
-         "-gnatyl",          -- Check layout
-         "-gnatym",          -- Check line length <= 79 (overridden by -gnatyM120)
-         "-gnatyn",          -- Check casing of entities in Standard
-         "-gnatyp",          -- Check pragma casing
-         "-gnatyr",          -- Check references
-         "-gnatys",          -- Check separate specs
-         "-gnatyt",          -- Check token spacing
-         "-gnatyu",          -- Check unnecessary blank lines
-         "-gnatyx",          -- Check extra parentheses
-         "-gnatyM120",       -- Maximum line length of 120 characters
-         "-gnatyN",          -- Check casing of predefined identifiers
-         "-gnatyO",          -- Check overriding indicators
-         "-gnatyS",          -- Check no statements on same line as THEN or ELSE
-         "-gnatW8"           -- UTF-8 encoding
+         "-gnat2022"        --  Ada 2022 mode
+        ,"-gnatf"           --  Full error messages
+        ,"-gnatW8"          --  UTF-8 encoding for wide characters
+        ,"-gnatwe"          --  Warnings as errors
+        ,"-gnatU"           --  Tag uninitialized scalars (zero cost if init)
+        ,"-gnatd.n"         --  Activate front-end inlining
       );
 
-      for Default_Switches ("Ada") use Common_Switches & (
-         "-g",            -- Debug info
-         "-gnatVa",       -- All validity checks
-         "-gnateE",       -- Extra info in exceptions
-         "-gnata",        -- Enable assertions and contracts
-         "-gnatU",        -- Tag uninitialized scalars
-         "-gnatd.n",      -- Activate front-end inlining
-         "-gnatwe"        -- Warnings as errors
+      -- ---------------------------------------------------------------------
+      --  Warnings (all profiles)
+      -- ---------------------------------------------------------------------
+      Warning_Switches := (
+         "-gnatwa"          --  All standard warnings
+        ,"-gnatwl"          --  Elaboration warnings
+        ,"-gnatwu"          --  Unused entities warnings
+        ,"-gnatw.k"         --  Warn: variable could be constant
+        ,"-gnatw.m"         --  Warn: variable assigned but never read
+        ,"-gnatw.o"         --  Warn: modified but unreferenced out parameters
+        ,"-gnatw.r"         --  Warn: redundant constructs
+        ,"-gnatw.u"         --  Warn: unreferenced entities
+        ,"-gnatw.X"         --  Suppress: local exception propagation warnings
+        ,"-gnatw.Y"         --  Suppress: warnings from system units
       );
+
+      -- ---------------------------------------------------------------------
+      --  Style (all profiles)
+      -- ---------------------------------------------------------------------
+      Style_Switches := (
+         "-gnatyy"          --  Default style checks (3abcefhiklmnprst)
+        ,"-gnatyM79"        --  Max line length 79 characters
+        ,"-gnatyA"          --  Array index numbers in attributes
+        ,"-gnatyB"          --  Boolean operators (and then/or else required)
+        ,"-gnatyd"          --  Check no DOS line terminators
+        ,"-gnatys"          --  Check separate specs required
+        ,"-gnatyN"          --  Casing of predefined identifiers
+        ,"-gnatyO"          --  Explicit overriding keywords required
+        ,"-gnatyS"          --  No statements after THEN/ELSE
+        ,"-gnatyu"          --  No unnecessary blank lines
+        ,"-gnatyx"          --  No extra parentheses
+      );
+
+      -- ---------------------------------------------------------------------
+      --  Profile-specific flags
+      -- ---------------------------------------------------------------------
+      Profile_Switches := ();
+      case Hybrid_Lib_Ada_Config.Build_Profile is
+         when "development" =>
+            --  Maximum debuggability, all runtime checks
+            Profile_Switches := (
+               "-O0"           --  No optimization (debuggable code)
+              ,"-g"            --  Debug symbols
+              ,"-gnata"        --  Assertions and contracts enabled
+              ,"-gnato"        --  Overflow checking
+              ,"-gnatVa"       --  All validity checks
+              ,"-gnatE"        --  Dynamic elaboration checking
+              ,"-gnateE"       --  Extra exception info in tracebacks
+            );
+
+         when "validation" =>
+            --  Optimized but with assertions and debug info for testing
+            Profile_Switches := (
+               "-O2"           --  Optimize with debuggability
+              ,"-g"            --  Debug symbols (for profiling/coverage)
+              ,"-gnata"        --  Assertions and contracts enabled
+              ,"-gnato"        --  Overflow checking
+              ,"-gnatVa"       --  All validity checks
+            );
+
+         when "release" =>
+            --  Maximum performance, minimal runtime overhead
+            Profile_Switches := (
+               "-O3"           --  Maximum optimization
+              ,"-gnatn"        --  Enable inlining
+              ,"-gnatp"        --  Suppress all checks (use with caution!)
+              ,"-fdata-sections"    --  Separate ELF section for each variable
+              ,"-ffunction-sections" --  Separate ELF section for each function
+            );
+      end case;
+
+      -- ---------------------------------------------------------------------
+      --  Combined switches
+      -- ---------------------------------------------------------------------
+      for Default_Switches ("Ada") use
+        External_As_List ("ADAFLAGS", " ")
+        & Common_Switches
+        & Warning_Switches
+        & Style_Switches
+        & Profile_Switches;
+
    end Compiler;
 
    -- ==========================================================================
@@ -82,8 +130,8 @@ abstract project Hybrid_Lib_Ada_Shared_Config is
    -- ==========================================================================
    package Binder is
       for Default_Switches ("Ada") use (
-         "-Es",        -- Symbolic traceback
-         "-E"          -- Store tracebacks in exceptions
+         "-Es"             --  Symbolic traceback
+        ,"-E"              --  Store tracebacks in exceptions
       );
    end Binder;
 
@@ -92,23 +140,9 @@ abstract project Hybrid_Lib_Ada_Shared_Config is
    -- ==========================================================================
    package Builder is
       for Default_Switches ("Ada") use (
-         "-j0",           -- Use all available cores (0 = auto-detect)
-         "-s"             -- Recompile if compiler switches change
+         "-j0"             --  Use all available cores (auto-detect)
+        ,"-s"              --  Recompile if compiler switches change
       );
    end Builder;
-
-   -- ==========================================================================
-   -- Format Package: Code Formatting Configuration
-   -- ==========================================================================
-   package Format is
-      for Configuration use ".gnatformat.yaml";
-   end Format;
-
-   -- ==========================================================================
-   -- Documentation Package: API Documentation
-   -- ==========================================================================
-   package Documentation is
-      for Documentation_Dir use "docs/api";
-   end Documentation;
 
 end Hybrid_Lib_Ada_Shared_Config;

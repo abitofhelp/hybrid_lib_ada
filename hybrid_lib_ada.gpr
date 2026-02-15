@@ -144,8 +144,6 @@ library project Hybrid_Lib_Ada is
    package Compiler renames Hybrid_Lib_Ada_Shared_Config.Compiler;
    package Binder renames Hybrid_Lib_Ada_Shared_Config.Binder;
    package Builder renames Hybrid_Lib_Ada_Shared_Config.Builder;
-   package Format renames Hybrid_Lib_Ada_Shared_Config.Format;
-   package Documentation renames Hybrid_Lib_Ada_Shared_Config.Documentation;
 
    package Install is
       for Artifacts (".") use ("share");

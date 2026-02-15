@@ -14,7 +14,7 @@ pragma Ada_2022;
 --  Architecture Notes:
 --    - ADAPTER that implements the Writer output port
 --    - Conforms to interface defined by Application.Port.Out.Writer
---    - Uses Functional.Try.Try_To_Result_With_Param for exception handling
+--    - Uses Functional.Try.Map_To_Result_With_Param for exception handling
 --    - Depends on Ada.Text_IO (standard library IO)
 --    - This layer depends on Application + Domain + Functional
 --
