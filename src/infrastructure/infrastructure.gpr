@@ -15,6 +15,7 @@ with "../../hybrid_lib_ada_shared_config.gpr";
 with "../domain/domain.gpr";
 with "../application/application.gpr";
 with "functional";
+with "../root/root.gpr";
 
 library project Infrastructure is
 
@@ -42,9 +43,9 @@ library project Infrastructure is
    for Library_Standalone use "standard";
 
    for Library_Interface use
-     ("Infrastructure",
-      "Infrastructure.Adapter",
-      "Infrastructure.Adapter.Console_Writer");
+     ("Hybrid_Lib_Ada.Infrastructure",
+      "Hybrid_Lib_Ada.Infrastructure.Adapter",
+      "Hybrid_Lib_Ada.Infrastructure.Adapter.Console_Writer");
 
    package Compiler renames Hybrid_Lib_Ada_Shared_Config.Compiler;
    package Binder renames Hybrid_Lib_Ada_Shared_Config.Binder;

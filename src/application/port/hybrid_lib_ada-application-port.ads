@@ -1,6 +1,6 @@
 pragma Ada_2022;
 --  =========================================================================
---  Application.Port - Parent package for ports (hexagonal architecture)
+--  Hybrid_Lib_Ada.Application.Port - Parent package for ports (hexagonal architecture)
 --  =========================================================================
 --  Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
 --  SPDX-License-Identifier: BSD-3-Clause
@@ -16,12 +16,12 @@ pragma Ada_2022;
 --    - Outbound ports: How the application uses external systems
 --
 --  See Also:
---    Application.Port.Inbound - Input ports (how to call the app)
---    Application.Port.Outbound - Output ports (what the app needs)
+--    Hybrid_Lib_Ada.Application.Port.Inbound - Input ports (how to call the app)
+--    Hybrid_Lib_Ada.Application.Port.Outbound - Output ports (what the app needs)
 --  =========================================================================
 
-package Application.Port
+package Hybrid_Lib_Ada.Application.Port
   with Pure
 is
 
-end Application.Port;
+end Hybrid_Lib_Ada.Application.Port;

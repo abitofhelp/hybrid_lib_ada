@@ -8,18 +8,18 @@ pragma Ada_2022;
 --  Purpose:
 --    Integration tests for Hybrid_Lib_Ada.API.Greet operation.
 --    Tests the complete flow through API facade → API.Desktop → API.Operations
---    → Application.Usecase → Domain with real Console_Writer adapter.
+--    → Hybrid_Lib_Ada.Application.Usecase → Hybrid_Lib_Ada.Domain with real Console_Writer adapter.
 --  ======================================================================
 
 with Ada.Text_IO;
-with Domain.Error;
+with Hybrid_Lib_Ada.Domain.Error;
 with Hybrid_Lib_Ada.API;
 with Test_Framework;
 
 procedure Test_API_Greet is
 
    use Ada.Text_IO;
-   use Domain.Error;
+   use Hybrid_Lib_Ada.Domain.Error;
    use Hybrid_Lib_Ada.API;
 
    --  Test statistics
@@ -140,7 +140,7 @@ begin
         ("Create_Person empty - Is_Error", Person_Result.Is_Error (Result));
       if Person_Result.Is_Error (Result) then
          declare
-            Info : constant Domain.Error.Error_Type :=
+            Info : constant Hybrid_Lib_Ada.Domain.Error.Error_Type :=
               Person_Result.Error_Info (Result);
          begin
             Run_Test

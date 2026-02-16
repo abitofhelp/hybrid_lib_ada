@@ -1,5 +1,5 @@
 pragma Ada_2022;
-with Domain;
+with Hybrid_Lib_Ada.Domain;
 --  ======================================================================
 --  Test_Application_Usecase_Greet
 --  ======================================================================
@@ -7,29 +7,29 @@ with Domain;
 --  SPDX-License-Identifier: BSD-3-Clause
 --
 --  Purpose:
---    Unit tests for Application.Usecase.Greet use case.
+--    Unit tests for Hybrid_Lib_Ada.Application.Usecase.Greet use case.
 --    Tests use case execution with mock writer port.
 --  ======================================================================
 
 with Ada.Text_IO;
 with Ada.Strings.Fixed;
 with Ada.Strings.Unbounded;
-with Application.Command.Greet;
-with Application.Port.Outbound.Writer;
-with Application.Usecase.Greet;
-with Domain.Error;
-with Domain.Unit;
-with Domain.Value_Object.Person;
+with Hybrid_Lib_Ada.Application.Command.Greet;
+with Hybrid_Lib_Ada.Application.Port.Outbound.Writer;
+with Hybrid_Lib_Ada.Application.Usecase.Greet;
+with Hybrid_Lib_Ada.Domain.Error;
+with Hybrid_Lib_Ada.Domain.Unit;
+with Hybrid_Lib_Ada.Domain.Value_Object.Person;
 with Test_Framework;
 
 procedure Test_Application_Usecase_Greet is
 
    use Ada.Text_IO;
    use Ada.Strings.Unbounded;
-   use Application.Command.Greet;
-   use Application.Port.Outbound.Writer;
-   use Domain.Unit;
-   use Domain.Error;
+   use Hybrid_Lib_Ada.Application.Command.Greet;
+   use Hybrid_Lib_Ada.Application.Port.Outbound.Writer;
+   use Hybrid_Lib_Ada.Domain.Unit;
+   use Hybrid_Lib_Ada.Domain.Error;
 
    --  Test statistics
    Total_Tests  : Natural := 0;
@@ -65,7 +65,7 @@ procedure Test_Application_Usecase_Greet is
    pragma Style_Checks (On);
 
    --  Instantiate use case with success writer
-   package Greet_UseCase_Success is new Application.Usecase.Greet
+   package Greet_UseCase_Success is new Hybrid_Lib_Ada.Application.Usecase.Greet
      (Writer => Mock_Writer_Success);
 
    --  ========================================================================
@@ -84,12 +84,12 @@ procedure Test_Application_Usecase_Greet is
    pragma Style_Checks (On);
 
    --  Instantiate use case with failure writer
-   package Greet_UseCase_Failure is new Application.Usecase.Greet
+   package Greet_UseCase_Failure is new Hybrid_Lib_Ada.Application.Usecase.Greet
      (Writer => Mock_Writer_Failure);
 
 begin
    Put_Line ("========================================");
-   Put_Line ("Testing: Application.Usecase.Greet");
+   Put_Line ("Testing: Hybrid_Lib_Ada.Application.Usecase.Greet");
    Put_Line ("========================================");
    New_Line;
 
@@ -200,7 +200,7 @@ begin
    --  ========================================================================
 
    declare
-      use Domain.Value_Object.Person;
+      use Hybrid_Lib_Ada.Domain.Value_Object.Person;
       Max_Name : constant String (1 .. Max_Name_Length) := [others => 'X'];
       Cmd      : constant Greet_Command := Create (Max_Name);
       Result   : constant Unit_Result.Result :=
@@ -241,7 +241,7 @@ begin
    --  Print summary
    New_Line;
    Put_Line ("========================================");
-   Put_Line ("Test Summary: Application.Usecase.Greet");
+   Put_Line ("Test Summary: Hybrid_Lib_Ada.Application.Usecase.Greet");
    Put_Line ("========================================");
    Put_Line ("Total tests: " & Total_Tests'Image);
    Put_Line ("Passed:      " & Passed_Tests'Image);

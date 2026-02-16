@@ -1,6 +1,6 @@
 pragma Ada_2022;
 --  =========================================================================
---  Infrastructure.Adapter.Console_Writer - Console output implementation
+--  Hybrid_Lib_Ada.Infrastructure.Adapter.Console_Writer - Console output implementation
 --  =========================================================================
 --  Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
 --  SPDX-License-Identifier: BSD-3-Clause
@@ -17,15 +17,15 @@ pragma Ada_2022;
 
 with Ada.Text_IO;
 with Ada.IO_Exceptions;
-with Domain.Error;
-with Domain.Unit;
+with Hybrid_Lib_Ada.Domain.Error;
+with Hybrid_Lib_Ada.Domain.Unit;
 with Functional.Try.Map_To_Result_With_Param;
 pragma Elaborate_All (Functional.Try.Map_To_Result_With_Param);
 
-package body Infrastructure.Adapter.Console_Writer is
+package body Hybrid_Lib_Ada.Infrastructure.Adapter.Console_Writer is
 
-   use Application.Port.Outbound.Writer;
-   use Domain.Unit;
+   use Hybrid_Lib_Ada.Application.Port.Outbound.Writer;
+   use Hybrid_Lib_Ada.Domain.Unit;
 
    --  ========================================================================
    --  Internal: Write Action (may raise exceptions)
@@ -45,7 +45,7 @@ package body Infrastructure.Adapter.Console_Writer is
    --  ========================================================================
 
    function Make_Write_Error
-     (Kind : Domain.Error.Error_Kind; Message : String)
+     (Kind : Hybrid_Lib_Ada.Domain.Error.Error_Kind; Message : String)
       return Unit_Result.Result
    is
    begin
@@ -57,17 +57,17 @@ package body Infrastructure.Adapter.Console_Writer is
    --  ========================================================================
 
    package Try_Write is new Functional.Try.Map_To_Result_With_Param
-     (Error_Kind_Type    => Domain.Error.Error_Kind,
+     (Error_Kind_Type    => Hybrid_Lib_Ada.Domain.Error.Error_Kind,
       Param_Type         => String,
       Result_Type        => Unit_Result.Result,
       Make_Error         => Make_Write_Error,
-      Default_Error_Kind => Domain.Error.IO_Error,
+      Default_Error_Kind => Hybrid_Lib_Ada.Domain.Error.IO_Error,
       Action             => Write_Action);
 
    --  Exception mappings (declarative, not procedural)
    Write_Mappings : constant Try_Write.Mapping_Array :=
-     [(Ada.IO_Exceptions.Device_Error'Identity, Domain.Error.IO_Error),
-      (Ada.IO_Exceptions.Use_Error'Identity, Domain.Error.IO_Error)];
+     [(Ada.IO_Exceptions.Device_Error'Identity, Hybrid_Lib_Ada.Domain.Error.IO_Error),
+      (Ada.IO_Exceptions.Use_Error'Identity, Hybrid_Lib_Ada.Domain.Error.IO_Error)];
 
    -----------
    -- Write --
@@ -75,10 +75,10 @@ package body Infrastructure.Adapter.Console_Writer is
 
    function Write
      (Message : String)
-      return Application.Port.Outbound.Writer.Unit_Result.Result
+      return Hybrid_Lib_Ada.Application.Port.Outbound.Writer.Unit_Result.Result
    is
    begin
       return Try_Write.Run (Message, Write_Mappings);
    end Write;
 
-end Infrastructure.Adapter.Console_Writer;
+end Hybrid_Lib_Ada.Infrastructure.Adapter.Console_Writer;

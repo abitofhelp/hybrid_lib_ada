@@ -1,6 +1,6 @@
 pragma Ada_2022;
 --  =========================================================================
---  Domain.Value_Object.Person - Person value object for the greeter domain
+--  Hybrid_Lib_Ada.Domain.Value_Object.Person - Person value object for the greeter domain
 --  =========================================================================
 --  Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
 --  SPDX-License-Identifier: BSD-3-Clause
@@ -10,7 +10,7 @@ pragma Ada_2022;
 --    Defines the Person value object representing a person's name.
 --    Value object: immutable, validated at construction, uses bounded strings.
 --    Returns Result type for validation (no exceptions).
---    Domain provides data (Get_Name), Application formats output.
+--    Hybrid_Lib_Ada.Domain provides data (Get_Name), Hybrid_Lib_Ada.Application formats output.
 --
 --  Usage:
 --    Result := Create ("Alice");
@@ -27,13 +27,13 @@ pragma Ada_2022;
 --    - Pure domain logic - ZERO external crate dependencies
 --
 --  See Also:
---    Domain.Error.Result - Result type for error handling
+--    Hybrid_Lib_Ada.Domain.Error.Result - Result type for error handling
 --  =========================================================================
 
 with Ada.Strings.Bounded;
-with Domain.Error.Result;
+with Hybrid_Lib_Ada.Domain.Error.Result;
 
-package Domain.Value_Object.Person
+package Hybrid_Lib_Ada.Domain.Value_Object.Person
   with Preelaborate
 is
 
@@ -70,7 +70,7 @@ is
 
    --  Instantiate Result type for Person
    package Person_Result is new
-     Domain.Error.Result.Generic_Result (T => Person);
+     Hybrid_Lib_Ada.Domain.Error.Result.Generic_Result (T => Person);
 
    --  ========================================================================
    --  DESIGN DECISION: Is_Valid_Person Not Called in Create
@@ -121,4 +121,4 @@ is
        Get_Name'Result'Length > 0
        and then Get_Name'Result'Length <= Max_Name_Length;
 
-end Domain.Value_Object.Person;
+end Hybrid_Lib_Ada.Domain.Value_Object.Person;

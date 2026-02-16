@@ -12,19 +12,19 @@ pragma Ada_2022;
 
 with Ada.Strings.Bounded;
 with Ada.Text_IO;
-with Application.Command.Greet;
-with Application.Port.Outbound.Writer;
-with Domain.Error;
-with Domain.Unit;
+with Hybrid_Lib_Ada.Application.Command.Greet;
+with Hybrid_Lib_Ada.Application.Port.Outbound.Writer;
+with Hybrid_Lib_Ada.Domain.Error;
+with Hybrid_Lib_Ada.Domain.Unit;
 with Hybrid_Lib_Ada.API.Operations;
 with Test_Framework;
 
 procedure Test_API_Operations is
 
    use Ada.Text_IO;
-   use Application.Port.Outbound.Writer;
-   use Domain.Error;
-   use Domain.Unit;
+   use Hybrid_Lib_Ada.Application.Port.Outbound.Writer;
+   use Hybrid_Lib_Ada.Domain.Error;
+   use Hybrid_Lib_Ada.Domain.Unit;
 
    --  Bounded string for capturing mock output
    package Message_Strings is new Ada.Strings.Bounded.Generic_Bounded_Length
@@ -100,8 +100,8 @@ begin
 
    Reset_Mock;
    declare
-      Cmd    : constant Application.Command.Greet.Greet_Command :=
-        Application.Command.Greet.Create ("Alice");
+      Cmd    : constant Hybrid_Lib_Ada.Application.Command.Greet.Greet_Command :=
+        Hybrid_Lib_Ada.Application.Command.Greet.Create ("Alice");
       Result : constant Unit_Result.Result := Test_Ops.Greet (Cmd);
    begin
       Run_Test ("Greet 'Alice' - Is_Ok", Unit_Result.Is_Ok (Result));
@@ -117,8 +117,8 @@ begin
 
    Reset_Mock;
    declare
-      Cmd    : constant Application.Command.Greet.Greet_Command :=
-        Application.Command.Greet.Create ("Bob");
+      Cmd    : constant Hybrid_Lib_Ada.Application.Command.Greet.Greet_Command :=
+        Hybrid_Lib_Ada.Application.Command.Greet.Create ("Bob");
       Result : constant Unit_Result.Result := Test_Ops.Greet (Cmd);
    begin
       Run_Test ("Greet 'Bob' - Is_Ok", Unit_Result.Is_Ok (Result));
@@ -133,8 +133,8 @@ begin
 
    Reset_Mock;
    declare
-      Cmd    : constant Application.Command.Greet.Greet_Command :=
-        Application.Command.Greet.Create ("Jane Doe");
+      Cmd    : constant Hybrid_Lib_Ada.Application.Command.Greet.Greet_Command :=
+        Hybrid_Lib_Ada.Application.Command.Greet.Create ("Jane Doe");
       Result : constant Unit_Result.Result := Test_Ops.Greet (Cmd);
    begin
       Run_Test ("Greet 'Jane Doe' - Is_Ok", Unit_Result.Is_Ok (Result));
@@ -149,8 +149,8 @@ begin
 
    Reset_Mock;
    declare
-      Cmd    : constant Application.Command.Greet.Greet_Command :=
-        Application.Command.Greet.Create ("Anne-Marie O'Brien");
+      Cmd    : constant Hybrid_Lib_Ada.Application.Command.Greet.Greet_Command :=
+        Hybrid_Lib_Ada.Application.Command.Greet.Create ("Anne-Marie O'Brien");
       Result : constant Unit_Result.Result := Test_Ops.Greet (Cmd);
    begin
       Run_Test ("Greet special chars - Is_Ok", Unit_Result.Is_Ok (Result));
@@ -166,8 +166,8 @@ begin
    Reset_Mock;
    Mock_Should_Fail := True;
    declare
-      Cmd    : constant Application.Command.Greet.Greet_Command :=
-        Application.Command.Greet.Create ("Test");
+      Cmd    : constant Hybrid_Lib_Ada.Application.Command.Greet.Greet_Command :=
+        Hybrid_Lib_Ada.Application.Command.Greet.Create ("Test");
       Result : constant Unit_Result.Result := Test_Ops.Greet (Cmd);
    begin
       Run_Test ("Greet with failing writer - Is_Error",
@@ -188,10 +188,10 @@ begin
 
    Reset_Mock;
    declare
-      Cmd1   : constant Application.Command.Greet.Greet_Command :=
-        Application.Command.Greet.Create ("First");
-      Cmd2   : constant Application.Command.Greet.Greet_Command :=
-        Application.Command.Greet.Create ("Second");
+      Cmd1   : constant Hybrid_Lib_Ada.Application.Command.Greet.Greet_Command :=
+        Hybrid_Lib_Ada.Application.Command.Greet.Create ("First");
+      Cmd2   : constant Hybrid_Lib_Ada.Application.Command.Greet.Greet_Command :=
+        Hybrid_Lib_Ada.Application.Command.Greet.Create ("Second");
       Result1 : constant Unit_Result.Result := Test_Ops.Greet (Cmd1);
       Result2 : constant Unit_Result.Result := Test_Ops.Greet (Cmd2);
    begin

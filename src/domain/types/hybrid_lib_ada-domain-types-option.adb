@@ -1,6 +1,6 @@
 pragma Ada_2022;
 --  =========================================================================
---  Domain.Types.Option - Implementation of Option monad
+--  Hybrid_Lib_Ada.Domain.Types.Option - Implementation of Option monad
 --  =========================================================================
 --  Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
 --  SPDX-License-Identifier: BSD-3-Clause
@@ -10,7 +10,7 @@ pragma Ada_2022;
 --    (Get, Get_Or_Else), and railway combinators (Map, Flat_Map, Filter).
 --  =========================================================================
 
-package body Domain.Types.Option is
+package body Hybrid_Lib_Ada.Domain.Types.Option is
 
    package body Generic_Option is
 
@@ -158,4 +158,4 @@ package body Domain.Types.Option is
 
    end Generic_Option;
 
-end Domain.Types.Option;
+end Hybrid_Lib_Ada.Domain.Types.Option;

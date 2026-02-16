@@ -1,6 +1,6 @@
 pragma Ada_2022;
 --  =========================================================================
---  Domain.Error.Result - Implementation of Result monad
+--  Hybrid_Lib_Ada.Domain.Error.Result - Implementation of Result monad
 --  =========================================================================
 --  Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
 --  SPDX-License-Identifier: BSD-3-Clause
@@ -10,7 +10,7 @@ pragma Ada_2022;
 --    (Get, Get_Error), and railway combinators (Map, Flat_Map, Map_Error).
 --  =========================================================================
 
-package body Domain.Error.Result is
+package body Hybrid_Lib_Ada.Domain.Error.Result is
 
    package body Generic_Result is
 
@@ -291,4 +291,4 @@ package body Domain.Error.Result is
       end if;
    end And_Then_Into;
 
-end Domain.Error.Result;
+end Hybrid_Lib_Ada.Domain.Error.Result;

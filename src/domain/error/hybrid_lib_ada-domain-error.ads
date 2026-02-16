@@ -1,6 +1,6 @@
 pragma Ada_2022;
 --  =========================================================================
---  Domain.Error - Error handling types and utilities
+--  Hybrid_Lib_Ada.Domain.Error - Error handling types and utilities
 --  =========================================================================
 --  Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
 --  SPDX-License-Identifier: BSD-3-Clause
@@ -12,28 +12,28 @@ pragma Ada_2022;
 --  Architecture Notes:
 --    - Part of the DOMAIN layer (innermost, zero dependencies)
 --    - Error types are concrete (not generic) for consistency
---    - Used with Domain.Error.Result monad for functional error handling
+--    - Used with Hybrid_Lib_Ada.Domain.Error.Result monad for functional error handling
 --    - All errors use bounded strings (no heap allocation)
 --
 --  Usage:
---    with Domain.Error;           -- Gets error types
---    with Domain.Error.Result;    -- Gets Result[T] monad
+--    with Hybrid_Lib_Ada.Domain.Error;           -- Gets error types
+--    with Hybrid_Lib_Ada.Domain.Error.Result;    -- Gets Result[T] monad
 --
---    use Domain.Error;  -- Makes Error_Kind, Error_Type visible
+--    use Hybrid_Lib_Ada.Domain.Error;  -- Makes Error_Kind, Error_Type visible
 --
 --  Design Pattern:
---    Domain error types as building blocks for Result monad:
+--    Hybrid_Lib_Ada.Domain error types as building blocks for Result monad:
 --    - Error_Kind: Enumeration of error categories
 --    - Error_Type: Record containing kind + message
 --    - Result[T]: Either monad that wraps T or Error_Type
 --
 --  See Also:
---    Domain.Error.Result - Generic Result monad using these error types
+--    Hybrid_Lib_Ada.Domain.Error.Result - Generic Result monad using these error types
 --  =========================================================================
 
 with Ada.Strings.Bounded;
 
-package Domain.Error
+package Hybrid_Lib_Ada.Domain.Error
   with Preelaborate
 is
 
@@ -52,7 +52,7 @@ is
    --  Categories of errors that can occur in the application
    --  More granular than a single "Infrastructure_Error" for better handling
    type Error_Kind is
-     (Validation_Error,  --  Domain validation failures (invalid input)
+     (Validation_Error,  --  Hybrid_Lib_Ada.Domain validation failures (invalid input)
       Parse_Error,       --  Malformed data/parsing failures
       Not_Found_Error,   --  Resource not found (file, record, etc.)
       IO_Error,          --  I/O operations (file, network, console)
@@ -69,4 +69,4 @@ is
       Message : Error_Strings.Bounded_String;
    end record;
 
-end Domain.Error;
+end Hybrid_Lib_Ada.Domain.Error;

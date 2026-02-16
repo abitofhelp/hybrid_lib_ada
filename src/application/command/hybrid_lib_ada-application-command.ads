@@ -1,6 +1,6 @@
 pragma Ada_2022;
 --  =========================================================================
---  Application.Command - Parent package for command DTOs
+--  Hybrid_Lib_Ada.Application.Command - Parent package for command DTOs
 --  =========================================================================
 --  Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
 --  SPDX-License-Identifier: BSD-3-Clause
@@ -20,12 +20,12 @@ pragma Ada_2022;
 --    API layer sends commands, application executes them.
 --
 --  See Also:
---    Application.Command.Greet - Example command DTO
---    Application.Usecase - Use cases that process commands
+--    Hybrid_Lib_Ada.Application.Command.Greet - Example command DTO
+--    Hybrid_Lib_Ada.Application.Usecase - Use cases that process commands
 --  =========================================================================
 
-package Application.Command
+package Hybrid_Lib_Ada.Application.Command
   with Pure
 is
 
-end Application.Command;
+end Hybrid_Lib_Ada.Application.Command;

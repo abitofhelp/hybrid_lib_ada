@@ -1,6 +1,6 @@
 pragma Ada_2022;
 --  =========================================================================
---  Domain.Error.Result - Generic Result monad for error handling
+--  Hybrid_Lib_Ada.Domain.Error.Result - Generic Result monad for error handling
 --  =========================================================================
 --  Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
 --  SPDX-License-Identifier: BSD-3-Clause
@@ -11,14 +11,14 @@ pragma Ada_2022;
 --
 --  Architecture Notes:
 --    - Generic over success type T
---    - Uses Domain.Error.Error_Type for all errors
+--    - Uses Hybrid_Lib_Ada.Domain.Error.Error_Type for all errors
 --    - Pure domain implementation (no external dependencies)
 --    - Enables functional composition and error propagation
 --
 --  Usage:
---    with Domain.Error.Result;
+--    with Hybrid_Lib_Ada.Domain.Error.Result;
 --
---    package String_Result is new Domain.Error.Result.Generic_Result
+--    package String_Result is new Hybrid_Lib_Ada.Domain.Error.Result.Generic_Result
 --      (T => String);
 --
 --    R : String_Result.Result := String_Result.Ok ("success");
@@ -33,10 +33,10 @@ pragma Ada_2022;
 --    - Forces explicit error handling at compile time
 --
 --  See Also:
---    Domain.Error - Error types used by this monad
+--    Hybrid_Lib_Ada.Domain.Error - Error types used by this monad
 --  =========================================================================
 
-package Domain.Error.Result
+package Hybrid_Lib_Ada.Domain.Error.Result
   with Preelaborate
 is
 
@@ -272,4 +272,4 @@ is
    --  If Self is Error, converts to Target_Result.Error (same error info)
    --  If Self is Ok, calls F with value (F might return Error)
 
-end Domain.Error.Result;
+end Hybrid_Lib_Ada.Domain.Error.Result;

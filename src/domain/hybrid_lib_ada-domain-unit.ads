@@ -1,6 +1,6 @@
 pragma Ada_2022;
 --  =========================================================================
---  Domain.Unit - Unit type for Result with no meaningful value
+--  Hybrid_Lib_Ada.Domain.Unit - Unit type for Result with no meaningful value
 --  =========================================================================
 --  Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
 --  SPDX-License-Identifier: BSD-3-Clause
@@ -15,22 +15,22 @@ pragma Ada_2022;
 --    - DOMAIN layer (innermost, zero dependencies)
 --    - Allows consistent Result[Unit] return type instead of procedures
 --    - Similar to () in Rust, void in C, or Unit in Scala
---    - Located in Domain so ANY layer can use Result[Unit]
+--    - Located in Hybrid_Lib_Ada.Domain so ANY layer can use Result[Unit]
 --
 --  Usage:
---    with Domain.Unit;
---    with Domain.Error.Result;
+--    with Hybrid_Lib_Ada.Domain.Unit;
+--    with Hybrid_Lib_Ada.Domain.Error.Result;
 --
 --    package Unit_Result is new
---      Domain.Error.Result.Generic_Result (T => Domain.Unit.Unit);
+--      Hybrid_Lib_Ada.Domain.Error.Result.Generic_Result (T => Hybrid_Lib_Ada.Domain.Unit.Unit);
 --
 --    function Write (Message : String) return Unit_Result.Result;
 --
 --  See Also:
---    Domain.Error.Result - Generic Result monad
+--    Hybrid_Lib_Ada.Domain.Error.Result - Generic Result monad
 --  =========================================================================
 
-package Domain.Unit
+package Hybrid_Lib_Ada.Domain.Unit
   with Pure
 is
 
@@ -44,4 +44,4 @@ is
    --  Singleton instance for convenience
    Unit_Value : constant Unit := (null record);
 
-end Domain.Unit;
+end Hybrid_Lib_Ada.Domain.Unit;

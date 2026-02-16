@@ -25,9 +25,9 @@ pragma Ada_2022;
 --
 --  Architecture:
 --    This library follows hybrid DDD/Clean/Hexagonal architecture:
---    - Domain: Pure business logic (Person value object)
---    - Application: Use cases and ports (Greet use case)
---    - Infrastructure: Adapters (Console_Writer)
+--    - Hybrid_Lib_Ada.Domain: Pure business logic (Person value object)
+--    - Hybrid_Lib_Ada.Application: Use cases and ports (Greet use case)
+--    - Hybrid_Lib_Ada.Infrastructure: Adapters (Console_Writer)
 --    - API: Public facade (Hybrid_Lib_Ada.API)
 --
 --  Public API:

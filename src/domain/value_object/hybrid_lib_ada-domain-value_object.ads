@@ -1,6 +1,6 @@
 pragma Ada_2022;
 --  =========================================================================
---  Domain.Value_Object - Parent package for domain value objects
+--  Hybrid_Lib_Ada.Domain.Value_Object - Parent package for domain value objects
 --  =========================================================================
 --  Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
 --  SPDX-License-Identifier: BSD-3-Clause
@@ -16,11 +16,11 @@ pragma Ada_2022;
 --    - Value objects typically include validation logic
 --
 --  See Also:
---    Domain.Value_Object.Person - Person value object
+--    Hybrid_Lib_Ada.Domain.Value_Object.Person - Person value object
 --  =========================================================================
 
-package Domain.Value_Object
+package Hybrid_Lib_Ada.Domain.Value_Object
   with Pure
 is
 
-end Domain.Value_Object;
+end Hybrid_Lib_Ada.Domain.Value_Object;

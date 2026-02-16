@@ -14,6 +14,7 @@
 
 with "../../hybrid_lib_ada_shared_config.gpr";
 with "../../hybrid_lib_ada_internal.gpr";
+with "../../src/root/root.gpr";
 
 project Integration_Tests is
 

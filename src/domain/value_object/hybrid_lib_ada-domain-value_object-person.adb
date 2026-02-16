@@ -1,6 +1,6 @@
 pragma Ada_2022;
 --  =========================================================================
---  Domain.Value_Object.Person - Implementation of Person value object
+--  Hybrid_Lib_Ada.Domain.Value_Object.Person - Implementation of Person value object
 --  =========================================================================
 --  Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
 --  SPDX-License-Identifier: BSD-3-Clause
@@ -10,10 +10,10 @@ pragma Ada_2022;
 --    and Is_Valid_Person predicate for type invariant checking.
 --  =========================================================================
 
-package body Domain.Value_Object.Person is
+package body Hybrid_Lib_Ada.Domain.Value_Object.Person is
 
    use Person_Strings;
-   use Domain.Error;
+   use Hybrid_Lib_Ada.Domain.Error;
 
    ----------------------
    -- Is_Valid_Person --
@@ -64,4 +64,4 @@ package body Domain.Value_Object.Person is
       return To_String (Self.Name_Value);
    end Get_Name;
 
-end Domain.Value_Object.Person;
+end Hybrid_Lib_Ada.Domain.Value_Object.Person;

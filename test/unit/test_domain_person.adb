@@ -1,5 +1,5 @@
 pragma Ada_2022;
-with Domain;
+with Hybrid_Lib_Ada.Domain;
 --  ======================================================================
 --  Test_Domain_Person
 --  ======================================================================
@@ -7,22 +7,22 @@ with Domain;
 --  SPDX-License-Identifier: BSD-3-Clause
 --
 --  Purpose:
---    Unit tests for Domain.Value_Object.Person value object.
+--    Unit tests for Hybrid_Lib_Ada.Domain.Value_Object.Person value object.
 --    Tests Create validation and Get_Name accessor.
---    (Greeting format moved to Application layer)
+--    (Greeting format moved to Hybrid_Lib_Ada.Application layer)
 --  ======================================================================
 
 with Ada.Text_IO;
 with Ada.Strings.Fixed;
-with Domain.Error;
-with Domain.Value_Object.Person;
+with Hybrid_Lib_Ada.Domain.Error;
+with Hybrid_Lib_Ada.Domain.Value_Object.Person;
 with Test_Framework;
 
 procedure Test_Domain_Person is
 
    use Ada.Text_IO;
-   use Domain.Error;
-   use Domain.Value_Object.Person;
+   use Hybrid_Lib_Ada.Domain.Error;
+   use Hybrid_Lib_Ada.Domain.Value_Object.Person;
 
    --  Test statistics
    Total_Tests  : Natural := 0;
@@ -44,7 +44,7 @@ procedure Test_Domain_Person is
 
 begin
    Put_Line ("========================================");
-   Put_Line ("Testing: Domain.Value_Object.Person");
+   Put_Line ("Testing: Hybrid_Lib_Ada.Domain.Value_Object.Person");
    Put_Line ("========================================");
    New_Line;
 
@@ -274,7 +274,7 @@ begin
    --  Print summary
    New_Line;
    Put_Line ("========================================");
-   Put_Line ("Test Summary: Domain.Value_Object.Person");
+   Put_Line ("Test Summary: Hybrid_Lib_Ada.Domain.Value_Object.Person");
    Put_Line ("========================================");
    Put_Line ("Total tests: " & Total_Tests'Image);
    Put_Line ("Passed:      " & Passed_Tests'Image);

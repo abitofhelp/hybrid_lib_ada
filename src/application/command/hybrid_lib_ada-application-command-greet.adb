@@ -1,6 +1,6 @@
 pragma Ada_2022;
 --  =========================================================================
---  Application.Command.Greet - Implementation of DTO helpers
+--  Hybrid_Lib_Ada.Application.Command.Greet - Implementation of DTO helpers
 --  =========================================================================
 --  Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
 --  SPDX-License-Identifier: BSD-3-Clause
@@ -10,7 +10,7 @@ pragma Ada_2022;
 --    Greet_Command DTO used to pass data between API layer and use case.
 --  =========================================================================
 
-package body Application.Command.Greet is
+package body Hybrid_Lib_Ada.Application.Command.Greet is
 
    use Greet_Strings;
 
@@ -32,4 +32,4 @@ package body Application.Command.Greet is
       return To_String (Cmd.Name);
    end Get_Name;
 
-end Application.Command.Greet;
+end Hybrid_Lib_Ada.Application.Command.Greet;

@@ -16,6 +16,7 @@
 -- ==========================================================================
 
 with "../../hybrid_lib_ada_shared_config.gpr";
+with "../root/root.gpr";
 
 library project Version is
 

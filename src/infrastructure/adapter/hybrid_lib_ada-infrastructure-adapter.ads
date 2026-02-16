@@ -1,6 +1,6 @@
 pragma Ada_2022;
 --  =========================================================================
---  Infrastructure.Adapter - Parent package for concrete adapters
+--  Hybrid_Lib_Ada.Infrastructure.Adapter - Parent package for concrete adapters
 --  =========================================================================
 --  Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
 --  SPDX-License-Identifier: BSD-3-Clause
@@ -17,17 +17,17 @@ pragma Ada_2022;
 --
 --  Design Pattern:
 --    ADAPTER pattern (Hexagonal Architecture / Ports & Adapters):
---    - Application defines interface it needs (port)
+--    - Hybrid_Lib_Ada.Application defines interface it needs (port)
 --    - Adapter implements that interface using external system
 --    - api/desktop (composition root) wires adapter to application
 --
 --  See Also:
---    Infrastructure.Adapter.Console_Writer - Console output adapter
---    Application.Port.Outbound - Port interfaces
+--    Hybrid_Lib_Ada.Infrastructure.Adapter.Console_Writer - Console output adapter
+--    Hybrid_Lib_Ada.Application.Port.Outbound - Port interfaces
 --  =========================================================================
 
-package Infrastructure.Adapter
+package Hybrid_Lib_Ada.Infrastructure.Adapter
   with Pure
 is
 
-end Infrastructure.Adapter;
+end Hybrid_Lib_Ada.Infrastructure.Adapter;

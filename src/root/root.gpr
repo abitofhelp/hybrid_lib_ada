@@ -1,0 +1,31 @@
+-- ================================================================
+-- Root GPR - Project Root Package
+-- ================================================================
+-- Copyright (c) 2026 Michael Gardner, A Bit of Help, Inc.
+-- SPDX-License-Identifier: BSD-3-Clause
+--
+-- Purpose:
+--   Provides the project root package (Hybrid_Lib_Ada) so that all
+--   layer GPR projects can compile their child packages.
+-- ================================================================
+
+with "../../hybrid_lib_ada_shared_config.gpr";
+
+library project Root is
+
+   for Source_Dirs use (".");
+   for Object_Dir use "../../obj/root";
+   for Library_Dir use "../../lib/root";
+   for Library_Name use "root";
+   for Library_Kind use "static";
+   for Create_Missing_Dirs use "True";
+
+   for Library_Standalone use "standard";
+
+   for Library_Interface use
+     ("Hybrid_Lib_Ada");
+
+   package Compiler renames Hybrid_Lib_Ada_Shared_Config.Compiler;
+   package Binder renames Hybrid_Lib_Ada_Shared_Config.Binder;
+
+end Root;

@@ -1,6 +1,6 @@
 pragma Ada_2022;
 --  =========================================================================
---  Application.Command.Greet - DTO for greet use case
+--  Hybrid_Lib_Ada.Application.Command.Greet - DTO for greet use case
 --  =========================================================================
 --  Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
 --  SPDX-License-Identifier: BSD-3-Clause
@@ -15,26 +15,26 @@ pragma Ada_2022;
 --    - No business logic in DTOs
 --    - DTOs are different from domain entities
 --    - This separates external API from internal domain model
---    - Crosses boundary: API -> Application
+--    - Crosses boundary: API -> Hybrid_Lib_Ada.Application
 --
 --  Mapping to Go:
 --    Go: application/port/greet_command.go
 --    type GreetCommand struct { Name string }
 --
 --  See Also:
---    Domain.Value_Object.Person - Domain entity (different from DTO)
+--    Hybrid_Lib_Ada.Domain.Value_Object.Person - Hybrid_Lib_Ada.Domain entity (different from DTO)
 --  =========================================================================
 
 with Ada.Strings.Bounded;
 
-package Application.Command.Greet
+package Hybrid_Lib_Ada.Application.Command.Greet
   with Preelaborate
 is
 
    --  Maximum name length for DTO boundary (larger than domain constraint).
-   --  DTO accepts up to 256 chars; Domain validates and rejects > 100 chars.
+   --  DTO accepts up to 256 chars; Hybrid_Lib_Ada.Domain validates and rejects > 100 chars.
    --  This intentional boundary isolation:
-   --    1. Allows Domain to shrink constraints without breaking Command
+   --    1. Allows Hybrid_Lib_Ada.Domain to shrink constraints without breaking Command
    --    2. Defense in depth (two validation points)
    --    3. SPARK-compatible (bounded strings throughout)
    Max_DTO_Name_Length : constant := 256;
@@ -50,7 +50,7 @@ is
    --  ========================================================================
 
    --  Data Transfer Object for greet use case.
-   --  Simple data structure that crosses API -> Application
+   --  Simple data structure that crosses API -> Hybrid_Lib_Ada.Application
    --  boundary. It may carry invalid data; the domain layer is responsible
    --  for validating the name and returning appropriate Result errors.
 
@@ -60,10 +60,10 @@ is
 
    --  Helper function to create DTO from String. This function does not
    --  perform validation; it simply packages the raw input. Validation is
-   --  performed in Domain.Value_Object.Person.Create via Result.
+   --  performed in Hybrid_Lib_Ada.Domain.Value_Object.Person.Create via Result.
    function Create (Name : String) return Greet_Command;
 
    --  Helper function to extract name as String
    function Get_Name (Cmd : Greet_Command) return String;
 
-end Application.Command.Greet;
+end Hybrid_Lib_Ada.Application.Command.Greet;

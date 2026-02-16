@@ -6,18 +6,18 @@ pragma Ada_2022;
 --  SPDX-License-Identifier: BSD-3-Clause
 --
 --  Purpose:
---    Unit tests for Application.Command.Greet DTO.
+--    Unit tests for Hybrid_Lib_Ada.Application.Command.Greet DTO.
 --    Tests Create function and then Get_Name accessor.
 --  ======================================================================
 
 with Ada.Text_IO;
-with Application.Command.Greet;
+with Hybrid_Lib_Ada.Application.Command.Greet;
 with Test_Framework;
 
 procedure Test_Application_Command_Greet is
 
    use Ada.Text_IO;
-   use Application.Command.Greet;
+   use Hybrid_Lib_Ada.Application.Command.Greet;
 
    --  Test statistics
    Total_Tests  : Natural := 0;
@@ -39,7 +39,7 @@ procedure Test_Application_Command_Greet is
 
 begin
    Put_Line ("========================================");
-   Put_Line ("Testing: Application.Command.Greet");
+   Put_Line ("Testing: Hybrid_Lib_Ada.Application.Command.Greet");
    Put_Line ("========================================");
    New_Line;
 
@@ -173,7 +173,7 @@ begin
    --  Print summary
    New_Line;
    Put_Line ("========================================");
-   Put_Line ("Test Summary: Application.Command.Greet");
+   Put_Line ("Test Summary: Hybrid_Lib_Ada.Application.Command.Greet");
    Put_Line ("========================================");
    Put_Line ("Total tests: " & Total_Tests'Image);
    Put_Line ("Passed:      " & Passed_Tests'Image);

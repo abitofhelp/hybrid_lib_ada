@@ -1,6 +1,6 @@
 pragma Ada_2022;
 --  =========================================================================
---  Domain.Types.Option - Generic Option/Maybe monad
+--  Hybrid_Lib_Ada.Domain.Types.Option - Generic Option/Maybe monad
 --  =========================================================================
 --  Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
 --  SPDX-License-Identifier: BSD-3-Clause
@@ -17,9 +17,9 @@ pragma Ada_2022;
 --    - Alternative to null pointers and access types
 --
 --  Usage:
---    with Domain.Types.Option;
+--    with Hybrid_Lib_Ada.Domain.Types.Option;
 --
---    package String_Option is new Domain.Types.Option (T => String);
+--    package String_Option is new Hybrid_Lib_Ada.Domain.Types.Option (T => String);
 --
 --    Opt : String_Option.Option := String_Option.Of_Value ("value");
 --    if String_Option.Is_Some (Opt) then
@@ -32,10 +32,10 @@ pragma Ada_2022;
 --    - Forces explicit handling of missing values at compile time
 --
 --  See Also:
---    Domain.Error.Result - For computations that can fail with error
+--    Hybrid_Lib_Ada.Domain.Error.Result - For computations that can fail with error
 --  =========================================================================
 
-package Domain.Types.Option
+package Hybrid_Lib_Ada.Domain.Types.Option
   with Preelaborate
 is
 
@@ -173,4 +173,4 @@ is
 
    end Generic_Option;
 
-end Domain.Types.Option;
+end Hybrid_Lib_Ada.Domain.Types.Option;

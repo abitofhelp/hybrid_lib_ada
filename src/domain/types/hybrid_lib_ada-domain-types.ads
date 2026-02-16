@@ -1,6 +1,6 @@
 pragma Ada_2022;
 --  =========================================================================
---  Domain.Types - Parent package for domain utility types
+--  Hybrid_Lib_Ada.Domain.Types - Parent package for domain utility types
 --  =========================================================================
 --  Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
 --  SPDX-License-Identifier: BSD-3-Clause
@@ -17,15 +17,15 @@ pragma Ada_2022;
 --    - Pure implementation with no external dependencies
 --
 --  Contents:
---    Domain.Types.Option - Option/Maybe monad for optional values
+--    Hybrid_Lib_Ada.Domain.Types.Option - Option/Maybe monad for optional values
 --
 --  See Also:
---    Domain.Value_Object - Domain-specific value objects
---    Domain.Error.Result - Result monad for error handling
+--    Hybrid_Lib_Ada.Domain.Value_Object - Domain-specific value objects
+--    Hybrid_Lib_Ada.Domain.Error.Result - Result monad for error handling
 --  =========================================================================
 
-package Domain.Types
+package Hybrid_Lib_Ada.Domain.Types
   with Pure
 is
 
-end Domain.Types;
+end Hybrid_Lib_Ada.Domain.Types;

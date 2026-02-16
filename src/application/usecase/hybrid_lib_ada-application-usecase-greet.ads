@@ -1,6 +1,6 @@
 pragma Ada_2022;
 --  =========================================================================
---  Application.Usecase.Greet - Greet use case orchestration
+--  Hybrid_Lib_Ada.Application.Usecase.Greet - Greet use case orchestration
 --  =========================================================================
 --  Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
 --  SPDX-License-Identifier: BSD-3-Clause
@@ -18,23 +18,23 @@ pragma Ada_2022;
 --    - Depends on output ports defined in application layer
 --    - Never imports infrastructure layer
 --
---  Dependency Flow (all pointing INWARD toward Domain):
---    Greet_Use_Case -> Domain.Value_Object.Person
---    Greet_Use_Case -> Application.Port.Out.Writer
+--  Dependency Flow (all pointing INWARD toward Hybrid_Lib_Ada.Domain):
+--    Greet_Use_Case -> Hybrid_Lib_Ada.Domain.Value_Object.Person
+--    Greet_Use_Case -> Hybrid_Lib_Ada.Application.Port.Out.Writer
 --    (port interface)
---    Infrastructure.Console_Adapter -> Application.Port.Out.Writer
+--    Hybrid_Lib_Ada.Infrastructure.Console_Adapter -> Hybrid_Lib_Ada.Application.Port.Out.Writer
 --    (implements)
 --    - Takes Console_Write function as generic parameter
---    - Infrastructure provides the implementation
+--    - Hybrid_Lib_Ada.Infrastructure provides the implementation
 --    - api/desktop (composition root) wires them together
 --
 --  See Also:
---    Domain.Value_Object.Person - Person value object
---    Application.Port.Out.Writer - Output port interface
+--    Hybrid_Lib_Ada.Domain.Value_Object.Person - Person value object
+--    Hybrid_Lib_Ada.Application.Port.Out.Writer - Output port interface
 --  =========================================================================
 
-with Application.Port.Outbound.Writer;
-with Application.Command.Greet;
+with Hybrid_Lib_Ada.Application.Port.Outbound.Writer;
+with Hybrid_Lib_Ada.Application.Command.Greet;
 
 --  ========================================================================
 --  Generic Use Case Package
@@ -46,15 +46,15 @@ with Application.Command.Greet;
 --  This demonstrates STATIC DEPENDENCY INJECTION via generics:
 --  - No runtime overhead (compared to interface dispatch)
 --  - Compile-time verification of port compatibility
---  - Dependencies still point inbound (Application doesn't import
---    Infrastructure)
+--  - Dependencies still point inbound (Hybrid_Lib_Ada.Application doesn't import
+--    Hybrid_Lib_Ada.Infrastructure)
 
 generic
    with
      function Writer
        (Message : String)
-        return Application.Port.Outbound.Writer.Unit_Result.Result;
-package Application.Usecase.Greet with Preelaborate is
+        return Hybrid_Lib_Ada.Application.Port.Outbound.Writer.Unit_Result.Result;
+package Hybrid_Lib_Ada.Application.Usecase.Greet with Preelaborate is
 
    --  ======================================================================
    --  Execute: Run the greeting use case
@@ -74,7 +74,7 @@ package Application.Usecase.Greet with Preelaborate is
    --  - IO_Error: Console write failure (rare, but possible)
 
    function Execute
-     (Cmd : Application.Command.Greet.Greet_Command)
-      return Application.Port.Outbound.Writer.Unit_Result.Result;
+     (Cmd : Hybrid_Lib_Ada.Application.Command.Greet.Greet_Command)
+      return Hybrid_Lib_Ada.Application.Port.Outbound.Writer.Unit_Result.Result;
 
-end Application.Usecase.Greet;
+end Hybrid_Lib_Ada.Application.Usecase.Greet;

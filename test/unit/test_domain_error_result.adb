@@ -5,21 +5,21 @@ pragma Ada_2022;
 --  Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
 --  SPDX-License-Identifier: BSD-3-Clause
 --  Purpose:
---    Unit tests for Domain.Error.Result monad functionality.
+--    Unit tests for Hybrid_Lib_Ada.Domain.Error.Result monad functionality.
 --    Tests Ok/Error constructors, Is_Ok/Is_Error queries, and then value
 --    extraction.
 --  ======================================================================
 
-with Domain;
+with Hybrid_Lib_Ada.Domain;
 with Ada.Text_IO;
-with Domain.Error;
-with Domain.Error.Result;
+with Hybrid_Lib_Ada.Domain.Error;
+with Hybrid_Lib_Ada.Domain.Error.Result;
 with Test_Framework;
 
 procedure Test_Domain_Error_Result is
 
    use Ada.Text_IO;
-   use Domain.Error;
+   use Hybrid_Lib_Ada.Domain.Error;
 
    --  Test statistics
    Total_Tests  : Natural := 0;
@@ -40,15 +40,15 @@ procedure Test_Domain_Error_Result is
    pragma Style_Checks (On);
 
    --  Instantiate Result for Integer (for testing)
-   package Int_Result is new Domain.Error.Result.Generic_Result (T => Integer);
+   package Int_Result is new Hybrid_Lib_Ada.Domain.Error.Result.Generic_Result (T => Integer);
 
    --  Instantiate Result for Boolean (for testing)
    package Bool_Result is new
-     Domain.Error.Result.Generic_Result (T => Boolean);
+     Hybrid_Lib_Ada.Domain.Error.Result.Generic_Result (T => Boolean);
 
 begin
    Put_Line ("========================================");
-   Put_Line ("Testing: Domain.Error.Result");
+   Put_Line ("Testing: Hybrid_Lib_Ada.Domain.Error.Result");
    Put_Line ("========================================");
    New_Line;
 
@@ -469,7 +469,7 @@ begin
    --  Print summary
    New_Line;
    Put_Line ("========================================");
-   Put_Line ("Test Summary: Domain.Error.Result");
+   Put_Line ("Test Summary: Hybrid_Lib_Ada.Domain.Error.Result");
    Put_Line ("========================================");
    Put_Line ("Total tests: " & Total_Tests'Image);
    Put_Line ("Passed:      " & Passed_Tests'Image);

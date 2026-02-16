@@ -15,6 +15,7 @@
 
 with "../../hybrid_lib_ada_shared_config.gpr";
 with "../domain/domain.gpr";
+with "../root/root.gpr";
 
 library project Application is
 
@@ -50,16 +51,16 @@ library project Application is
    --  NOTE: Domain.* packages are deliberately EXCLUDED
    --  NOTE: Application.Error re-exports Domain.Error types
    for Library_Interface use
-     ("Application",
-      "Application.Command",
-      "Application.Command.Greet",
-      "Application.Error",
-      "Application.Port",
-      "Application.Port.Inbound",
-      "Application.Port.Outbound",
-      "Application.Port.Outbound.Writer",
-      "Application.Usecase",
-      "Application.Usecase.Greet");
+     ("Hybrid_Lib_Ada.Application",
+      "Hybrid_Lib_Ada.Application.Command",
+      "Hybrid_Lib_Ada.Application.Command.Greet",
+      "Hybrid_Lib_Ada.Application.Error",
+      "Hybrid_Lib_Ada.Application.Port",
+      "Hybrid_Lib_Ada.Application.Port.Inbound",
+      "Hybrid_Lib_Ada.Application.Port.Outbound",
+      "Hybrid_Lib_Ada.Application.Port.Outbound.Writer",
+      "Hybrid_Lib_Ada.Application.Usecase",
+      "Hybrid_Lib_Ada.Application.Usecase.Greet");
 
    package Compiler renames Hybrid_Lib_Ada_Shared_Config.Compiler;
    package Binder renames Hybrid_Lib_Ada_Shared_Config.Binder;

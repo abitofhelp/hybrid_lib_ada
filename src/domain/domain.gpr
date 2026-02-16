@@ -11,6 +11,7 @@
 -- ==========================================================================
 
 with "../../hybrid_lib_ada_shared_config.gpr";
+with "../root/root.gpr";
 
 library project Domain is
 
@@ -38,14 +39,14 @@ library project Domain is
    for Library_Standalone use "standard";
 
    for Library_Interface use
-     ("Domain",
-      "Domain.Unit",
-      "Domain.Error",
-      "Domain.Error.Result",
-      "Domain.Value_Object",
-      "Domain.Types",
-      "Domain.Types.Option",
-      "Domain.Value_Object.Person");
+     ("Hybrid_Lib_Ada.Domain",
+      "Hybrid_Lib_Ada.Domain.Unit",
+      "Hybrid_Lib_Ada.Domain.Error",
+      "Hybrid_Lib_Ada.Domain.Error.Result",
+      "Hybrid_Lib_Ada.Domain.Value_Object",
+      "Hybrid_Lib_Ada.Domain.Types",
+      "Hybrid_Lib_Ada.Domain.Types.Option",
+      "Hybrid_Lib_Ada.Domain.Value_Object.Person");
 
    package Compiler renames Hybrid_Lib_Ada_Shared_Config.Compiler;
    package Binder renames Hybrid_Lib_Ada_Shared_Config.Binder;

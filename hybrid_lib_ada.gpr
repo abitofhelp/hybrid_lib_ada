@@ -110,7 +110,7 @@ library project Hybrid_Lib_Ada is
    --    - GPRbuild: Prevents clients from accessing non-listed packages
    --  =======================================================================
 
-   for Library_Standalone use "standard";
+   for Library_Standalone use "encapsulated";
 
    --  Public Interface: Root package + Domain layer + API facade + Config
    --  Infrastructure is EXCLUDED (implementation detail)
@@ -121,21 +121,21 @@ library project Hybrid_Lib_Ada is
       "Hybrid_Lib_Ada",
       "Hybrid_Lib_Ada.API",
       "Hybrid_Lib_Ada.Version",
-      "Domain",
-      "Domain.Error",
-      "Domain.Error.Result",
-      "Domain.Unit",
-      "Domain.Value_Object",
-      "Domain.Value_Object.Person",
-      "Domain.Types",
-      "Domain.Types.Option",
+      "Hybrid_Lib_Ada.Domain",
+      "Hybrid_Lib_Ada.Domain.Error",
+      "Hybrid_Lib_Ada.Domain.Error.Result",
+      "Hybrid_Lib_Ada.Domain.Unit",
+      "Hybrid_Lib_Ada.Domain.Value_Object",
+      "Hybrid_Lib_Ada.Domain.Value_Object.Person",
+      "Hybrid_Lib_Ada.Domain.Types",
+      "Hybrid_Lib_Ada.Domain.Types.Option",
       --  Application types re-exported via API
-      "Application",
-      "Application.Command",
-      "Application.Command.Greet",
-      "Application.Port",
-      "Application.Port.Outbound",
-      "Application.Port.Outbound.Writer");
+      "Hybrid_Lib_Ada.Application",
+      "Hybrid_Lib_Ada.Application.Command",
+      "Hybrid_Lib_Ada.Application.Command.Greet",
+      "Hybrid_Lib_Ada.Application.Port",
+      "Hybrid_Lib_Ada.Application.Port.Outbound",
+      "Hybrid_Lib_Ada.Application.Port.Outbound.Writer");
 
    -- ==========================================================================
    -- Package References: Inherit from Hybrid_Lib_Ada_Shared_Config

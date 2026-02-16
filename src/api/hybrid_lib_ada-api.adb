@@ -11,7 +11,7 @@ pragma Ada_2022;
 --
 --  Architecture Note:
 --    API body imports API.Desktop (same layer child package), which is
---    the composition root. API does NOT import Infrastructure directly.
+--    the composition root. API does NOT import Hybrid_Lib_Ada.Infrastructure directly.
 --    This maintains clean hexagonal boundaries.
 --
 --  ===========================================================================
