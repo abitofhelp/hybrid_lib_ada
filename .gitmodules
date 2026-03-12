@@ -6,4 +6,4 @@
 	url = https://github.com/abitofhelp/hybrid_lib_docs.git
 [submodule "scripts/python/shared"]
 	path = scripts/python/shared
-	url = https://github.com/abitofhelp/hybrid_python_scripts.git
+	url = https://github.com/abitofhelp/hybrid_scripts_python.git
