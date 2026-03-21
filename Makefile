@@ -56,9 +56,12 @@ PYTHON3 := python3
 # NOTE: --no-indirect-imports is NOT needed. Architecture is enforced via
 #       Stand-Alone Library with explicit Library_Interface in hybrid_lib_ada.gpr
 #       which prevents transitive access from API layer to internal packages.
-# Filter build output to show only warnings/errors (capture both stdout and stderr)
-ALR_BUILD_FLAGS := -j0 2>&1 | grep -E 'warning:|error:|\(style\)|finished|Success' || true
-ALR_TEST_FLAGS  := -j0 2>&1 | grep -E 'warning:|error:|\(style\)|finished|Success' || true
+# Build flags (compiler options only)
+ALR_BUILD_FLAGS := -j0
+
+# Build wrapper: filters output to diagnostics only while propagating the
+# build exit code. See scripts/python/shared/makefile/alr_build.py.
+ALR_BUILD_WRAPPER := $(PYTHON3) scripts/python/shared/makefile/alr_build.py
 
 # =============================================================================
 # Directories
@@ -169,29 +172,29 @@ build: build-dev
 
 build-dev: check-arch prereqs
 	@echo "$(GREEN)Building $(PROJECT_NAME) (development mode)...$(NC)"
-	$(ALR) build --development -- $(ALR_BUILD_FLAGS)
+	@$(ALR_BUILD_WRAPPER) $(ALR) build --development -- $(ALR_BUILD_FLAGS)
 	@echo "$(GREEN)✓ Development build complete: $(LIB_DIR)/lib$(PROJECT_NAME).a$(NC)"
 
 build-opt: check-arch prereqs
 	@echo "$(GREEN)Building $(PROJECT_NAME) (validation profile)...$(NC)"
-	$(ALR) build --validation -- $(ALR_BUILD_FLAGS)
+	@$(ALR_BUILD_WRAPPER) $(ALR) build --validation -- $(ALR_BUILD_FLAGS)
 	@echo "$(GREEN)✓ Validation build complete: $(LIB_DIR)/lib$(PROJECT_NAME).a$(NC)"
 
 build-release: check-arch prereqs
 	@echo "$(GREEN)Building $(PROJECT_NAME) (release mode)...$(NC)"
-	$(ALR) build --release -- $(ALR_BUILD_FLAGS)
+	@$(ALR_BUILD_WRAPPER) $(ALR) build --release -- $(ALR_BUILD_FLAGS)
 	@echo "$(GREEN)✓ Release build complete: $(LIB_DIR)/lib$(PROJECT_NAME).a$(NC)"
 
 build-tests: check-arch prereqs
 	@echo "$(GREEN)Building test suites...$(NC)"
 	@if [ -f "$(TEST_DIR)/unit/unit_tests.gpr" ]; then \
-		$(ALR) exec -- $(GPRBUILD) -P $(TEST_DIR)/unit/unit_tests.gpr -p $(ALR_TEST_FLAGS); \
+		$(ALR_BUILD_WRAPPER) $(ALR) exec -- $(GPRBUILD) -P $(TEST_DIR)/unit/unit_tests.gpr -p $(ALR_BUILD_FLAGS); \
 		echo "$(GREEN)✓ Unit tests built$(NC)"; \
 	else \
 		echo "$(YELLOW)Unit test project not found$(NC)"; \
 	fi
 	@if [ -f "$(TEST_DIR)/integration/integration_tests.gpr" ]; then \
-		$(ALR) exec -- $(GPRBUILD) -P $(TEST_DIR)/integration/integration_tests.gpr -p $(ALR_TEST_FLAGS); \
+		$(ALR_BUILD_WRAPPER) $(ALR) exec -- $(GPRBUILD) -P $(TEST_DIR)/integration/integration_tests.gpr -p $(ALR_BUILD_FLAGS); \
 		echo "$(GREEN)✓ Integration tests built$(NC)"; \
 	else \
 		echo "$(YELLOW)Integration test project not found$(NC)"; \
@@ -235,6 +238,8 @@ clean:
 	@$(ALR) exec -- gprclean -P $(TEST_DIR)/unit/unit_tests.gpr -q 2>/dev/null || true
 	@$(ALR) exec -- gprclean -P $(TEST_DIR)/integration/integration_tests.gpr -q 2>/dev/null || true
 	@rm -rf $(BUILD_DIR) $(LIB_DIR) $(TEST_DIR)/bin $(TEST_DIR)/obj
+	@# Delete platform-specific lock file (see README: Platform Build Constraint)
+	@rm -f alire/alire.lock
 	@find . -name "*.backup" -delete 2>/dev/null || true
 	@echo "$(GREEN)✓ Project artifacts cleaned (dependencies preserved for fast rebuild)$(NC)"
 
@@ -351,7 +356,7 @@ test-coverage: ## Run tests with GNATcoverage analysis
 
 check:
 	@echo "$(GREEN)Running code checks...$(NC)"
-	@$(ALR) build --development -- $(ALR_BUILD_FLAGS)
+	@$(ALR_BUILD_WRAPPER) $(ALR) build --development -- $(ALR_BUILD_FLAGS)
 	@echo "$(GREEN)✓ Code checks complete$(NC)"
 
 check-arch: ## Validate hexagonal architecture boundaries
