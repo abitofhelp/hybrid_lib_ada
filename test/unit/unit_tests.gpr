@@ -12,9 +12,7 @@
 --        make test-unit
 -- ===========================================================================
 
-with "../../hybrid_lib_ada_shared_config.gpr";
 with "../../hybrid_lib_ada_internal.gpr";
-with "../../src/root/root.gpr";
 
 project Unit_Tests is
 
@@ -25,8 +23,14 @@ project Unit_Tests is
    --  Only the runner is Main; individual tests are procedures it calls
    for Main use ("unit_runner.adb");
 
-   package Compiler renames Hybrid_Lib_Ada_Shared_Config.Compiler;
-   package Binder renames Hybrid_Lib_Ada_Shared_Config.Binder;
+   package Compiler is
+      for Default_Switches ("Ada") use
+         Hybrid_Lib_Ada_Internal.Compiler'Default_Switches ("Ada");
+   end Compiler;
+
+   package Binder is
+      for Switches ("Ada") use ("-Es");
+   end Binder;
 
    package Builder is
       for Switches ("Ada") use ("-g");  -- Debug symbols
