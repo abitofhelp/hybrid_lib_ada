@@ -210,3 +210,4 @@ ENV/
 *__GNATPP-TEMP
 # PlantUML jar
 tools/puml/
+*.tgz
