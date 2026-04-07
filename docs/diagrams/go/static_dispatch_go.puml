@@ -1,0 +1,170 @@
+@startuml static_dispatch_go
+!theme plain
+skinparam linetype ortho
+
+title Generic-Based Static Dispatch\nCompile-Time Binding in Go (Library)
+
+package "Infrastructure Layer" #E6F3FF {
+  class "console.Writer" as CW <<struct>> {
+    +Write(ctx, msg) : Result[Unit]
+    --
+    Concrete implementation
+    of output port
+  }
+}
+
+package "Application Layer" #E8F5E9 {
+  class "outbound.WriterPort" as Port <<interface constraint>> {
+    +Write(ctx, msg) : Result[Unit]
+    --
+    **Type Constraint**
+    Defines required behavior
+    for generic parameter
+  }
+
+  class "usecase.GreetUseCase[W]" as UC <<generic struct>> {
+    -writer : W
+    +Execute(ctx, cmd) : Result[Unit]
+    --
+    **Generic Use Case**
+    W constrained by WriterPort
+    Concrete type known at compile time
+  }
+}
+
+package "API Layer" #FFEBCD {
+  class "api/adapter/desktop" as Desktop <<composition root>> {
+    +NewGreeter() : GreetPort
+    --
+    **Composition Root**
+    Instantiates generic with
+    concrete console.Writer type
+  }
+
+  class "api" as Facade <<thin facade>> {
+    Type aliases
+    Re-exports
+    --
+    **Public Facade**
+    Re-exports domain/app types
+    Provides desktop adapter
+  }
+}
+
+' Relationships
+CW ..|> Port : satisfies constraint
+UC o--> Port : type parameter W
+Desktop -down-> CW : instantiates with
+Desktop -down-> UC : instantiates
+Facade -down-> Desktop : provides
+
+note right of Desktop #CCFFCC
+  **desktop.NewGreeter() Wiring**
+  ═══════════════════════════════════
+
+  ```go
+  // Located in: api/adapter/desktop/
+  // desktop.go
+
+  package desktop
+
+  import (
+      "github.com/.../infrastructure/adapter/console"
+      "github.com/.../application/usecase"
+  )
+
+  // NewGreeter creates a GreetPort with
+  // console.Writer statically bound
+  func NewGreeter() inbound.GreetPort {
+      writer := console.NewWriter()
+      // Generic instantiated with concrete type
+      return usecase.NewGreetUseCase[*console.Writer](writer)
+  }
+  ```
+
+  **Key:** Type parameter [*console.Writer]
+  binds concrete type at compile time
+end note
+
+note bottom of UC
+  **Generic Use Case Definition**
+  ═══════════════════════════════════
+
+  ```go
+  package usecase
+
+  // W is constrained by WriterPort interface
+  type GreetUseCase[W outbound.WriterPort] struct {
+      writer W
+  }
+
+  func NewGreetUseCase[W outbound.WriterPort](
+      w W,
+  ) *GreetUseCase[W] {
+      return &GreetUseCase[W]{writer: w}
+  }
+
+  func (uc *GreetUseCase[W]) Execute(
+      ctx context.Context,
+      cmd command.GreetCommand,
+  ) domerr.Result[model.Unit] {
+      // uc.writer calls are statically dispatched
+      // Compiler knows exact type W
+  }
+  ```
+
+  **Key:** Generic struct with type constraint
+  enables compile-time method resolution
+end note
+
+note bottom of Port
+  **Interface as Type Constraint**
+  ═══════════════════════════════════
+
+  ```go
+  package outbound
+
+  // WriterPort serves as type constraint
+  // for generic parameters
+  type WriterPort interface {
+      Write(ctx context.Context, msg string)
+          domerr.Result[model.Unit]
+  }
+  ```
+
+  **Key:** Interface used as constraint,
+  not for dynamic dispatch
+end note
+
+legend right
+  **Go Generic Static Dispatch**
+  ═══════════════════════════════════════
+
+  **Three Go Dispatch Mechanisms:**
+  1. **Static (direct)** - No indirection
+  2. **Static (generic)** - Compile-time bound ✓
+  3. **Dynamic (interface)** - Runtime vtable
+
+  **Why Generics for Static Dispatch:**
+  • Concrete type known at compile time
+  • No interface indirection overhead
+  • Compiler can inline method calls
+  • Type safety preserved
+
+  **Comparison to Ada:**
+  ═══════════════════════════════════════
+  Ada: generic with procedure Write(...)
+  Go:  type GreetUseCase[W WriterPort]
+
+  Ada: package My_UC is new Use_Case(Write)
+  Go:  NewGreetUseCase[*console.Writer](w)
+
+  **Library Architecture**
+  ═══════════════════════════════════════
+  • api: Type re-exports (facade)
+  • api/adapter/desktop: Generic instantiation
+  • application/usecase: Generic definitions
+  • Consumer: Imports api, uses desktop
+endlegend
+
+@enduml

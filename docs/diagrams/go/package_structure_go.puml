@@ -1,0 +1,168 @@
+@startuml package_structure_go
+!theme plain
+skinparam componentStyle rectangle
+
+title Package Structure\nActual Packages in Each Layer (Library - Go)
+
+frame "API Layer" #FFEBCD {
+  component "api" as APIFacade
+  component "api/adapter/desktop" as APIDesktop
+
+  note right of APIFacade
+    **Public Facade**
+    - Re-exports Domain types
+    - Re-exports Application types
+    - Single entry point for consumers
+
+    ```go
+    package api
+
+    // Re-exported types
+    type Result[T any] = domerr.Result[T]
+    type Person = valueobject.Person
+    type GreetCommand = command.GreetCommand
+    type GreetPort = inbound.GreetPort
+    ```
+  end note
+
+  note right of APIDesktop
+    **Composition Root**
+    - Creates concrete greeter
+    - Wires ConsoleWriter
+    - Ready-to-use implementation
+
+    ```go
+    package desktop
+
+    func NewGreeter() inbound.GreetPort {
+        writer := console.NewWriter()
+        return usecase.NewGreetUseCase(writer)
+    }
+    ```
+  end note
+}
+
+frame "Infrastructure Layer" #E6F3FF {
+  component "infrastructure/adapter/console" as InfraConsole
+  note right of InfraConsole
+    **Implements Writer Port**
+    - fmt.Println output
+    - Error wrapping
+    - Returns Result[Unit]
+
+    ```go
+    package console
+
+    type Writer struct{}
+
+    func (w *Writer) Write(ctx context.Context,
+        msg string) domerr.Result[model.Unit] {
+        _, err := fmt.Println(msg)
+        if err != nil {
+            return domerr.Err[model.Unit](...)
+        }
+        return domerr.Ok(model.UnitValue)
+    }
+    ```
+  end note
+}
+
+frame "Application Layer" #E8F5E9 {
+  component "application/command" as AppCommand
+  component "application/usecase" as AppUsecase
+  component "application/port/outbound" as AppPortOut
+  component "application/port/inbound" as AppPortIn
+
+  note right of AppCommand
+    **Command DTO**
+    Immutable struct with name
+  end note
+
+  note right of AppUsecase
+    **Use Case Implementation**
+    ```go
+    package usecase
+
+    type GreetUseCase struct {
+        writer outbound.WriterPort
+    }
+
+    func (uc *GreetUseCase) Execute(ctx context.Context,
+        cmd command.GreetCommand) domerr.Result[model.Unit]
+    ```
+  end note
+
+  note right of AppPortOut
+    **Output Port Interface**
+    ```go
+    type WriterPort interface {
+        Write(ctx context.Context, msg string)
+            domerr.Result[model.Unit]
+    }
+    ```
+  end note
+}
+
+frame "Domain Layer" #FFF9E6 {
+  component "domain/error" as DomainError
+  component "domain/valueobject" as DomainPerson
+  component "application/model" as DomainUnit
+
+  note right of DomainError
+    **Error Types + Result**
+    - ErrorKind constants
+    - ErrorType struct
+    - Result[T] generic type
+    - Ok(), Err() constructors
+  end note
+
+  note right of DomainPerson
+    **Value Object**
+    - Person struct (immutable)
+    - CreatePerson() validation
+    - MaxNameLength constant
+  end note
+}
+
+' Dependencies (center-seeking)
+APIFacade -down-> APIDesktop : provides desktop
+APIDesktop -down-> InfraConsole : creates
+APIDesktop -down-> AppUsecase : creates
+
+AppUsecase -down-> AppPortOut : depends on
+AppUsecase -down-> AppCommand : receives
+AppUsecase -down-> DomainPerson : creates
+
+InfraConsole -down-> AppPortOut : implements
+InfraConsole -down-> DomainError : uses
+
+AppCommand -down-> DomainPerson : validates to
+AppPortOut -down-> DomainError : uses Result
+AppPortOut -down-> DomainUnit : uses Unit
+
+legend bottom
+  **Package Naming Convention**
+  ════════════════════════════════════
+  Go uses lowercase, slash-separated paths:
+  • parent/child/grandchild pattern
+  • snake_case for multi-word packages
+
+  **Example:**
+  • Package: domain/valueobject
+  • File: domain/valueobject/person.go
+  • Type: Person
+
+  **Dependency Injection Pattern**
+  ════════════════════════════════════
+  • Interfaces defined in consumer packages
+  • Constructor injection via NewXxx()
+  • api/adapter/desktop - Composition root
+
+  **Error Handling**
+  ════════════════════════════════════
+  • Result[T] monad (not Go errors)
+  • Ok(value) / Err(error) pattern
+  • No panics across boundaries
+endlegend
+
+@enduml

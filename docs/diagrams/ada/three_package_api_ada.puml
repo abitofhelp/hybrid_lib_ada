@@ -1,0 +1,177 @@
+@startuml three_package_api
+!theme plain
+skinparam linetype ortho
+skinparam nodesep 60
+skinparam ranksep 80
+
+title Three-Package API Pattern\nSPARK Verification + Platform Flexibility
+
+package "Consumer Application" as Consumer #E0FFE0 {
+  component "Main Procedure" as Main
+  note right of Main
+    ```ada
+    with Hybrid_Lib_Ada.API;
+    use Hybrid_Lib_Ada.API;
+
+    Cmd := Create_Greet_Command ("Alice");
+    Result := Greet (Cmd);
+    ```
+  end note
+}
+
+package "API Layer" as APILayer #FFEBCD {
+
+  package "API (Thin Facade)" as APIFacade {
+    component "Hybrid_Lib_Ada.API" as API #FFE4B5
+    note right of API
+      **SPARK_Mode: Off**
+      - Re-exports Domain types
+      - Re-exports Application types
+      - Delegates Greet to Desktop
+      - Single import point
+    end note
+  }
+
+  package "Composition Roots" as Roots {
+    component "API.Desktop" as Desktop #FFD699
+    component "API.Embedded" as Embedded #FFD699
+    component "API.Web" as Web #FFD699
+
+    note right of Desktop
+      **SPARK_Mode: Off**
+      - Wires Console_Writer
+      - Composition root for desktop
+      - arch_guard exception
+    end note
+
+    note right of Embedded
+      **Future: UART_Writer**
+      STM32, embedded targets
+    end note
+
+    note right of Web
+      **Future: DOM_Writer**
+      WebAssembly targets
+    end note
+  }
+
+  package "SPARK-Safe Operations" as SPARKOps #CCFFCC {
+    component "API.Operations" as Operations
+    note right of Operations
+      **SPARK_Mode: On**
+      - Generic over Writer
+      - Depends ONLY on
+        Application/Domain
+      - **Formally verifiable**
+      - No Infrastructure deps
+    end note
+  }
+}
+
+package "Infrastructure Layer" as InfraLayer #E6F3FF {
+  component "Console_Writer" as CW
+  component "UART_Writer" as UW
+  component "DOM_Writer" as DW
+}
+
+package "Application Layer" as AppLayer #E8F5E9 {
+  component "Use Cases" as UC
+  component "Ports" as Ports
+  component "Commands" as Cmds
+}
+
+package "Domain Layer" as DomainLayer #FFF9E6 {
+  component "Value Objects" as VOs
+  component "Error + Result" as Errors
+}
+
+' Consumer to API
+Main -down-> API : imports
+
+' API delegations
+API -down-> Desktop : delegates Greet
+
+' Composition root wiring
+Desktop -down-> Operations : instantiates with
+Desktop -down-> CW : Console_Writer.Write
+
+Embedded -down-> Operations : instantiates with
+Embedded -down-> UW : UART_Writer.Write
+
+Web -down-> Operations : instantiates with
+Web -down-> DW : DOM_Writer.Write
+
+' Operations dependencies (SPARK boundary)
+Operations -down-> UC : Application layer
+Operations -down-> Cmds : uses
+Operations -[hidden]down-> VOs
+
+' Infrastructure implements ports
+CW -down-> Ports : implements Writer
+UW -down-> Ports : implements Writer
+DW -down-> Ports : implements Writer
+
+' Application to Domain
+UC -down-> VOs : creates Person
+Ports -down-> Errors : uses Result
+
+' SPARK boundary highlighting
+note top of Operations #CCFFCC
+  **SPARK Verification Boundary**
+  ═══════════════════════════════════
+  Everything INSIDE this package is
+  formally verifiable:
+  - API.Operations
+  - Application.Usecase.*
+  - Application.Command.*
+  - Domain.*
+end note
+
+note bottom of Desktop #FFCCCC
+  **Outside SPARK Boundary**
+  ═══════════════════════════════════
+  Contains I/O wiring:
+  - API.Desktop (and other roots)
+  - API (thin facade)
+  - Infrastructure.*
+end note
+
+legend right
+  **Why Three Packages?**
+  ═══════════════════════════════════════
+
+  **1. API.Operations (SPARK-Safe)**
+  • Generic, parameterized by Writer
+  • SPARK_Mode: On - formally verifiable
+  • Depends ONLY on Application/Domain
+  • Shared by ALL composition roots
+
+  **2. API.Desktop (Composition Root)**
+  • Instantiates Operations with concrete adapter
+  • SPARK_Mode: Off - contains I/O wiring
+  • Located in api/desktop/ (arch_guard exception)
+  • One root per target platform
+
+  **3. API (Thin Facade)**
+  • Re-exports types for single import
+  • Delegates to Desktop (or other root)
+  • SPARK_Mode: Off - orchestration only
+  • Stable public interface
+
+  **Platform Flexibility**
+  ═══════════════════════════════════════
+  • Desktop: Console_Writer (Ada.Text_IO)
+  • Embedded: UART_Writer (STM32.USART)
+  • Web: DOM_Writer (Browser API)
+  • Test: Mock_Writer (captured output)
+
+  **Key Insight**
+  ═══════════════════════════════════════
+  Business logic in API.Operations is:
+  ✅ SPARK-verifiable
+  ✅ Shared across all platforms
+  ✅ Zero code duplication
+  ✅ Compile-time safe
+endlegend
+
+@enduml

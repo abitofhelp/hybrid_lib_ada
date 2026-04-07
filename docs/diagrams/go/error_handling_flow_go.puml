@@ -1,0 +1,193 @@
+@startuml error_handling_flow_go
+!theme plain
+
+title Error Handling Flow\nRailway-Oriented Programming with Result[T] (Go)
+
+actor "Consumer\nApplication" as Consumer
+
+participant "api\nFacade" as API #FFEBCD
+participant "api/adapter/desktop\nComposition Root" as Desktop #FFE4B5
+participant "application/usecase\nGreetUseCase" as Application #E8F5E9
+participant "infrastructure/adapter\nconsole.Writer" as Infrastructure #E6F3FF
+participant "domain/error\nResult[T]" as Domain #FFF9E6
+
+== Happy Path (Success) ==
+
+Consumer -> API : greeter.Execute(ctx, NewGreetCommand("Alice"))
+activate API
+
+API -> Desktop : greeter.Execute(ctx, cmd)
+activate Desktop
+
+Desktop -> Application : uc.Execute(ctx, cmd)\n[INTERFACE DISPATCH]
+activate Application
+
+Application -> Application : valueobject.CreatePerson(name)
+note right
+  Domain validation
+  Returns Result[Person]
+end note
+
+Application -> Infrastructure : writer.Write(ctx, message)\n[INTERFACE DISPATCH]
+activate Infrastructure
+
+Infrastructure -> Infrastructure : fmt.Println(message)
+note right
+  **Error Handling**
+  Check error return
+  Wrap to Result type
+end note
+
+Infrastructure --> Application : domerr.Ok(model.UnitValue)
+deactivate Infrastructure
+
+Application --> Desktop : domerr.Ok(model.UnitValue)
+deactivate Application
+
+Desktop --> API : domerr.Ok(model.UnitValue)
+deactivate Desktop
+
+API --> Consumer : domerr.Ok(model.UnitValue)
+deactivate API
+
+Consumer -> Consumer : result.IsOk() = true
+note right
+  ```go
+  if result.IsOk() {
+      // Success!
+  }
+  ```
+end note
+
+== Error Path (Infrastructure Failure) ==
+
+Consumer -> API : greeter.Execute(ctx, NewGreetCommand("Bob"))
+activate API
+
+API -> Desktop : greeter.Execute(ctx, cmd)
+activate Desktop
+
+Desktop -> Application : uc.Execute(ctx, cmd)
+activate Application
+
+Application -> Infrastructure : writer.Write(ctx, message)
+activate Infrastructure
+
+Infrastructure -> Infrastructure : fmt.Println returns\nerror
+note right #FFCCCC
+  **Error Boundary**
+  Go error checked
+  Wrapped to Result type
+end note
+
+Infrastructure -> Domain : domerr.Err[Unit](\n  InfrastructureError,\n  "write failed: ...")
+activate Domain
+
+Domain --> Infrastructure : Err(InfrastructureError)
+deactivate Domain
+
+Infrastructure --> Application : Err(InfrastructureError)
+deactivate Infrastructure
+
+Application --> Desktop : Err(InfrastructureError)
+deactivate Application
+
+Desktop --> API : Err(InfrastructureError)
+deactivate Desktop
+
+API --> Consumer : Err(InfrastructureError)
+deactivate API
+
+Consumer -> Consumer : result.IsErr() = true
+Consumer -> Consumer : Extract Error()
+note right
+  ```go
+  err := result.Error()
+  // err.Kind = InfrastructureError
+  // err.Message = "write failed: ..."
+  ```
+end note
+
+== Error Path (Domain Validation) ==
+
+Consumer -> API : greeter.Execute(ctx, NewGreetCommand(""))
+activate API
+
+API -> Desktop : greeter.Execute(ctx, cmd)
+activate Desktop
+
+Desktop -> Application : uc.Execute(ctx, cmd)
+activate Application
+
+Application -> Domain : valueobject.CreatePerson("")
+activate Domain
+
+Domain -> Domain : Validate name\n(len > 0)
+note right #FFCCCC
+  **Domain Validation**
+  Pure function check
+  No panics
+  Returns Error variant
+end note
+
+Domain --> Application : Err(ValidationError)
+deactivate Domain
+
+Application --> Desktop : Err(ValidationError)
+deactivate Application
+
+Desktop --> API : Err(ValidationError)
+deactivate Desktop
+
+API --> Consumer : Err(ValidationError)
+deactivate API
+
+Consumer -> Consumer : Extract Error()
+note right
+  ```go
+  err := result.Error()
+  switch err.Kind {
+  case domerr.ValidationError:
+      fmt.Printf("Invalid input: %s\n", err.Message)
+  case domerr.InfrastructureError:
+      fmt.Println("System error occurred")
+  default:
+      fmt.Println("Unexpected error")
+  }
+  ```
+end note
+
+legend right
+  **Error Handling Rules**
+  ════════════════════════════════════
+  1. **Domain**: Validates, returns Err variant
+  2. **Application**: Orchestrates, propagates errors
+  3. **Infrastructure**: Checks Go errors,
+     converts to Result Err
+  4. **Consumer**: Pattern matches errors,
+     displays user-friendly messages
+
+  **Key Patterns**
+  ════════════════════════════════════
+  • Result[T] monad (not Go errors)
+  • Error wrapping at infrastructure boundary
+  • Railway-oriented programming
+  • Errors flow outward through layers
+
+  **Interface Dispatch**
+  ════════════════════════════════════
+  • Calls through interfaces
+  • Runtime dispatch (minimal overhead)
+  • Easy mocking for tests
+
+  **Error Kinds**
+  ════════════════════════════════════
+  • ValidationError - Input validation
+  • InfrastructureError - I/O errors
+  • NotFoundError - Resource missing
+  • AlreadyExistsError - Duplicate
+  • ConfigError - Configuration
+  • InternalError - Unexpected
+endlegend
+
+@enduml

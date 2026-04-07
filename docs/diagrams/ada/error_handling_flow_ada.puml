@@ -1,0 +1,195 @@
+@startuml error_handling_flow
+!theme plain
+
+title Error Handling Flow\nRailway-Oriented Programming with Generic_Result
+
+actor "Consumer\nApplication" as Consumer
+
+participant "API\nFacade" as API #FFEBCD
+participant "API.Desktop\nComposition Root" as Desktop #FFE4B5
+participant "Application\nGreet_Use_Case" as Application #E8F5E9
+participant "Infrastructure\nConsole_Writer" as Infrastructure #E6F3FF
+participant "Domain\nGeneric_Result" as Domain #FFF9E6
+
+== Happy Path (Success) ==
+
+Consumer -> API : Greet(Create_Greet_Command("Alice"))
+activate API
+
+API -> Desktop : Greet(Cmd)
+activate Desktop
+
+Desktop -> Application : Execute(Cmd)\n[STATIC DISPATCH]
+activate Application
+
+Application -> Application : Person.Create(Name)
+note right
+  Domain validation
+  Returns Result[Person]
+end note
+
+Application -> Infrastructure : Writer(Message)\n[STATIC DISPATCH]
+activate Infrastructure
+
+Infrastructure -> Infrastructure : Put_Line(Message)
+note right
+  **Exception Handling**
+  begin/exception block
+  Catches I/O exceptions
+  Transforms to Result
+end note
+
+Infrastructure --> Application : Result.Ok(Unit_Value)
+deactivate Infrastructure
+
+Application --> Desktop : Result.Ok(Unit_Value)
+deactivate Application
+
+Desktop --> API : Result.Ok(Unit_Value)
+deactivate Desktop
+
+API --> Consumer : Result.Ok(Unit_Value)
+deactivate API
+
+Consumer -> Consumer : Unit_Result.Is_Ok = True
+note right
+  ```ada
+  if Unit_Result.Is_Ok (Result) then
+     -- Success!
+     null;
+  end if;
+  ```
+end note
+
+== Error Path (Infrastructure Failure) ==
+
+Consumer -> API : Greet(Create_Greet_Command("Bob"))
+activate API
+
+API -> Desktop : Greet(Cmd)
+activate Desktop
+
+Desktop -> Application : Execute(Cmd)
+activate Application
+
+Application -> Infrastructure : Writer(Message)
+activate Infrastructure
+
+Infrastructure -> Infrastructure : Put_Line raises\nexception
+note right #FFCCCC
+  **Exception Boundary**
+  begin/exception catches
+  I/O errors mapped to Result
+end note
+
+Infrastructure -> Domain : Result.Error(\n  IO_Error,\n  "write failed: ...")
+activate Domain
+
+Domain --> Infrastructure : Error(IO_Error)
+deactivate Domain
+
+Infrastructure --> Application : Error(IO_Error)
+deactivate Infrastructure
+
+Application --> Desktop : Error(IO_Error)
+deactivate Application
+
+Desktop --> API : Error(IO_Error)
+deactivate Desktop
+
+API --> Consumer : Error(IO_Error)
+deactivate API
+
+Consumer -> Consumer : Unit_Result.Is_Error = True
+Consumer -> Consumer : Extract Error_Info
+note right
+  ```ada
+  Info : Error_Type := Unit_Result.Error_Info (Result);
+  -- Info.Kind = IO_Error
+  -- Info.Message = "write failed: ..."
+  ```
+end note
+
+== Error Path (Domain Validation) ==
+
+Consumer -> API : Greet(Create_Greet_Command(""))
+activate API
+
+API -> Desktop : Greet(Cmd)
+activate Desktop
+
+Desktop -> Application : Execute(Cmd)
+activate Application
+
+Application -> Domain : Person.Create("")
+activate Domain
+
+Domain -> Domain : Validate name\n(Length > 0)
+note right #FFCCCC
+  **Domain Validation**
+  Pure function check
+  No exceptions
+  Returns Error variant
+end note
+
+Domain --> Application : Error(Validation_Error)
+deactivate Domain
+
+Application --> Desktop : Error(Validation_Error)
+deactivate Application
+
+Desktop --> API : Error(Validation_Error)
+deactivate Desktop
+
+API --> Consumer : Error(Validation_Error)
+deactivate API
+
+Consumer -> Consumer : Extract Error_Info
+note right
+  ```ada
+  case Info.Kind is
+     when Validation_Error =>
+        Put_Line ("Invalid input: " &
+          Error_Strings.To_String (Info.Message));
+     when IO_Error =>
+        Put_Line ("System error occurred");
+     when others =>
+        Put_Line ("Unexpected error");
+  end case;
+  ```
+end note
+
+legend right
+  **Error Handling Rules**
+  ════════════════════════════════════
+  1. **Domain**: Validates, returns Error variant
+  2. **Application**: Orchestrates, propagates errors
+  3. **Infrastructure**: Catches exceptions via
+     begin/exception, converts to Error
+  4. **Consumer**: Pattern matches errors,
+     displays user-friendly messages
+
+  **Key Patterns**
+  ════════════════════════════════════
+  • Generic_Result (not Ada exceptions)
+  • Exception handling at infrastructure boundary
+  • Railway-oriented programming
+  • Errors flow outward through layers
+
+  **Static Dispatch**
+  ════════════════════════════════════
+  • All calls resolved at compile time
+  • Zero runtime overhead (no dispatching)
+  • Type safety verified by compiler
+
+  **Error Kinds**
+  ════════════════════════════════════
+  • Validation_Error - Input validation
+  • IO_Error - Infrastructure I/O
+  • Not_Found_Error - Resource missing
+  • Already_Exists_Error - Duplicate
+  • Config_Error - Configuration
+  • Internal_Error - Unexpected
+endlegend
+
+@enduml

@@ -1,0 +1,169 @@
+@startuml package_structure
+!theme plain
+skinparam componentStyle rectangle
+
+title Package Structure\nActual Packages in Each Layer (Library)
+
+frame "API Layer" #FFEBCD {
+  component "Hybrid_Lib_Ada.API" as APIFacade
+  component "Hybrid_Lib_Ada.API.Desktop" as APIDesktop
+  component "Hybrid_Lib_Ada.API.Operations" as APIOps #CCFFCC
+
+  note right of APIFacade
+    **Public Facade**
+    - Re-exports Domain types
+    - Re-exports Application types
+    - Delegates Greet to Desktop
+    - SPARK_Mode: Off
+
+    ```ada
+    package Hybrid_Lib_Ada.API is
+       subtype Person_Type is ...;
+       subtype Greet_Command is ...;
+       function Greet (...) return ...;
+    end Hybrid_Lib_Ada.API;
+    ```
+  end note
+
+  note right of APIDesktop
+    **Composition Root**
+    - Instantiates API.Operations
+    - Wires Console_Writer
+    - SPARK_Mode: Off
+
+    ```ada
+    package Console_Ops is new
+      API.Operations
+        (Writer => Console_Writer.Write);
+    ```
+  end note
+
+  note right of APIOps
+    **SPARK-Safe Operations**
+    - Generic over Writer
+    - SPARK_Mode: On
+    - Depends ONLY on
+      Application/Domain
+
+    ```ada
+    generic
+       with function Writer (...) return ...;
+    package API.Operations is
+       function Greet (...) return ...;
+    end API.Operations;
+    ```
+  end note
+}
+
+frame "Infrastructure Layer" #E6F3FF {
+  component "Infrastructure.Adapter.Console_Writer" as InfraConsole
+  note right of InfraConsole
+    **Implements Writer Port**
+    - Ada.Text_IO.Put_Line
+    - Exception handling
+    - SPARK_Mode: Off
+
+    ```ada
+    function Write (Message : String)
+      return Unit_Result.Result is
+    begin
+       Put_Line (Message);
+       return Unit_Result.Ok (Unit_Value);
+    exception
+       when others =>
+          return Unit_Result.Error (...);
+    end Write;
+    ```
+  end note
+}
+
+frame "Application Layer" #E8F5E9 {
+  component "Application.Command.Greet" as AppCommand
+  component "Application.Usecase.Greet" as AppUsecase
+  component "Application.Port.Outbound.Writer" as AppPort
+
+  note right of AppCommand
+    **Command DTO**
+    Bounded string for name
+  end note
+
+  note right of AppUsecase
+    **Generic Use Case**
+    ```ada
+    generic
+       with function Writer (...) return ...;
+    package Application.Usecase.Greet is
+       function Execute (Cmd) return Result;
+    end;
+    ```
+  end note
+
+  note right of AppPort
+    **Output Port Definition**
+    - Unit_Result package
+    - Generic_Writer package
+  end note
+}
+
+frame "Domain Layer" #FFF9E6 {
+  component "Domain.Error" as DomainError
+  component "Domain.Error.Result" as DomainResult
+  component "Domain.Value_Object.Person" as DomainPerson
+  component "Domain.Unit" as DomainUnit
+
+  note right of DomainError
+    **Error Types**
+    - Error_Kind enumeration
+    - Error_Type record
+    - Bounded error message
+  end note
+
+  note right of DomainResult
+    **Generic Result Monad**
+    - Result[T] : Ok(T) | Error
+    - Is_Ok, Is_Error
+    - Value, Error_Info
+  end note
+}
+
+' Dependencies (center-seeking)
+APIFacade -down-> APIDesktop : delegates
+APIDesktop -down-> APIOps : instantiates
+APIDesktop -down-> InfraConsole : wires
+
+APIOps -down-> AppUsecase : uses
+APIOps -down-> AppCommand : uses
+
+InfraConsole -down-> AppPort : implements
+InfraConsole -down-> DomainError : uses
+
+AppCommand -down-> DomainPerson : validates
+AppUsecase -down-> DomainPerson : creates
+AppPort -down-> DomainResult : uses
+AppPort -down-> DomainUnit : uses
+
+legend bottom
+  **Package Naming Convention**
+  ════════════════════════════════════
+  All packages use hierarchical paths:
+  • Parent.Child.Grandchild pattern
+  • Underscore_Pascal_Case
+
+  **Example:**
+  • Package: Domain.Value_Object.Person
+  • File: domain-value_object-person.ads/adb
+  • Type: Person
+
+  **Three-Package API Pattern**
+  ════════════════════════════════════
+  • API.Operations - SPARK-safe (generic)
+  • API.Desktop - Composition root (wires infra)
+  • API - Thin facade (re-exports + delegates)
+
+  **SPARK Boundary**
+  ════════════════════════════════════
+  🟢 SPARK_Mode(On): API.Operations, Application.*, Domain.*
+  🔴 SPARK_Mode(Off): API, API.Desktop, Infrastructure.*
+endlegend
+
+@enduml

@@ -1,0 +1,236 @@
+@startuml api_reexport_pattern_go
+!theme plain
+
+title API Re-export Pattern (LIBRARY)\nPublic Facade for Consumer Applications (Go)
+
+package "Domain Layer" as Domain #FFF9E6 {
+  class "domain/error" as DomainError {
+    + ErrorType : struct
+    + ErrorKind : type
+    + ValidationError : const
+    + InfrastructureError : const
+    + Result[T] : generic type
+    + Ok[T](v) : Result[T]
+    + Err[T](e) : Result[T]
+    --
+    Canonical error definitions
+    + Result monad
+  }
+
+  class "domain/valueobject" as DomainPerson {
+    + Person : struct (immutable)
+    + CreatePerson(name) : Result[Person]
+    + Name() : string
+    + MaxNameLength : const
+    --
+    Domain value object
+  }
+}
+
+package "Application Layer" as Application #E8F5E9 {
+  class "application/command" as AppCommand {
+    + GreetCommand : struct
+    + NewGreetCommand(name) : GreetCommand
+    + Name() : string
+    --
+    Input DTO
+  }
+
+  class "application/port/outbound" as AppPortOut {
+    + WriterPort : interface
+    --
+    Output port contract
+  }
+
+  class "application/port/inbound" as AppPortIn {
+    + GreetPort : interface
+    --
+    Input port contract
+  }
+
+  class "application/model" as AppModel {
+    + Unit : struct
+    + UnitValue : const
+    --
+    Void type equivalent
+  }
+}
+
+package "API Layer (Public Facade)" as API #FFEBCD {
+  class "api" as APIFacade {
+    + Result[T] : type alias
+    + ErrorType : type alias
+    + Person : type alias
+    + GreetCommand : type alias
+    + GreetPort : type alias
+    + Unit : type alias
+    + Ok[T](v) : Result[T]
+    + Err[T](e) : Result[T]
+    + CreatePerson(name) : Result
+    + NewGreetCommand(name) : Cmd
+    --
+    **Re-exports for consumers**
+    Single import point
+  }
+}
+
+package "api/adapter/desktop (Composition Root)" as APIDesktop #FFE4B5 {
+  class "desktop" as Desktop {
+    + NewGreeter() : GreetPort
+    --
+    **Wires infrastructure**
+    Creates UseCase with Writer
+  }
+}
+
+package "Infrastructure Layer" as Infrastructure #E6F3FF {
+  class "infrastructure/adapter/console" as ConsoleWriter {
+    + Writer : struct
+    + NewWriter() : *Writer
+    + Write(ctx, msg) : Result
+    --
+    Implements **WriterPort**
+    Uses fmt.Println
+  }
+}
+
+package "Consumer Application" as Consumer #E0FFE0 {
+  class "Consumer Code" as ConsumerApp {
+    import "github.com/.../api"
+    import "github.com/.../api/adapter/desktop"
+    --
+    **Library consumer**
+    Two imports for types + impl
+  }
+}
+
+' Re-export relationships
+DomainError <.. APIFacade : re-exports
+DomainPerson <.. APIFacade : re-exports
+AppCommand <.. APIFacade : re-exports
+AppPortIn <.. APIFacade : re-exports
+AppModel <.. APIFacade : re-exports
+
+' Desktop wiring
+ConsoleWriter <.. Desktop : creates
+Desktop ..> AppPortIn : returns GreetPort
+
+' Consumer usage
+APIFacade <.. ConsumerApp : imports
+Desktop <.. ConsumerApp : imports
+
+note right of APIFacade
+  **API Facade Pattern**
+  ═══════════════════════════
+
+  ```go
+  package api
+
+  import (
+      domerr "github.com/.../domain/error"
+      "github.com/.../domain/valueobject"
+      "github.com/.../application/command"
+      "github.com/.../application/port/inbound"
+  )
+
+  // Re-export Domain types
+  type Result[T any] = domerr.Result[T]
+  type ErrorType = domerr.ErrorType
+  type Person = valueobject.Person
+
+  func CreatePerson(name string) Result[Person] {
+      return valueobject.CreatePerson(name)
+  }
+
+  // Re-export Application types
+  type GreetCommand = command.GreetCommand
+  type GreetPort = inbound.GreetPort
+
+  func NewGreetCommand(name string) GreetCommand {
+      return command.NewGreetCommand(name)
+  }
+  ```
+end note
+
+note bottom of Desktop
+  **Composition Root**
+  ════════════════════════
+
+  ```go
+  package desktop
+
+  import (
+      "github.com/.../infrastructure/adapter/console"
+      "github.com/.../application/usecase"
+      "github.com/.../application/port/inbound"
+  )
+
+  // NewGreeter creates a ready-to-use greeter
+  // with console output wired in
+  func NewGreeter() inbound.GreetPort {
+      writer := console.NewWriter()
+      return usecase.NewGreetUseCase(writer)
+  }
+  ```
+end note
+
+note bottom of ConsumerApp
+  **Consumer Usage**
+  ════════════════════════
+
+  ```go
+  package main
+
+  import (
+      "context"
+      "fmt"
+
+      "github.com/abitofhelp/hybrid_lib_go/api"
+      "github.com/abitofhelp/hybrid_lib_go/api/adapter/desktop"
+  )
+
+  func main() {
+      ctx := context.Background()
+
+      // Create greeter with console output
+      greeter := desktop.NewGreeter()
+
+      // Create command
+      cmd := api.NewGreetCommand("Alice")
+
+      // Execute
+      result := greeter.Execute(ctx, cmd)
+
+      if result.IsOk() {
+          // Success! "Hello, Alice!" printed
+      } else {
+          // Handle error
+          err := result.Error()
+          fmt.Printf("Error: %s\n", err.Message)
+      }
+  }
+  ```
+end note
+
+legend right
+  **Library Re-export Pattern**
+  ═══════════════════════════════
+  ✅ Type aliases (zero overhead)
+  ✅ Two imports for consumers
+  ✅ Clean public interface
+  ✅ Hides internal layer structure
+
+  **Go API Pattern**
+  ═══════════════════════════════
+  • **api** - Type re-exports facade
+  • **api/adapter/desktop** - Composition root
+  • **api/adapter/xxx** - Other adapters
+
+  **Interface Satisfaction**
+  ═══════════════════════════════
+  • Implicit (duck typing)
+  • No "implements" keyword
+  • Consumer defines interfaces
+endlegend
+
+@enduml

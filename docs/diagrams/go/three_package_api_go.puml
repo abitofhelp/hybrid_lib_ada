@@ -1,0 +1,179 @@
+@startuml three_package_api_go
+!theme plain
+skinparam linetype ortho
+skinparam nodesep 60
+skinparam ranksep 80
+
+title API Adapter Pattern\nComposition Root + Platform Flexibility (Go)
+
+package "Consumer Application" as Consumer #E0FFE0 {
+  component "main" as Main
+  note right of Main
+    ```go
+    import (
+        "github.com/.../api"
+        "github.com/.../api/adapter/desktop"
+    )
+
+    greeter := desktop.NewGreeter()
+    cmd := api.NewGreetCommand("Alice")
+    result := greeter.Execute(ctx, cmd)
+    ```
+  end note
+}
+
+package "API Layer" as APILayer #FFEBCD {
+
+  package "api (Type Facade)" as APIFacade {
+    component "api" as API #FFE4B5
+    note right of API
+      **Type Re-exports**
+      - Re-exports Domain types
+      - Re-exports Application types
+      - Single import for types
+      - No business logic
+    end note
+  }
+
+  package "Composition Roots" as Roots {
+    component "api/adapter/desktop" as Desktop #FFD699
+    component "api/adapter/embedded" as Embedded #FFD699
+    component "api/adapter/web" as Web #FFD699
+
+    note right of Desktop
+      **Composition Root**
+      - Creates console.Writer
+      - Creates GreetUseCase
+      - Returns GreetPort interface
+    end note
+
+    note right of Embedded
+      **Future: UART_Writer**
+      Embedded targets
+    end note
+
+    note right of Web
+      **Future: WebWriter**
+      WASM targets
+    end note
+  }
+
+  package "Application Use Cases" as UseCases #CCFFCC {
+    component "application/usecase" as Operations
+    note right of Operations
+      **Business Logic**
+      - Depends on interfaces
+      - Platform agnostic
+      - **Testable in isolation**
+      - No infrastructure deps
+    end note
+  }
+}
+
+package "Infrastructure Layer" as InfraLayer #E6F3FF {
+  component "console.Writer" as CW
+  component "uart.Writer" as UW
+  component "web.Writer" as DW
+}
+
+package "Application Layer" as AppLayer #E8F5E9 {
+  component "Use Cases" as UC
+  component "Ports (interfaces)" as Ports
+  component "Commands" as Cmds
+}
+
+package "Domain Layer" as DomainLayer #FFF9E6 {
+  component "Value Objects" as VOs
+  component "Error + Result" as Errors
+}
+
+' Consumer to API
+Main -down-> API : imports types
+Main -down-> Desktop : imports adapter
+
+' Composition root wiring
+Desktop -down-> Operations : creates with
+Desktop -down-> CW : console.NewWriter()
+
+Embedded -down-> Operations : creates with
+Embedded -down-> UW : uart.NewWriter()
+
+Web -down-> Operations : creates with
+Web -down-> DW : web.NewWriter()
+
+' Operations dependencies
+Operations -down-> UC : implements GreetPort
+Operations -down-> Cmds : receives commands
+Operations -[hidden]down-> VOs
+
+' Infrastructure implements ports
+CW -down-> Ports : implements WriterPort
+UW -down-> Ports : implements WriterPort
+DW -down-> Ports : implements WriterPort
+
+' Application to Domain
+UC -down-> VOs : creates Person
+Ports -down-> Errors : uses Result
+
+' Highlighting
+note top of Operations #CCFFCC
+  **Testable Business Logic**
+  ═══════════════════════════════════
+  Everything here is:
+  - Interface-based (mockable)
+  - Platform agnostic
+  - Unit testable
+  - application/usecase/*
+  - application/command/*
+  - domain/*
+end note
+
+note bottom of Desktop #FFE4B5
+  **Composition Root**
+  ═══════════════════════════════════
+  Wires concrete implementations:
+  - api/adapter/desktop
+  - api/adapter/embedded
+  - api/adapter/web
+  - infrastructure/adapter/*
+end note
+
+legend right
+  **Why This Pattern?**
+  ═══════════════════════════════════════
+
+  **1. application/usecase (Business Logic)**
+  • Depends only on interfaces
+  • Platform agnostic, testable
+  • Shared by ALL composition roots
+  • No infrastructure dependencies
+
+  **2. api/adapter/xxx (Composition Roots)**
+  • Creates concrete implementations
+  • Wires infrastructure to use cases
+  • One adapter per target platform
+  • Returns interface (GreetPort)
+
+  **3. api (Type Facade)**
+  • Re-exports types for convenience
+  • Single import for domain/app types
+  • Stable public interface
+  • No business logic
+
+  **Platform Flexibility**
+  ═══════════════════════════════════════
+  • Desktop: console.Writer (fmt.Println)
+  • Embedded: uart.Writer (serial port)
+  • Web: web.Writer (DOM API)
+  • Test: mock.Writer (captured output)
+
+  **Key Insight**
+  ═══════════════════════════════════════
+  Business logic in usecase is:
+  ✅ Interface-based (mockable)
+  ✅ Shared across all platforms
+  ✅ Zero code duplication
+  ✅ Easy to test in isolation
+endlegend
+
+@enduml
