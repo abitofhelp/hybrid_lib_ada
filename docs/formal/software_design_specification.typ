@@ -152,14 +152,15 @@ Architecture conformance is enforced through layered controls:
 
 The Application layer defines ports and use cases. Infrastructure adapters implement outbound ports. Domain and Application remain independent of concrete I/O concerns.
 
+// Sort rows alphabetically by the first column.
 #table(
   columns: (auto, 1fr),
   table.header([*Element*], [*Role*]),
-  [Application.Usecase.Greet],
-  [Orchestrates the greeting use case using domain validation and an outbound Writer port.],
-
   [Application.Port.Outbound.Writer],
   [Application-owned outbound port contract.],
+
+  [Application.Usecase.Greet],
+  [Orchestrates the greeting use case using domain validation and an outbound Writer port.],
 
   [Infrastructure.Adapter.Console_Writer],
   [Concrete infrastructure adapter implementing the Writer port.],
@@ -399,6 +400,7 @@ The library profile uses a three-package API pattern:
 - `Hybrid_Lib_Ada.API.Desktop` as the default composition root,
 - `Hybrid_Lib_Ada.API.Operations` as the SPARK-safe operations surface.
 
+// Sort rows alphabetically by the first column.
 #table(
   columns: (auto, 1fr, auto),
   table.header([*Package*], [*Design Role*], [*SPARK*]),
@@ -465,30 +467,31 @@ end Execute;
 
 This project uses a layered exception-boundary policy.
 
+// Sort rows alphabetically by the first column.
 #table(
   columns: (auto, auto, auto, 1fr),
   table.header(
     [*Layer*], [*Functional.Try*], [*Manual `exception`*], [*Rationale*]
   ),
-  [Infrastructure],
-  [Required at external boundaries],
-  [Forbidden],
-  [Must convert external exceptions to Result values consistently.],
-
-  [Domain],
+  [API],
   [N/A],
   [Forbidden],
-  [Pure core logic; works with Result values only.],
+  [Public facade; returns Result values to consumers.],
 
   [Application],
   [N/A],
   [Forbidden],
   [Use-case orchestration; works with Result values only.],
 
-  [API],
+  [Domain],
   [N/A],
   [Forbidden],
-  [Public facade; returns Result values to consumers.],
+  [Pure core logic; works with Result values only.],
+
+  [Infrastructure],
+  [Required at external boundaries],
+  [Forbidden],
+  [Must convert external exceptions to Result values consistently.],
 
   [Test],
   [Optional],

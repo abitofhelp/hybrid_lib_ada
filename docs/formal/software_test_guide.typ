@@ -98,12 +98,13 @@ This document covers:
 
 == Test Categories
 
+// Sort rows alphabetically by the first column.
 #table(
   columns: (auto, auto, 1fr),
   table.header([Category], [Location], [Purpose]),
-  [Unit Tests], [`test/unit/`], [Test individual packages in isolation.],
-  [Integration Tests], [`test/integration/`], [Test cross-layer interactions.],
   [Example Programs], [`examples/`], [Runnable demonstrations of library usage.],
+  [Integration Tests], [`test/integration/`], [Test cross-layer interactions.],
+  [Unit Tests], [`test/unit/`], [Test individual packages in isolation.],
 )
 
 See CHANGELOG for current test counts per release.
@@ -331,12 +332,13 @@ Use simple, resettable mock state for outbound-port behavior:
 
 == Layer Coverage
 
+// Sort rows alphabetically by the first column.
 #table(
   columns: (auto, 1fr),
   table.header([Layer], [Test Files]),
-  [Domain], [`test_domain_*.adb`],
-  [Application], [`test_application_*.adb`],
   [API], [`test_api_*.adb`],
+  [Application], [`test_application_*.adb`],
+  [Domain], [`test_domain_*.adb`],
 )
 
 See CHANGELOG for current counts per layer and total.

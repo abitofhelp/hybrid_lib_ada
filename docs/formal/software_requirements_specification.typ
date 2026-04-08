@@ -136,13 +136,14 @@ This library profile uses the same hybrid Domain/Application/Infrastructure core
 
 Supporting architecture guidance is maintained in `docs/guides/`. Supporting UML diagrams are maintained in `docs/diagrams/`.
 
+// Sort rows alphabetically by the first column.
 #table(
   columns: (auto, 1fr),
   table.header([*Layer*], [*Purpose*]),
-  [Domain], [Pure business logic, value objects, error types.],
-  [Application], [Use cases, commands, ports (interfaces).],
-  [Infrastructure], [Adapters for I/O operations.],
   [API], [Public facade with stable interface.],
+  [Application], [Use cases, commands, ports (interfaces).],
+  [Domain], [Pure business logic, value objects, error types.],
+  [Infrastructure], [Adapters for I/O operations.],
 )
 
 == Product Features
@@ -424,13 +425,14 @@ None. The library is hardware-agnostic.
   [Infrastructure and API layers may use `SPARK_Mode => Off` for I/O operations.],
 )
 
+// Sort rows alphabetically by the first column.
 #table(
   columns: (auto, auto, 1fr),
   table.header([*Layer*], [*SPARK_Mode*], [*Rationale*]),
-  [Domain], [On], [Pure business logic, provable.],
-  [Application], [On], [Operations, inbound ports, outbound ports.],
-  [Infrastructure], [Off], [I/O operations.],
   [API], [Off], [Facade over infrastructure.],
+  [Application], [On], [Operations, inbound ports, outbound ports.],
+  [Domain], [On], [Pure business logic, provable.],
+  [Infrastructure], [Off], [I/O operations.],
 )
 
 == Testability (NFR-08)
