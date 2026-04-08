@@ -8,6 +8,12 @@
 // Modification Policy:
 //   - Edit this file for project-specific SRS content.
 //   - Keep shared presentation logic in core.typ.
+// Table Ordering:
+//   Sort any table whose rows a reader might scan to locate a specific
+//   entry — definitions, acronyms, constraints, packages, interfaces,
+//   and similar reference tables.  Sort alphabetically by the first
+//   column.  Tables with an inherent sequence (requirement IDs within
+//   a section, change history, workflow steps) retain their logical order.
 // SPDX-License-Identifier: BSD-3-Clause
 // ============================================================================
 
@@ -17,7 +23,7 @@
   authors: ("Michael Gardner",),
   copyright: "© 2025 Michael Gardner, A Bit of Help, Inc.",
   license_file: "See the LICENSE file in the project root",
-  project-name: "HYBRID_LIB_ADA",
+  project_name: "HYBRID_LIB_ADA",
   spdx_license: "BSD-3-Clause",
   status: "Released", // valid: "Draft" | "Review" | "Released" | "Archived"
   status_date: "2025-12-14",
@@ -60,7 +66,7 @@
   ),
 )
 
-#show: formal_doc.with(doc, profile)
+#show: formal_doc.with(doc, profile, change_history)
 
 = Introduction
 
@@ -80,6 +86,7 @@ This Software Requirements Specification (SRS) defines the functional and non-fu
 
 == Definitions and Acronyms
 
+// Sorted alphabetically by Term.
 #table(
   columns: (auto, 1fr),
   table.header([*Term*], [*Definition*]),
@@ -148,13 +155,15 @@ Supporting architecture guidance is maintained in `docs/guides/`. Supporting UML
 
 == User Classes
 
+// Sorted alphabetically by User Class.
 #table(
   columns: (auto, 1fr),
   table.header([*User Class*], [*Description*]),
-  [Library Consumers], [Ada developers integrating library functionality.],
   [Architecture Students], [Developers learning hexagonal architecture in Ada.],
   [Embedded Developers],
   [Developers requiring heap-free, SPARK-compatible patterns.],
+
+  [Library Consumers], [Ada developers integrating library functionality.],
 )
 
 == Operating Environment
@@ -170,6 +179,7 @@ Supporting architecture guidance is maintained in `docs/guides/`. Supporting UML
 
 == Constraints
 
+// Sorted alphabetically by Constraint.
 #table(
   columns: (auto, 1fr),
   table.header([*Constraint*], [*Rationale*]),
@@ -440,22 +450,24 @@ None. The library is hardware-agnostic.
 
 === Hardware Requirements
 
+// Sorted alphabetically by Category.
 #table(
   columns: (auto, 1fr),
   table.header([*Category*], [*Requirement*]),
   [CPU], [Any modern processor.],
-  [RAM], [64 MB minimum.],
   [Disk], [10 MB minimum.],
+  [RAM], [64 MB minimum.],
 )
 
 === Software Requirements
 
+// Sorted alphabetically by Category.
 #table(
   columns: (auto, 1fr),
   table.header([*Category*], [*Requirement*]),
-  [Operating System], [Linux, macOS, BSD, Windows 11.],
-  [Compiler], [GNAT FSF 13+ or GNAT Pro.],
   [Build System], [Alire 2.0+.],
+  [Compiler], [GNAT FSF 13+ or GNAT Pro.],
+  [Operating System], [Linux, macOS, BSD, Windows 11.],
 )
 
 == Architectural Constraints
@@ -471,15 +483,17 @@ Architecture conformance shall be enforced through a combination of project/buil
 
 == Verification Methods
 
+// Sorted alphabetically by Method.
 #table(
   columns: (auto, 1fr),
   table.header([*Method*], [*Description*]),
-  [Code Review], [All code reviewed before merge.],
-  [Static Analysis], [Zero compiler warnings.],
-  [Dynamic Testing], [All tests must pass.],
-  [Coverage Analysis], [> 90% line coverage.],
   [Architecture Validation],
   [`arch_guard.py` validates direct dependency rules during developer builds and CI/CD; project/build interface restrictions provide additional enforcement where configured.],
+
+  [Code Review], [All code reviewed before merge.],
+  [Coverage Analysis], [> 90% line coverage.],
+  [Dynamic Testing], [All tests must pass.],
+  [Static Analysis], [Zero compiler warnings.],
 )
 
 == Traceability Matrix

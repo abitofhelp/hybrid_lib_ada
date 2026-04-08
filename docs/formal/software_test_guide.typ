@@ -8,6 +8,12 @@
 // Modification Policy:
 //   - Edit this file for project-specific STG content.
 //   - Keep shared presentation logic in core.typ.
+// Table Ordering:
+//   Sort any table whose rows a reader might scan to locate a specific
+//   entry — definitions, acronyms, constraints, packages, interfaces,
+//   and similar reference tables.  Sort alphabetically by the first
+//   column.  Tables with an inherent sequence (requirement IDs within
+//   a section, change history, workflow steps) retain their logical order.
 // SPDX-License-Identifier: BSD-3-Clause
 // ============================================================================
 
@@ -145,13 +151,14 @@ test/
 
 == Naming Conventions
 
+// Sorted alphabetically by Element.
 #table(
   columns: (auto, auto, 1fr),
   table.header([Element], [Convention], [Example]),
-  [Test file], [`test_<layer>_<package>.adb`], [`test_domain_person.adb`],
-  [Test name], [Descriptive, action-result], [`"Create valid name - Is_Ok"`],
   [Mock prefix], [`Mock_`], [`Mock_Writer_Success`],
   [Runner], [`<category>_runner.adb`], [`unit_runner.adb`],
+  [Test file], [`test_<layer>_<package>.adb`], [`test_domain_person.adb`],
+  [Test name], [Descriptive, action-result], [`"Create valid name - Is_Ok"`],
 )
 
 == GPR Projects

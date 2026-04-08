@@ -7,6 +7,12 @@
 // Modification Policy:
 //   - Keep shared presentation logic in core.typ.
 //   - Keep project-specific design content here.
+// Table Ordering:
+//   Sort any table whose rows a reader might scan to locate a specific
+//   entry — definitions, acronyms, constraints, packages, interfaces,
+//   and similar reference tables.  Sort alphabetically by the first
+//   column.  Tables with an inherent sequence (requirement IDs within
+//   a section, change history, workflow steps) retain their logical order.
 // SPDX-License-Identifier: BSD-3-Clause
 // ============================================================================
 
@@ -16,7 +22,7 @@
   authors: ("Michael Gardner",),
   copyright: "© 2025 Michael Gardner, A Bit of Help, Inc.",
   license_file: "See the LICENSE file in the project root",
-  project-name: "HYBRID_LIB_ADA",
+  project_name: "HYBRID_LIB_ADA",
   spdx_license: "BSD-3-Clause",
   status: "Released",
   status_date: "2025-12-11",
@@ -58,7 +64,7 @@
   ),
 )
 
-#show: formal_doc.with(doc, profile)
+#show: formal_doc.with(doc, profile, change_history)
 
 = Introduction
 
@@ -219,6 +225,7 @@ src/
 
 === Domain Layer
 
+// Sorted alphabetically by Package.
 #table(
   columns: (auto, 1fr, auto),
   table.header([*Package*], [*Purpose*], [*SPARK*]),
@@ -233,6 +240,7 @@ src/
 
 === Application Layer
 
+// Sorted alphabetically by Package.
 #table(
   columns: (auto, 1fr, auto),
   table.header([*Package*], [*Purpose*], [*SPARK*]),
@@ -247,6 +255,7 @@ src/
 
 === Infrastructure Layer
 
+// Sorted alphabetically by Package.
 #table(
   columns: (auto, 1fr, auto),
   table.header([*Package*], [*Purpose*], [*SPARK*]),
@@ -257,6 +266,7 @@ src/
 
 === API Layer
 
+// Sorted alphabetically by Package.
 #table(
   columns: (auto, 1fr, auto),
   table.header([*Package*], [*Purpose*], [*SPARK*]),
@@ -370,14 +380,16 @@ package Console_Ops is new Hybrid_Lib_Ada.API.Operations
   (Writer => Infrastructure.Adapter.Console_Writer.Write);
 ```
 
+// Sorted alphabetically by Benefit.
 #table(
   columns: (auto, 1fr),
   table.header([*Benefit*], [*Description*]),
-  [Zero runtime overhead], [Monomorphization occurs at compile time.],
   [SPARK compatible], [No runtime dispatching is required.],
-  [Type safe], [The compiler verifies contracts and instantiations.],
   [Testable],
   [Mock writers and alternate composition roots are easy to provide.],
+
+  [Type safe], [The compiler verifies contracts and instantiations.],
+  [Zero runtime overhead], [Monomorphization occurs at compile time.],
 )
 
 == Three-Package API Pattern
@@ -435,16 +447,18 @@ end Execute;
 
 == No Exceptions Policy
 
+// Sorted alphabetically by Situation.
 #table(
   columns: (auto, 1fr),
   table.header([*Situation*], [*Handling*]),
-  [Validation failure], [Return Error result.],
   [I/O failure], [Return Error result.],
+  [Programmer error in core layers],
+  [Fail loudly; treat as a bug to fix rather than a normal runtime condition.],
+
   [Unexpected error at infrastructure boundary],
   [Convert to `Internal_Error` result at the boundary.],
 
-  [Programmer error in core layers],
-  [Fail loudly; treat as a bug to fix rather than a normal runtime condition.],
+  [Validation failure], [Return Error result.],
 )
 
 == Exception Boundary Specification
@@ -530,6 +544,7 @@ Release preparation and developer workflow validate these rules:
 
 == GPR Projects
 
+// Sorted alphabetically by Project.
 #table(
   columns: (auto, 1fr),
   table.header([*Project*], [*Purpose*]),
@@ -542,12 +557,13 @@ Release preparation and developer workflow validate these rules:
 
 == Build Profiles
 
+// Sorted alphabetically by Profile.
 #table(
   columns: (auto, auto, 1fr),
   table.header([*Profile*], [*Target*], [*Features*]),
-  [standard], [Desktop/server], [Full feature set.],
-  [embedded], [Ravenscar embedded], [Tasking-safe embedded profile.],
   [baremetal], [Minimal runtime], [Zero-footprint style profile.],
+  [embedded], [Ravenscar embedded], [Tasking-safe embedded profile.],
+  [standard], [Desktop/server], [Full feature set.],
 )
 
 = Design Decisions
