@@ -1,5 +1,5 @@
 // ============================================================================
-// File: hybrid_lib_ada_sds.typ
+// File: software_design_specification.typ
 // Purpose: Software Design Specification for HYBRID_LIB_ADA.
 // Scope: Real project SDS content using the shared formal Typst core.
 // Usage: Compile to PDF as the distribution artifact. The .typ source is the
@@ -16,7 +16,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 // ============================================================================
 
-#import "core.typ": change_history_table, formal_doc
+#import "core.typ": formal_doc
 
 #let doc = (
   authors: ("Michael Gardner",),
@@ -64,7 +64,14 @@
   ),
 )
 
-#show: formal_doc.with(doc, profile, change_history)
+// Extra appendix subsections rendered before the auto-appended Change History.
+#let extra_appendices = [
+  == Package Dependency Notes
+
+  The package dependency structure reflects the same hybrid core as the application profile, with the API pattern providing the library-specific outer boundary. Supporting UML diagrams are maintained in `docs/diagrams/`.
+]
+
+#show: formal_doc.with(doc, profile, change_history, extra_appendix_body: extra_appendices)
 
 = Introduction
 
@@ -226,14 +233,14 @@ src/
 
 === Domain Layer
 
-// Sorted alphabetically by Package.
+// Sort rows alphabetically by the first column.
 #table(
   columns: (auto, 1fr, auto),
   table.header([*Package*], [*Purpose*], [*SPARK*]),
   [`Domain`], [Layer root.], [On],
-  [`Domain.Unit`], [Unit type for void-like operations.], [On],
   [`Domain.Error`], [Error type with kind and bounded message.], [On],
   [`Domain.Error.Result`], [Generic Result[T] monad.], [On],
+  [`Domain.Unit`], [Unit type for void-like operations.], [On],
   [`Domain.Value_Object`], [Value object root.], [On],
   [`Domain.Value_Object.Option`], [Option[T] monad.], [On],
   [`Domain.Value_Object.Person`], [Person value object.], [On],
@@ -241,14 +248,14 @@ src/
 
 === Application Layer
 
-// Sorted alphabetically by Package.
+// Sort rows alphabetically by the first column.
 #table(
   columns: (auto, 1fr, auto),
   table.header([*Package*], [*Purpose*], [*SPARK*]),
   [`Application`], [Layer root.], [On],
-  [`Application.Error`], [Re-exports Domain.Error.], [On],
   [`Application.Command`], [Command root.], [On],
   [`Application.Command.Greet`], [Greeting command DTO.], [On],
+  [`Application.Error`], [Re-exports Domain.Error.], [On],
   [`Application.Port`], [Port root.], [On],
   [`Application.Port.Outbound.Writer`], [Writer port definition.], [On],
   [`Application.Usecase.Greet`], [Greeting use case.], [On],
@@ -256,7 +263,7 @@ src/
 
 === Infrastructure Layer
 
-// Sorted alphabetically by Package.
+// Sort rows alphabetically by the first column.
 #table(
   columns: (auto, 1fr, auto),
   table.header([*Package*], [*Purpose*], [*SPARK*]),
@@ -267,15 +274,15 @@ src/
 
 === API Layer
 
-// Sorted alphabetically by Package.
+// Sort rows alphabetically by the first column.
 #table(
   columns: (auto, 1fr, auto),
   table.header([*Package*], [*Purpose*], [*SPARK*]),
   [`Hybrid_Lib_Ada`], [Library root.], [Off],
-  [`Hybrid_Lib_Ada.Version`], [Version information.], [Off],
   [`Hybrid_Lib_Ada.API`], [Public facade.], [Off],
-  [`Hybrid_Lib_Ada.API.Operations`], [SPARK-safe operations surface.], [On],
   [`Hybrid_Lib_Ada.API.Desktop`], [Desktop composition root.], [Off],
+  [`Hybrid_Lib_Ada.API.Operations`], [SPARK-safe operations surface.], [On],
+  [`Hybrid_Lib_Ada.Version`], [Version information.], [Off],
 )
 
 = Type Definitions
@@ -381,7 +388,7 @@ package Console_Ops is new Hybrid_Lib_Ada.API.Operations
   (Writer => Infrastructure.Adapter.Console_Writer.Write);
 ```
 
-// Sorted alphabetically by Benefit.
+// Sort rows alphabetically by the first column.
 #table(
   columns: (auto, 1fr),
   table.header([*Benefit*], [*Description*]),
@@ -449,7 +456,7 @@ end Execute;
 
 == No Exceptions Policy
 
-// Sorted alphabetically by Situation.
+// Sort rows alphabetically by the first column.
 #table(
   columns: (auto, 1fr),
   table.header([*Situation*], [*Handling*]),
@@ -547,7 +554,7 @@ Release preparation and developer workflow validate these rules:
 
 == GPR Projects
 
-// Sorted alphabetically by Project.
+// Sort rows alphabetically by the first column.
 #table(
   columns: (auto, 1fr),
   table.header([*Project*], [*Purpose*]),
@@ -560,7 +567,7 @@ Release preparation and developer workflow validate these rules:
 
 == Build Profiles
 
-// Sorted alphabetically by Profile.
+// Sort rows alphabetically by the first column.
 #table(
   columns: (auto, auto, 1fr),
   table.header([*Profile*], [*Target*], [*Features*]),
@@ -588,13 +595,3 @@ Release preparation and developer workflow validate these rules:
 *Decision:* use static polymorphism via generics.
 
 *Rationale:* this supports SPARK compatibility, zero runtime overhead, and compile-time type safety.
-
-= Appendices
-
-== Package Dependency Notes
-
-The package dependency structure reflects the same hybrid core as the application profile, with the API pattern providing the library-specific outer boundary. Supporting UML diagrams are maintained in `docs/diagrams/`.
-
-== Change History
-
-#change_history_table(change_history)

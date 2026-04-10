@@ -1,5 +1,5 @@
 // ============================================================================
-// File: srs_lib.typ
+// File: software_requirements_specification.typ
 // Purpose: Software Requirements Specification for the Hybrid_Lib_Ada project.
 // Scope: Project-specific SRS content plus invocation of shared formal-document
 //   functionality from core.typ.
@@ -17,7 +17,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 // ============================================================================
 
-#import "core.typ": change_history_table, formal_doc
+#import "core.typ": formal_doc
 
 #let doc = (
   authors: ("Michael Gardner",),
@@ -66,7 +66,14 @@
   ),
 )
 
-#show: formal_doc.with(doc, profile, change_history)
+// Extra appendix subsections rendered before the auto-appended Change History.
+#let extra_appendices = [
+  == Glossary
+
+  See Section 1.3 Definitions and Acronyms.
+]
+
+#show: formal_doc.with(doc, profile, change_history, extra_appendix_body: extra_appendices)
 
 = Introduction
 
@@ -86,7 +93,7 @@ This Software Requirements Specification (SRS) defines the functional and non-fu
 
 == Definitions and Acronyms
 
-// Sorted alphabetically by Term.
+// Sort rows alphabetically by the first column.
 #table(
   columns: (auto, 1fr),
   table.header([*Term*], [*Definition*]),
@@ -156,7 +163,7 @@ Supporting architecture guidance is maintained in `docs/guides/`. Supporting UML
 
 == User Classes
 
-// Sorted alphabetically by User Class.
+// Sort rows alphabetically by the first column.
 #table(
   columns: (auto, 1fr),
   table.header([*User Class*], [*Description*]),
@@ -180,7 +187,7 @@ Supporting architecture guidance is maintained in `docs/guides/`. Supporting UML
 
 == Constraints
 
-// Sorted alphabetically by Constraint.
+// Sort rows alphabetically by the first column.
 #table(
   columns: (auto, 1fr),
   table.header([*Constraint*], [*Rationale*]),
@@ -452,7 +459,7 @@ None. The library is hardware-agnostic.
 
 === Hardware Requirements
 
-// Sorted alphabetically by Category.
+// Sort rows alphabetically by the first column.
 #table(
   columns: (auto, 1fr),
   table.header([*Category*], [*Requirement*]),
@@ -463,7 +470,7 @@ None. The library is hardware-agnostic.
 
 === Software Requirements
 
-// Sorted alphabetically by Category.
+// Sort rows alphabetically by the first column.
 #table(
   columns: (auto, 1fr),
   table.header([*Category*], [*Requirement*]),
@@ -485,7 +492,7 @@ Architecture conformance shall be enforced through a combination of project/buil
 
 == Verification Methods
 
-// Sorted alphabetically by Method.
+// Sort rows alphabetically by the first column.
 #table(
   columns: (auto, 1fr),
   table.header([*Method*], [*Description*]),
@@ -517,13 +524,3 @@ Architecture conformance shall be enforced through a combination of project/buil
   [FR-04.4], [Hybrid_Lib_Ada.API.Operations], [test_api_operations.adb],
   [FR-04.5], [Hybrid_Lib_Ada.API.Desktop], [test_api_greet.adb],
 )
-
-= Appendices
-
-== Glossary
-
-See Section 1.3 Definitions and Acronyms.
-
-== Change History
-
-#change_history_table(change_history)

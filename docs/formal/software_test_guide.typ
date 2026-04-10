@@ -1,5 +1,5 @@
 // ============================================================================
-// File: hybrid_lib_ada_stg.typ
+// File: software_test_guide.typ
 // Purpose: Software Test Guide for HYBRID_LIB_ADA.
 // Scope: Real project test strategy, organization, execution, traceability,
 //   examples, and maintenance guidance for the library profile.
@@ -17,7 +17,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 // ============================================================================
 
-#import "core.typ": formal_doc, change_history_table
+#import "core.typ": formal_doc
 
 #let doc = (
   title: "Software Test Guide",
@@ -152,7 +152,7 @@ test/
 
 == Naming Conventions
 
-// Sorted alphabetically by Element.
+// Sort rows alphabetically by the first column.
 #table(
   columns: (auto, auto, 1fr),
   table.header([Element], [Convention], [Example]),
