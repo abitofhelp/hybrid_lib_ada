@@ -25,9 +25,9 @@
   project_name: "HYBRID_LIB_ADA",
   spdx_license: "BSD-3-Clause",
   status: "Released",
-  status_date: "2025-12-11",
+  status_date: "2026-04-24",
   title: "Software Design Specification",
-  version: "2.0.1",
+  version: "2.0.2",
 )
 
 #let profile = (
@@ -44,6 +44,12 @@
 )
 
 #let change_history = (
+  (
+    version: "2.0.2",
+    date: "2026-04-24",
+    author: "Michael Gardner",
+    changes: "Patch — added Library_Standalone Design Decision under Build Configuration. Documents the rationale for Library_Standalone = \"standard\" (composability across Ada toolchain ecosystems, avoidance of duplicate-runtime link failures from \"encapsulated\" stand-alone libraries) and credits Library_Interface as the public-API enforcement mechanism. Cites the arch_guard enforcement boundary (ROOT_GPR_ENCAPSULATED_ERROR).",
+  ),
   (
     version: "2.0.1",
     date: "2025-12-11",
@@ -575,6 +581,42 @@ Release preparation and developer workflow validate these rules:
   [embedded], [Ravenscar embedded], [Tasking-safe embedded profile.],
   [standard], [Desktop/server], [Full feature set.],
 )
+
+== Library_Standalone Design Decision
+
+hybrid_lib_ada uses:
+
+```gpr
+Library_Standalone => "standard";
+```
+
+*Rationale:*
+
+- hybrid_lib_ada is intended for composition within Ada toolchain
+  ecosystems where the consumer supplies the Ada runtime at link time.
+- Using `"encapsulated"` would bundle the full Ada runtime (RTS) into
+  `libhybrid_lib_ada.a`. When two encapsulated stand-alone libraries
+  (ESALs) are linked into the same executable, the linker emits
+  thousands of `multiple definition` errors for the duplicated runtime
+  symbols. This is a fundamental composition limitation of
+  `"encapsulated"`, not a fixable defect.
+- Public-API enforcement is achieved via `Library_Interface`, not via
+  `Library_Standalone`. `Library_Interface` lists the packages clients
+  may `with`; GPRbuild rejects any `with` clause naming an unlisted
+  package. `Library_Standalone` is purely a packaging directive.
+
+*Therefore:*
+
+- `"standard"` is required for composability with other Ada libraries
+  that may themselves be stand-alone.
+- `"encapsulated"` is explicitly prohibited for this project.
+- The architecture rule is enforced by
+  `scripts/python/shared/arch_guard/adapters/ada.py`
+  (`ROOT_GPR_ENCAPSULATED_ERROR`) on every `make check-arch`.
+
+*Note:* `"encapsulated"` may be appropriate for standalone distribution
+to non-Ada environments (e.g., a C-callable library where the consumer
+has no Ada runtime), but this is not a requirement for hybrid_lib_ada.
 
 = Design Decisions
 
