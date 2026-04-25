@@ -37,7 +37,7 @@ Sibling PR:
 | No "Closes #X" / no astengine issue language (per GPT direction) | ✓ |
 | `make check-arch` — FAIL pre-flip, PASS post-flip | ✓ both sides captured |
 | `make build` — clean | ✓ (`libhybrid_lib_ada.a`, 0.79s) |
-| `make test` — ALL TEST SUITES: SUCCESS (99/99) | ✓ |
+| `make test` — ALL TEST SUITES: SUCCESS (99 unit + 10 integration = 109/109) | ✓ |
 | `make docs-formal` — 3/3 PDFs | ✓ |
 | No src/** change | ✓ (verified via `git diff --stat`) |
 | No SRS / STG change | ✓ |
