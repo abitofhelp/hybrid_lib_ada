@@ -14,6 +14,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **`Library_Standalone` flipped from `"encapsulated"` to `"standard"`**
+  in `hybrid_lib_ada.gpr`. `"encapsulated"` bundled the Ada runtime into
+  `libhybrid_lib_ada.a`, causing duplicate-runtime `multiple definition`
+  link errors when composed with any other encapsulated SAL.
+  `"standard"` uses the system Ada runtime at link time, which is the
+  correct model for Ada-toolchain ecosystems. Public-API enforcement
+  is unchanged — `Library_Interface` (the actual enforcement
+  mechanism) is untouched.
+- `hybrid_lib_ada.gpr` comment block rewritten to credit
+  `Library_Interface` for public-API enforcement (previous text
+  misleadingly attributed it to `Library_Standalone`).
+- SDS bumped v2.0.1 → v2.0.2 (patch) with new "Build Configuration /
+  Library_Standalone Design Decision" section documenting the
+  rationale and the arch_guard enforcement boundary.
+
+### Fixed
+
+- Resolved an ESAL composition limitation that prevented hybrid_lib_ada
+  from being linked alongside any other encapsulated stand-alone Ada
+  library. The template-regeneration vector that re-introduced
+  `"encapsulated"` on library roots was closed upstream in
+  `hybrid_scripts_python` PR #6 (arch_guard now enforces
+  `Library_Standalone = "standard"` on root library GPRs;
+  `namespace_layers.py` no longer auto-upgrades to `"encapsulated"`).
+
+### Migration
+
+- No API changes.
+- Downstream consumers: nothing to do if already using `"standard"`.
+  If consuming hybrid_lib_ada as a submodule, `git submodule update
+  --remote`; if via Alire, `alr update`; then rebuild.
+
 ## [2.0.0] - 2025-12-10
 
 **Test Coverage:** 99 unit + 10 integration + 0 examples = 109 total

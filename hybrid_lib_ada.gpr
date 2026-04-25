@@ -90,8 +90,13 @@ library project Hybrid_Lib_Ada is
    for Library_Kind use Library_Type;
 
    --  =======================================================================
-   --  Stand-Alone Library Configuration - PUBLIC API ENFORCEMENT
+   --  Stand-Alone Library Configuration - PUBLIC API SURFACE
    --  =======================================================================
+   --
+   --  Public-API enforcement is the role of Library_Interface, NOT of
+   --  Library_Standalone. Library_Standalone controls how the library
+   --  is packaged for linking; Library_Interface explicitly lists the
+   --  packages that clients are allowed to `with`.
    --
    --  Hybrid Library Architecture: Only Domain and API are public
    --
@@ -105,12 +110,19 @@ library project Hybrid_Lib_Ada is
    --    - Infrastructure.*          Concrete adapters
    --
    --  ENFORCED BY:
-   --    - Library_Standalone: Enables stand-alone library mode
-   --    - Library_Interface: Explicitly lists ONLY public packages
-   --    - GPRbuild: Prevents clients from accessing non-listed packages
+   --    - Library_Interface: explicitly lists the packages clients may
+   --      `with`. GPRbuild rejects any `with` clause naming an
+   --      unlisted package.
+   --    - Library_Standalone: "standard" — stand-alone library that
+   --      picks up the system Ada runtime at link time. Do NOT use
+   --      "encapsulated" here: it bundles the Ada RTS and causes
+   --      duplicate-runtime link failures when multiple encapsulated
+   --      libraries are composed. See SDS § "Library_Standalone
+   --      design decision" for the full rationale. Enforced by
+   --      arch_guard's Ada adapter (ROOT_GPR_ENCAPSULATED_ERROR).
    --  =======================================================================
 
-   for Library_Standalone use "encapsulated";
+   for Library_Standalone use "standard";
 
    --  Public Interface: Root package + Domain layer + API facade + Config
    --  Infrastructure is EXCLUDED (implementation detail)
