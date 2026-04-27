@@ -1,11 +1,12 @@
 # Hybrid_Lib_Ada Documentation
 
-**Version:** 2.0.0  
-**Date:** 2025-12-10  
+**Doc Version:** 2.0.0<br>
+**Applies to hybrid_lib_ada:** ^2.0<br>
+**Last Updated:** 2026-04-26<br>
 **SPDX-License-Identifier:** BSD-3-Clause<br>
 **License File:** See the LICENSE file in the project root<br>
-**Copyright:** © 2025 Michael Gardner, A Bit of Help, Inc.<br>  
-**Status:** Released  
+**Copyright:** © 2026 Michael Gardner, A Bit of Help, Inc.<br>
+**Status:** Released
 
 ---
 

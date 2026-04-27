@@ -2,12 +2,13 @@
 
 [![License](https://img.shields.io/badge/license-BSD--3--Clause-blue.svg)](LICENSE) [![Ada](https://img.shields.io/badge/Ada-2022-blue.svg)](https://ada-lang.io) [![SPARK](https://img.shields.io/badge/SPARK-Proved-green.svg)](https://www.adacore.com/about-spark)
 
-**Version:** 2.0.0  
-**Date:** December 10, 2025  
-**SPDX-License-Identifier:** BSD-3-Clause
-**License File:** See the LICENSE file in the project root
-**Copyright:** © 2025 Michael Gardner, A Bit of Help, Inc.  
-**Status:** Released  
+**Doc Version:** 2.0.0<br>
+**Applies to hybrid_lib_ada:** ^2.0<br>
+**Last Updated:** 2026-04-26<br>
+**SPDX-License-Identifier:** BSD-3-Clause<br>
+**License File:** See the LICENSE file in the project root<br>
+**Copyright:** © 2026 Michael Gardner, A Bit of Help, Inc.<br>
+**Status:** Released
 
 ## Overview
 

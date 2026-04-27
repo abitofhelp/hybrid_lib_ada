@@ -1,11 +1,12 @@
 # Architecture Enforcement in Ada/GPRbuild
 
-**Version:** 2.0.0  
-**Date:** 2025-12-10  
+**Doc Version:** 2.0.0<br>
+**Applies to hybrid_lib_ada:** ^2.0<br>
+**Last Updated:** 2026-04-26<br>
 **SPDX-License-Identifier:** BSD-3-Clause<br>
 **License File:** See the LICENSE file in the project root<br>
-**Copyright:** © 2025 Michael Gardner, A Bit of Help, Inc.<br>  
-**Status:** Released  
+**Copyright:** © 2026 Michael Gardner, A Bit of Help, Inc.<br>
+**Status:** Released
 
 
 This document explains how to enforce hexagonal/clean architecture rules in Ada projects using GPRbuild and the architecture guard script.
